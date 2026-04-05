@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polski — Word by Word</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Po<span>l</span>ski</div>
+    <div class="tagline">One word. Every form. Real sentences.</div>
+  </header>
+  <div class="word-nav" id="wordNav"></div>
+  <div class="session-stats" id="sessionStats"></div>
+
+  <div class="flashcard-section">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="flashcard-area" id="flashcardArea"></div>
+  </div>
+
+  <div class="completed-trail" id="completedTrail"></div>
+
+  <div class="paradigm-wrap" id="paradigmWrap">
+    <div class="paradigm-toggle" id="paradigmToggle">
+      <div class="paradigm-toggle-left" id="paradigmToggleLeft"></div>
+      <span class="toggle-arrow">▼</span>
+    </div>
+    <div class="paradigm-body" id="paradigmBody"></div>
+  </div>
+
+  <footer>
+    Słowo po słowie — word by word<br>
+    <button class="reset-link" onclick="resetProgress()">Reset all progress</button>
+  </footer>
+</div>
+<div class="unlock-toast" id="unlockToast"></div>
+<div class="paradigm-popup" id="paradigmPopup" onclick="if(event.target===this)closePopup()">
+  <div class="paradigm-popup-inner" id="paradigmPopupInner"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/srs.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

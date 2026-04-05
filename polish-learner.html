@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polski — Word by Word</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f0e8; --ink:#1a1008; --accent:#c0392b; --muted:#8a7a6a;
+    --card:#fffdf8; --border:#d4c9b8; --correct:#2d6a4f; --wrong:#c0392b; --locked:#c5bdb0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:2rem 1rem}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+  .wrap{max-width:760px;margin:0 auto;position:relative;z-index:1}
+
+  header{text-align:center;margin-bottom:2rem}
+  .logo{font-family:'Playfair Display',serif;font-size:2.2rem;letter-spacing:-0.02em}
+  .logo span{color:var(--accent)}
+  .tagline{font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem}
+
+  /* Word nav */
+  .word-nav{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem}
+  .word-pill{position:relative;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;padding:0.35rem 0.8rem 0.5rem;border:1.5px solid var(--border);border-radius:3px;background:var(--card);color:var(--muted);cursor:default;transition:all 0.15s;overflow:hidden}
+  .word-pill.unlocked{cursor:pointer}
+  .word-pill.unlocked:hover{border-color:var(--accent);color:var(--accent)}
+  .word-pill.active{background:var(--accent);border-color:var(--accent);color:white;font-weight:500}
+  .word-pill.locked{opacity:0.45;color:var(--locked);border-color:var(--locked)}
+  .word-pill.locked::after{content:'🔒';font-size:0.55rem;margin-left:0.25rem}
+  .pill-mastery{position:absolute;bottom:0;left:0;height:3px;background:var(--correct);transition:width 0.4s;border-radius:0 0 2px 2px}
+  .word-pill.active .pill-mastery{background:rgba(255,255,255,0.5)}
+
+  /* Stats */
+  .session-stats{display:flex;justify-content:center;gap:1.4rem;margin-bottom:1.5rem;font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.06em;color:var(--muted)}
+  .stat-num{font-weight:500;color:var(--ink)}
+
+  /* Progress */
+  .progress-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:1.2rem;overflow:hidden}
+  .progress-fill{height:100%;background:var(--correct);border-radius:2px;transition:width 0.4s ease}
+
+  /* ── FLASHCARD (top of content area) ── */
+  .flashcard-area{position:relative;min-height:190px;margin-bottom:1.5rem}
+  .sentence-card{background:var(--card);border:1.5px solid var(--border);border-radius:6px;padding:1.5rem 1.8rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:border-color 0.3s,background 0.3s,opacity 0.35s ease,transform 0.35s ease}
+  .sentence-card.entering{opacity:0;transform:translateY(14px)}
+  .sentence-card.visible{opacity:1;transform:translateY(0)}
+  .sentence-card.exiting{opacity:0;transform:translateY(-10px)}
+  .sentence-card.correct{border-color:var(--correct);background:#f0faf4}
+  .sentence-card.wrong-flash{border-color:var(--wrong)}
+  @keyframes cardShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  .sentence-card.shaking{animation:cardShake 0.3s ease}
+
+  .card-word-label{font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--muted);letter-spacing:0.06em;margin-bottom:0.6rem;display:flex;align-items:center;justify-content:space-between}
+  .skill-level-badge{font-size:0.56rem;opacity:0.5}
+
+  .sentence-line{font-size:1.15rem;line-height:1.7;margin-bottom:0.55rem;display:flex;align-items:center;flex-wrap:wrap;gap:0.25rem}
+  .sentence-word{font-family:'Playfair Display',serif}
+  .blank-wrap{display:inline-flex;align-items:center}
+  input.blank{font-family:'Playfair Display',serif;font-size:1.1rem;width:130px;border:none;border-bottom:2px solid var(--ink);background:transparent;color:var(--ink);outline:none;padding:0 0.2rem;text-align:center;transition:border-color 0.2s}
+  input.blank:focus{border-color:var(--accent)}
+  input.blank.correct{border-color:var(--correct);color:var(--correct)}
+  input.blank.wrong{border-color:var(--wrong);color:var(--wrong)}
+  input.blank:disabled{cursor:default}
+  .translation{font-size:0.8rem;color:var(--muted);font-style:italic;margin-bottom:0.7rem}
+
+  .card-actions{display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap}
+  .check-btn{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;letter-spacing:0.06em;padding:0.4rem 1.1rem;border:1.5px solid var(--ink);border-radius:3px;background:transparent;color:var(--ink);cursor:pointer;transition:all 0.15s}
+  .check-btn:hover{background:var(--ink);color:var(--card)}
+  .check-btn.done{border-color:var(--correct);color:var(--correct);cursor:default}
+  .check-btn.done:hover{background:transparent}
+
+  .hint-keys{display:flex;gap:0.35rem;margin-left:auto}
+  .hint-key{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.04em;padding:0.25rem 0.5rem;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+  .hint-key:hover{border-color:var(--accent);color:var(--accent)}
+  .hint-key.used{border-color:var(--accent);color:var(--accent);opacity:0.6}
+  .hint-key kbd{font-size:0.58rem;opacity:0.5;margin-right:0.15rem}
+
+  .hint-text{font-size:0.76rem;color:var(--muted);min-height:1.1em;margin-top:0.5rem}
+  .hint-text.show-wrong{color:var(--wrong)}
+  .hint-text.show-correct{color:var(--correct)}
+
+  /* Case tag — only shown via F2 */
+  .case-tag-revealed{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.63rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(192,57,43,0.3);border-radius:3px;padding:0.12rem 0.45rem;margin-top:0.4rem}
+
+  /* ── PARADIGM (below card, collapsible) ── */
+  .paradigm-wrap{margin-bottom:1.5rem}
+  .paradigm-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:0.6rem 1rem;background:var(--card);border:1.5px solid var(--border);border-radius:6px;transition:all 0.2s;user-select:none}
+  .paradigm-toggle:hover{border-color:var(--accent)}
+  .paradigm-toggle-left{display:flex;align-items:baseline;gap:0.6rem;flex-wrap:wrap}
+  .paradigm-toggle .p-word{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ink);line-height:1}
+  .paradigm-toggle .p-meta{font-size:0.7rem;color:var(--muted)}
+  .paradigm-toggle .p-meaning{font-size:0.78rem;color:var(--muted);font-style:italic}
+  .toggle-arrow{font-size:0.7rem;color:var(--muted);transition:transform 0.3s}
+  .paradigm-wrap.open .toggle-arrow{transform:rotate(180deg)}
+  .paradigm-body{background:var(--card);border:1.5px solid var(--border);border-top:none;border-radius:0 0 6px 6px;padding:0 1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s ease}
+  .paradigm-wrap.open .paradigm-body{max-height:1400px;padding:0.8rem 1.2rem 1rem}
+  .paradigm-wrap.open .paradigm-toggle{border-radius:6px 6px 0 0}
+
+  table.paradigm{width:100%;border-collapse:collapse;font-size:0.86rem}
+  .paradigm th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);padding:0.2rem 0.4rem 0.35rem 0;border-bottom:1px solid var(--border)}
+  .paradigm td{padding:0.35rem 0.4rem 0.35rem 0;vertical-align:top}
+  .paradigm tr:not(:last-child) td{border-bottom:1px solid rgba(212,201,184,0.5)}
+  .case-name{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;width:82px}
+  .case-question{font-size:0.71rem;color:var(--muted);font-style:italic;width:110px}
+  .case-form{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink)}
+  .case-usage{font-size:0.76rem;color:var(--muted);padding-left:0.4rem}
+  .highlight-row td{background:rgba(192,57,43,0.04)}
+  .skill-check{color:var(--correct);font-size:0.68rem;margin-left:0.25rem;opacity:0.7}
+
+  /* F1 popup overlay */
+  .paradigm-popup{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(26,16,8,0.35);opacity:0;pointer-events:none;transition:opacity 0.25s}
+  .paradigm-popup.show{opacity:1;pointer-events:auto}
+  .paradigm-popup-inner{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:1.3rem 1.6rem;max-width:680px;width:90vw;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.15)}
+  .paradigm-popup-inner h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:0.7rem}
+  .popup-close{float:right;font-size:1.1rem;cursor:pointer;background:none;border:none;color:var(--muted);padding:0.2rem 0.4rem;line-height:1}
+  .popup-close:hover{color:var(--ink)}
+
+  /* Trail */
+  .completed-trail{max-height:240px;overflow-y:auto;margin-top:0.5rem}
+  .trail-item{display:flex;align-items:baseline;gap:0.5rem;padding:0.35rem 0;border-bottom:1px solid rgba(212,201,184,0.3);opacity:0;transform:translateX(-8px);animation:trailIn 0.3s ease forwards;font-size:0.83rem}
+  @keyframes trailIn{to{opacity:1;transform:translateX(0)}}
+  .trail-check{color:var(--correct);font-size:0.72rem;flex-shrink:0}
+  .trail-sentence{font-family:'Playfair Display',serif;font-size:0.83rem;flex:1}
+  .trail-sentence .trail-answer{color:var(--correct);font-weight:700}
+  .trail-case{font-family:'IBM Plex Mono',monospace;font-size:0.53rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);flex-shrink:0}
+  .trail-mistake{font-size:0.6rem;color:var(--wrong);opacity:0.7}
+  .trail-hints{font-size:0.56rem;color:var(--accent);opacity:0.6}
+
+  .unlock-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--card);font-size:0.86rem;padding:0.7rem 1.4rem;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,0.2);opacity:0;transition:all 0.4s ease;z-index:100;pointer-events:none;white-space:nowrap}
+  .unlock-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer{text-align:center;margin-top:2.5rem;font-size:0.71rem;color:var(--muted);letter-spacing:0.06em}
+  .reset-link{font-family:'IBM Plex Mono',monospace;font-size:0.66rem;color:var(--muted);cursor:pointer;border:none;background:none;text-decoration:underline;text-underline-offset:2px;margin-top:0.5rem;display:inline-block}
+  .reset-link:hover{color:var(--wrong)}
+
+  @media(max-width:520px){
+    .paradigm-body{padding-left:0.7rem!important;padding-right:0.7rem!important}
+    .sentence-card{padding:1.1rem 1.1rem}
+    .case-question{display:none}
+    .paradigm-toggle .p-word{font-size:1.15rem}
+    .session-stats{gap:0.7rem;font-size:0.62rem}
+    .word-pill{font-size:0.73rem;padding:0.28rem 0.55rem 0.42rem}
+    .hint-key kbd{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Po<span>l</span>ski</div>
+    <div class="tagline">One word. Every form. Real sentences.</div>
+  </header>
+  <div class="word-nav" id="wordNav"></div>
+  <div class="session-stats" id="sessionStats"></div>
+
+  <!-- Card FIRST, paradigm BELOW -->
+  <div class="flashcard-section">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="flashcard-area" id="flashcardArea"></div>
+  </div>
+
+  <div class="completed-trail" id="completedTrail"></div>
+
+  <div class="paradigm-wrap" id="paradigmWrap">
+    <div class="paradigm-toggle" id="paradigmToggle">
+      <div class="paradigm-toggle-left" id="paradigmToggleLeft"></div>
+      <span class="toggle-arrow">▼</span>
+    </div>
+    <div class="paradigm-body" id="paradigmBody"></div>
+  </div>
+
+  <footer>
+    Słowo po słowie — word by word<br>
+    <button class="reset-link" onclick="resetProgress()">Reset all progress</button>
+  </footer>
+</div>
+<div class="unlock-toast" id="unlockToast"></div>
+<div class="paradigm-popup" id="paradigmPopup" onclick="if(event.target===this)closePopup()">
+  <div class="paradigm-popup-inner" id="paradigmPopupInner"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   WORD DATA
+   ═══════════════════════════════════════════════════════════════ */
+const WORDS = [
+  {
+    id:"dom", base:"dom", pos:"noun · masc. inanimate", meaning:"house, home",
+    paradigm: { type:"noun",
+      singular: [
+        { abbr:"NOM", question:"kto? co?",     form:"dom",    usage:"subject",       skill:"NOM" },
+        { abbr:"GEN", question:"kogo? czego?", form:"domu",   usage:"of, from, no…", skill:"GEN" },
+        { abbr:"DAT", question:"komu? czemu?", form:"domowi", usage:"to, for",       skill:"DAT" },
+        { abbr:"ACC", question:"kogo? co?",    form:"dom",    usage:"direct object", skill:"ACC" },
+        { abbr:"INS", question:"kim? czym?",   form:"domem",  usage:"with, by",      skill:"INS" },
+        { abbr:"LOC", question:"o kim? o czym?",form:"domu",  usage:"in, at, about", skill:"LOC" },
+        { abbr:"VOC", question:"—",            form:"domie",  usage:"direct address", skill:"VOC" },
+      ],
+      plural: [
+        { abbr:"NOM·PL", question:"", form:"domy",   usage:"", skill:"NOM·PL" },
+        { abbr:"GEN·PL", question:"", form:"domów",  usage:"", skill:"GEN·PL" },
+        { abbr:"DAT·PL", question:"", form:"domom",  usage:"", skill:"DAT·PL" },
+        { abbr:"ACC·PL", question:"", form:"domy",   usage:"", skill:"ACC·PL" },
+        { abbr:"INS·PL", question:"", form:"domami", usage:"", skill:"INS·PL" },
+        { abbr:"LOC·PL", question:"", form:"domach", usage:"", skill:"LOC·PL" },
+        { abbr:"VOC·PL", question:"", form:"domy",   usage:"", skill:"VOC·PL" },
+      ]
+    },
+    sentences: [
+      { before:"To jest",           blank:"dom",    after:".",            translation:"This is a house.",                     skill:"NOM", hint:"Nominative" },
+      { before:"Ten",               blank:"dom",    after:"jest stary.",  translation:"This house is old.",                   skill:"NOM", hint:"Nominative" },
+      { before:"Nasz",              blank:"dom",    after:"jest duży.",   translation:"Our house is big.",                    skill:"NOM", hint:"Nominative" },
+      { before:"Nie ma tu żadnego", blank:"domu",   after:".",            translation:"There is no house here.",               skill:"GEN", hint:"Genitive" },
+      { before:"Szukam tego",       blank:"domu",   after:".",            translation:"I'm looking for this house.",           skill:"GEN", hint:"Genitive" },
+      { before:"Idę do",            blank:"domu",   after:".",            translation:"I'm going home.",                       skill:"GEN", hint:"Genitive" },
+      { before:"Wracam z tego",     blank:"domu",   after:".",            translation:"I'm returning from this house.",        skill:"GEN", hint:"Genitive" },
+      { before:"Blisko",            blank:"domu",   after:"jest park.",   translation:"There's a park near the house.",        skill:"GEN", hint:"Genitive" },
+      { before:"Przyglądam się temu",blank:"domowi",after:".",            translation:"I'm looking at this house closely.",    skill:"DAT", hint:"Dative" },
+      { before:"Dziwię się temu",    blank:"domowi",after:".",            translation:"I'm surprised by this house.",          skill:"DAT", hint:"Dative" },
+      { before:"Widzę ten",         blank:"dom",    after:"z daleka.",    translation:"I can see that house from afar.",       skill:"ACC", hint:"Accusative" },
+      { before:"Kupuję ten",        blank:"dom",    after:".",            translation:"I'm buying this house.",                skill:"ACC", hint:"Accusative" },
+      { before:"Znam ten",          blank:"dom",    after:"dobrze.",      translation:"I know this house well.",               skill:"ACC", hint:"Accusative" },
+      { before:"Przed",             blank:"domem",  after:"stoi samochód.",translation:"In front of the house stands a car.", skill:"INS", hint:"Instrumental" },
+      { before:"Za tym",            blank:"domem",  after:"jest ogród.",  translation:"Behind this house there's a garden.",   skill:"INS", hint:"Instrumental" },
+      { before:"Interesuję się tym",blank:"domem",  after:".",            translation:"I'm interested in this house.",         skill:"INS", hint:"Instrumental" },
+      { before:"Nad",               blank:"domem",  after:"latają ptaki.",translation:"Birds fly over the house.",             skill:"INS", hint:"Instrumental" },
+      { before:"Mieszkam w tym",    blank:"domu",   after:".",            translation:"I live in this house.",                 skill:"LOC", hint:"Locative" },
+      { before:"Myślę o tym",       blank:"domu",   after:".",            translation:"I'm thinking about this house.",        skill:"LOC", hint:"Locative" },
+      { before:"W tym",             blank:"domu",   after:"jest ciepło.", translation:"It's warm in this house.",              skill:"LOC", hint:"Locative" },
+      { before:"O",                 blank:"domie",  after:", jak za tobą tęsknię!",translation:"Oh house, how I miss you!",   skill:"VOC", hint:"Vocative" },
+      { before:"Te",                blank:"domy",   after:"są piękne.",   translation:"These houses are beautiful.",           skill:"NOM·PL", hint:"Nominative plural" },
+      { before:"Nowe",              blank:"domy",   after:"rosną szybko.",translation:"New houses are going up quickly.",      skill:"NOM·PL", hint:"Nominative plural" },
+      { before:"Na ulicy jest dużo",blank:"domów",  after:".",            translation:"There are many houses on the street.",  skill:"GEN·PL", hint:"Genitive plural" },
+      { before:"Wśród tych",        blank:"domów",  after:"jest jeden stary.",translation:"Among these houses there's one old one.",skill:"GEN·PL",hint:"Genitive plural" },
+      { before:"Szukamy nowych",    blank:"domów",  after:".",            translation:"We're looking for new houses.",         skill:"GEN·PL", hint:"Genitive plural" },
+      { before:"Przyglądamy się tym",blank:"domom", after:".",            translation:"We're looking at these houses closely.", skill:"DAT·PL", hint:"Dative plural" },
+      { before:"Dziwię się tym",     blank:"domom", after:".",            translation:"I'm surprised by these houses.",        skill:"DAT·PL", hint:"Dative plural" },
+      { before:"Lubię stare",       blank:"domy",   after:".",            translation:"I like old houses.",                    skill:"ACC·PL", hint:"Accusative plural" },
+      { before:"Buduję nowe",       blank:"domy",   after:".",            translation:"I'm building new houses.",              skill:"ACC·PL", hint:"Accusative plural" },
+      { before:"Między tymi",       blank:"domami", after:"jest park.",   translation:"Between these houses there's a park.",  skill:"INS·PL", hint:"Instrumental plural" },
+      { before:"Przed tymi",        blank:"domami", after:"jest parking.",translation:"There's a parking in front of these houses.",skill:"INS·PL",hint:"Instrumental plural" },
+      { before:"W tych",            blank:"domach", after:"mieszkają ludzie.",translation:"People live in these houses.",      skill:"LOC·PL", hint:"Locative plural" },
+      { before:"O tych",            blank:"domach", after:"dużo się mówi.",translation:"People talk a lot about these houses.",skill:"LOC·PL", hint:"Locative plural" },
+      { before:"O",                 blank:"domy",   after:"nasze, stójcie wiecznie!",translation:"Oh our houses, stand forever!",skill:"VOC·PL",hint:"Vocative plural" },
+    ]
+  },
+  {
+    id:"kobieta", base:"kobieta", pos:"noun · feminine", meaning:"woman",
+    paradigm: { type:"noun",
+      singular: [
+        { abbr:"NOM", question:"kto?",   form:"kobieta",  usage:"subject",       skill:"NOM" },
+        { abbr:"GEN", question:"kogo?",  form:"kobiety",  usage:"of, from, no…", skill:"GEN" },
+        { abbr:"DAT", question:"komu?",  form:"kobiecie", usage:"to, for",       skill:"DAT" },
+        { abbr:"ACC", question:"kogo?",  form:"kobietę",  usage:"direct object", skill:"ACC" },
+        { abbr:"INS", question:"kim?",   form:"kobietą",  usage:"with, by",      skill:"INS" },
+        { abbr:"LOC", question:"o kim?", form:"kobiecie", usage:"in, at, about", skill:"LOC" },
+        { abbr:"VOC", question:"—",      form:"kobieto!", usage:"direct address", skill:"VOC" },
+      ],
+      plural: [
+        { abbr:"NOM·PL", question:"", form:"kobiety",   usage:"", skill:"NOM·PL" },
+        { abbr:"GEN·PL", question:"", form:"kobiet",    usage:"", skill:"GEN·PL" },
+        { abbr:"DAT·PL", question:"", form:"kobietom",  usage:"", skill:"DAT·PL" },
+        { abbr:"ACC·PL", question:"", form:"kobiety",   usage:"", skill:"ACC·PL" },
+        { abbr:"INS·PL", question:"", form:"kobietami", usage:"", skill:"INS·PL" },
+        { abbr:"LOC·PL", question:"", form:"kobietach", usage:"", skill:"LOC·PL" },
+        { abbr:"VOC·PL", question:"", form:"kobiety",   usage:"", skill:"VOC·PL" },
+      ]
+    },
+    sentences: [
+      { before:"Ta",                   blank:"kobieta",  after:"jest miła.",       translation:"This woman is kind.",                       skill:"NOM", hint:"Nominative" },
+      { before:"Każda",                blank:"kobieta",  after:"to wie.",          translation:"Every woman knows that.",                   skill:"NOM", hint:"Nominative" },
+      { before:"Młoda",                blank:"kobieta",  after:"czeka na przystanku.",translation:"A young woman waits at the stop.",      skill:"NOM", hint:"Nominative" },
+      { before:"Nie znam tej",         blank:"kobiety",  after:".",                translation:"I don't know this woman.",                  skill:"GEN", hint:"Genitive" },
+      { before:"Bez tej",             blank:"kobiety",  after:"nic nie zrobimy.", translation:"Without this woman we won't do anything.",  skill:"GEN", hint:"Genitive" },
+      { before:"Szukam tej",          blank:"kobiety",  after:".",                translation:"I'm looking for this woman.",                skill:"GEN", hint:"Genitive" },
+      { before:"Daję tę książkę tej", blank:"kobiecie", after:".",                translation:"I give this book to this woman.",           skill:"DAT", hint:"Dative" },
+      { before:"Pomagam tej",         blank:"kobiecie", after:".",                translation:"I'm helping this woman.",                   skill:"DAT", hint:"Dative" },
+      { before:"Dziękuję tej",        blank:"kobiecie", after:".",                translation:"I'm thanking this woman.",                  skill:"DAT", hint:"Dative" },
+      { before:"Widzę tę",            blank:"kobietę",  after:"codziennie.",      translation:"I see this woman every day.",               skill:"ACC", hint:"Accusative" },
+      { before:"Znam tę",             blank:"kobietę",  after:"od lat.",          translation:"I've known this woman for years.",           skill:"ACC", hint:"Accusative" },
+      { before:"Proszę tę",           blank:"kobietę",  after:"o pomoc.",         translation:"I'm asking this woman for help.",           skill:"ACC", hint:"Accusative" },
+      { before:"Idę z tą",            blank:"kobietą",  after:"do kina.",         translation:"I'm going to the cinema with this woman.",  skill:"INS", hint:"Instrumental" },
+      { before:"Rozmawiam z tą",      blank:"kobietą",  after:".",                translation:"I'm talking with this woman.",              skill:"INS", hint:"Instrumental" },
+      { before:"Rozmawiamy o tej",    blank:"kobiecie", after:".",                translation:"We're talking about this woman.",            skill:"LOC", hint:"Locative" },
+      { before:"Myślę o tej",         blank:"kobiecie", after:".",                translation:"I'm thinking about this woman.",             skill:"LOC", hint:"Locative" },
+      { before:"",                     blank:"Kobieto",  after:", masz rację!",    translation:"Woman, you are right!",                    skill:"VOC", hint:"Vocative" },
+      { before:"Droga",               blank:"kobieto",  after:", posłuchaj!",     translation:"Dear woman, listen!",                       skill:"VOC", hint:"Vocative" },
+      { before:"Te",                   blank:"kobiety",  after:"są stąd.",         translation:"These women are from here.",                skill:"NOM·PL", hint:"Nominative plural" },
+      { before:"Na sali jest wiele",  blank:"kobiet",   after:".",                translation:"There are many women in the hall.",          skill:"GEN·PL", hint:"Genitive plural" },
+      { before:"Słucham tych",        blank:"kobiet",   after:"z uwagą.",         translation:"I'm listening to these women carefully.",    skill:"GEN·PL", hint:"Genitive plural" },
+      { before:"Tym",                  blank:"kobietom", after:"pomagamy.",        translation:"We're helping these women.",                skill:"DAT·PL", hint:"Dative plural" },
+      { before:"Dziękuję tym",        blank:"kobietom", after:".",                translation:"I'm thanking these women.",                 skill:"DAT·PL", hint:"Dative plural" },
+      { before:"Widzę te",            blank:"kobiety",  after:"każdego dnia.",    translation:"I see these women every day.",              skill:"ACC·PL", hint:"Accusative plural" },
+      { before:"Rozmawiam z tymi",    blank:"kobietami",after:".",                translation:"I'm talking with these women.",              skill:"INS·PL", hint:"Instrumental plural" },
+      { before:"Opowiadam o tych",    blank:"kobietach",after:".",                translation:"I'm telling about these women.",             skill:"LOC·PL", hint:"Locative plural" },
+      { before:"Drogie",              blank:"kobiety",  after:", posłuchajcie!",  translation:"Dear women, listen!",                      skill:"VOC·PL", hint:"Vocative plural" },
+    ]
+  },
+  {
+    id:"dobry", base:"dobry", pos:"adjective", meaning:"good",
+    paradigm: { type:"adj",
+      masc: [
+        { abbr:"NOM·M",    question:"masc. sg", form:"dobry",   usage:"subject",       skill:"NOM·M" },
+        { abbr:"GEN·M",    question:"",          form:"dobrego", usage:"of/from",       skill:"GEN·M" },
+        { abbr:"DAT·M",    question:"",          form:"dobremu", usage:"to/for",        skill:"DAT·M" },
+        { abbr:"ACC·M(i)",  question:"",          form:"dobry",   usage:"inanimate obj.",skill:"ACC·M(i)" },
+        { abbr:"ACC·M(a)",  question:"",          form:"dobrego", usage:"animate obj.",  skill:"ACC·M(a)" },
+        { abbr:"INS·M",    question:"",          form:"dobrym",  usage:"with/by",       skill:"INS·M" },
+        { abbr:"LOC·M",    question:"",          form:"dobrym",  usage:"in/at/about",   skill:"LOC·M" },
+      ],
+      fem: [
+        { abbr:"NOM·F", question:"fem. sg", form:"dobra",  usage:"subject", skill:"NOM·F" },
+        { abbr:"GEN·F", question:"",         form:"dobrej", usage:"",        skill:"GEN·F" },
+        { abbr:"DAT·F", question:"",         form:"dobrej", usage:"",        skill:"DAT·F" },
+        { abbr:"ACC·F", question:"",         form:"dobrą",  usage:"",        skill:"ACC·F" },
+        { abbr:"INS·F", question:"",         form:"dobrą",  usage:"",        skill:"INS·F" },
+        { abbr:"LOC·F", question:"",         form:"dobrej", usage:"",        skill:"LOC·F" },
+      ],
+      neut: [
+        { abbr:"NOM·N", question:"neut. sg", form:"dobre",   usage:"", skill:"NOM·N" },
+        { abbr:"GEN·N", question:"",          form:"dobrego", usage:"", skill:"GEN·N" },
+        { abbr:"DAT·N", question:"",          form:"dobremu", usage:"", skill:"DAT·N" },
+        { abbr:"INS·N", question:"",          form:"dobrym",  usage:"", skill:"INS·N" },
+        { abbr:"LOC·N", question:"",          form:"dobrym",  usage:"", skill:"LOC·N" },
+      ],
+      pl: [
+        { abbr:"NOM·PL·V",  question:"masc-pers pl", form:"dobrzy",  usage:"", skill:"NOM·PL·V" },
+        { abbr:"NOM·PL·NV", question:"non-masc pl",  form:"dobre",   usage:"", skill:"NOM·PL·NV" },
+        { abbr:"GEN·PL",    question:"",              form:"dobrych", usage:"", skill:"GEN·PL" },
+        { abbr:"DAT·PL",    question:"",              form:"dobrym",  usage:"", skill:"DAT·PL" },
+        { abbr:"ACC·PL·V",  question:"",              form:"dobrych", usage:"", skill:"ACC·PL·V" },
+        { abbr:"ACC·PL·NV", question:"",              form:"dobre",   usage:"", skill:"ACC·PL·NV" },
+        { abbr:"INS·PL",    question:"",              form:"dobrymi", usage:"", skill:"INS·PL" },
+        { abbr:"LOC·PL",    question:"",              form:"dobrych", usage:"", skill:"LOC·PL" },
+      ]
+    },
+    sentences: [
+      { before:"To jest",    blank:"dobry",   after:"pomysł.",         translation:"That is a good idea. (m: pomysł)",       skill:"NOM·M",    hint:"Nominative masculine" },
+      { before:"To jest",    blank:"dobry",   after:"dzień.",          translation:"It's a good day.",                        skill:"NOM·M",    hint:"Nominative masculine" },
+      { before:"To jest",    blank:"dobra",   after:"książka.",        translation:"That is a good book. (f)",                skill:"NOM·F",    hint:"Nominative feminine" },
+      { before:"To jest",    blank:"dobra",   after:"wiadomość.",      translation:"That is good news. (f)",                  skill:"NOM·F",    hint:"Nominative feminine" },
+      { before:"To jest",    blank:"dobre",   after:"wino.",           translation:"That is a good wine. (n)",                skill:"NOM·N",    hint:"Nominative neuter" },
+      { before:"To jest",    blank:"dobre",   after:"piwo.",           translation:"That is a good beer. (n)",                skill:"NOM·N",    hint:"Nominative neuter" },
+      { before:"Szukam",     blank:"dobrego", after:"lekarza.",        translation:"I'm looking for a good doctor.",          skill:"GEN·M",    hint:"Genitive masculine" },
+      { before:"Nie ma",     blank:"dobrego", after:"powodu.",         translation:"There's no good reason.",                 skill:"GEN·M",    hint:"Genitive masculine" },
+      { before:"Nie ma tu",  blank:"dobrej",  after:"herbaty.",        translation:"There's no good tea here.",               skill:"GEN·F",    hint:"Genitive feminine" },
+      { before:"Bez",        blank:"dobrej",  after:"mapy się zgubisz.",translation:"Without a good map you'll get lost.",   skill:"GEN·F",    hint:"Genitive feminine" },
+      { before:"Cieszę się z",blank:"dobrego",after:"wyniku.",         translation:"I'm happy about a good result. (n)",      skill:"GEN·N",    hint:"Genitive neuter" },
+      { before:"Daję to",    blank:"dobremu", after:"człowiekowi.",    translation:"I'm giving this to a good person.",       skill:"DAT·M",    hint:"Dative masculine" },
+      { before:"Daję to",    blank:"dobrej",  after:"kobiecie.",       translation:"I'm giving this to a good woman.",        skill:"DAT·F",    hint:"Dative feminine" },
+      { before:"Daję to",    blank:"dobremu", after:"dziecku.",        translation:"I'm giving this to a good child. (n)",    skill:"DAT·N",    hint:"Dative neuter" },
+      { before:"Widzę",      blank:"dobry",   after:"film.",           translation:"I see a good movie. (inan. m.)",          skill:"ACC·M(i)", hint:"Accusative masculine inanimate" },
+      { before:"Mam",        blank:"dobrego", after:"przyjaciela.",    translation:"I have a good friend. (anim. m.)",        skill:"ACC·M(a)", hint:"Accusative masculine animate" },
+      { before:"Czytam",     blank:"dobrą",   after:"książkę.",        translation:"I'm reading a good book.",                skill:"ACC·F",    hint:"Accusative feminine" },
+      { before:"Mieszkam z", blank:"dobrym",  after:"kolegą.",         translation:"I live with a good friend (m).",          skill:"INS·M",    hint:"Instrumental masculine" },
+      { before:"Idę z",      blank:"dobrą",   after:"koleżanką.",     translation:"I'm going with a good friend (f).",       skill:"INS·F",    hint:"Instrumental feminine" },
+      { before:"Pod",        blank:"dobrym",  after:"wrażeniem.",      translation:"Under a good impression. (n)",            skill:"INS·N",    hint:"Instrumental neuter" },
+      { before:"Mówię o",    blank:"dobrym",  after:"nauczycielu.",    translation:"I'm talking about a good teacher (m).",   skill:"LOC·M",    hint:"Locative masculine" },
+      { before:"W tej",      blank:"dobrej",  after:"restauracji.",    translation:"In this good restaurant.",                skill:"LOC·F",    hint:"Locative feminine" },
+      { before:"W",          blank:"dobrym",  after:"miejscu.",        translation:"In a good place. (n)",                   skill:"LOC·N",    hint:"Locative neuter" },
+      { before:"To są",      blank:"dobrzy",  after:"ludzie.",         translation:"These are good people. (virile pl)",      skill:"NOM·PL·V", hint:"Nominative plural virile" },
+      { before:"To są",      blank:"dobre",   after:"wiadomości.",     translation:"These are good news. (non-virile pl)",    skill:"NOM·PL·NV",hint:"Nominative plural non-virile" },
+      { before:"Znam wielu", blank:"dobrych", after:"lekarzy.",        translation:"I know many good doctors.",               skill:"GEN·PL",   hint:"Genitive plural" },
+      { before:"Tym",        blank:"dobrym",  after:"ludziom pomagamy.",translation:"We help these good people.",             skill:"DAT·PL",   hint:"Dative plural" },
+      { before:"Znam tych",  blank:"dobrych", after:"ludzi.",          translation:"I know these good people. (vir. acc)",    skill:"ACC·PL·V", hint:"Accusative plural virile" },
+      { before:"Lubię te",   blank:"dobre",   after:"wina.",           translation:"I like these good wines. (non-vir. acc)", skill:"ACC·PL·NV",hint:"Accusative plural non-virile" },
+      { before:"Z",          blank:"dobrymi", after:"przyjaciółmi.",   translation:"With good friends.",                      skill:"INS·PL",   hint:"Instrumental plural" },
+      { before:"W",          blank:"dobrych", after:"restauracjach.",  translation:"In good restaurants.",                    skill:"LOC·PL",   hint:"Locative plural" },
+    ]
+  },
+  {
+    id:"mieć", base:"mieć", pos:"verb · imperfective", meaning:"to have",
+    paradigm: { type:"verb",
+      present: [
+        { abbr:"JA",     question:"I",      form:"mam",    usage:"", skill:"1sg" },
+        { abbr:"TY",     question:"you",    form:"masz",   usage:"", skill:"2sg" },
+        { abbr:"ON/ONA", question:"he/she", form:"ma",     usage:"", skill:"3sg" },
+        { abbr:"MY",     question:"we",     form:"mamy",   usage:"", skill:"1pl" },
+        { abbr:"WY",     question:"you·pl", form:"macie",  usage:"", skill:"2pl" },
+        { abbr:"ONI/ONE",question:"they",   form:"mają",   usage:"", skill:"3pl" },
+      ],
+      past_masc: [
+        { abbr:"JA (m)",question:"I (male)",  form:"miałem",  usage:"", skill:"1sg·m" },
+        { abbr:"TY (m)",question:"you (m)",   form:"miałeś",  usage:"", skill:"2sg·m" },
+        { abbr:"ON",    question:"he",        form:"miał",    usage:"", skill:"3sg·m" },
+        { abbr:"MY",    question:"we",        form:"mieliśmy",usage:"", skill:"1pl·past" },
+        { abbr:"ONI",   question:"they (m)",  form:"mieli",   usage:"", skill:"3pl·m" },
+      ],
+      past_fem: [
+        { abbr:"JA (f)",question:"I (female)",form:"miałam", usage:"", skill:"1sg·f" },
+        { abbr:"ONA",   question:"she",      form:"miała",  usage:"", skill:"3sg·f" },
+        { abbr:"ONE",   question:"they (f/n)",form:"miały",  usage:"", skill:"3pl·f" },
+      ]
+    },
+    sentences: [
+      { before:"Ja",     blank:"mam",      after:"psa.",           translation:"I have a dog.",                          skill:"1sg",     hint:"1st person singular" },
+      { before:"",        blank:"Mam",      after:"pytanie.",       translation:"I have a question.",                     skill:"1sg",     hint:"1st person singular" },
+      { before:"Czy ty", blank:"masz",     after:"czas?",          translation:"Do you have time?",                      skill:"2sg",     hint:"2nd person singular" },
+      { before:"Ty",     blank:"masz",     after:"rację.",         translation:"You are right.",                          skill:"2sg",     hint:"2nd person singular" },
+      { before:"Piotr",  blank:"ma",       after:"nowy samochód.", translation:"Piotr has a new car.",                   skill:"3sg",     hint:"3rd person singular" },
+      { before:"Ona",    blank:"ma",       after:"rację.",         translation:"She is right.",                           skill:"3sg",     hint:"3rd person singular" },
+      { before:"Kto",    blank:"ma",       after:"klucze?",        translation:"Who has the keys?",                       skill:"3sg",     hint:"3rd person singular" },
+      { before:"My",     blank:"mamy",     after:"dużo pracy.",    translation:"We have a lot of work.",                 skill:"1pl",     hint:"1st person plural" },
+      { before:"",        blank:"Mamy",     after:"problem.",       translation:"We have a problem.",                     skill:"1pl",     hint:"1st person plural" },
+      { before:"Czy wy", blank:"macie",    after:"pytania?",       translation:"Do you (pl) have questions?",            skill:"2pl",     hint:"2nd person plural" },
+      { before:"Oni",    blank:"mają",     after:"troje dzieci.",  translation:"They have three children.",              skill:"3pl",     hint:"3rd person plural" },
+      { before:"Wszyscy",blank:"mają",     after:"swoje zdanie.",  translation:"Everyone has their opinion.",            skill:"3pl",     hint:"3rd person plural" },
+      { before:"Kiedyś", blank:"miałem",   after:"rower.",         translation:"I used to have a bicycle. (male)",       skill:"1sg·m",   hint:"Past masculine 1sg" },
+      { before:"",        blank:"Miałem",   after:"sen.",           translation:"I had a dream. (male speaker)",          skill:"1sg·m",   hint:"Past masculine 1sg" },
+      { before:"Kiedyś", blank:"miałam",   after:"rower.",         translation:"I used to have a bicycle. (female)",     skill:"1sg·f",   hint:"Past feminine 1sg" },
+      { before:"Czy",    blank:"miałeś",   after:"czas?",          translation:"Did you have time? (to a male)",         skill:"2sg·m",   hint:"Past masculine 2sg" },
+      { before:"On",     blank:"miał",     after:"na to ochotę.",  translation:"He felt like it.",                        skill:"3sg·m",   hint:"Past masculine 3sg" },
+      { before:"On nie", blank:"miał",     after:"pojęcia.",       translation:"He had no idea.",                         skill:"3sg·m",   hint:"Past masculine 3sg" },
+      { before:"Ona",    blank:"miała",    after:"rację.",         translation:"She was right.",                           skill:"3sg·f",   hint:"Past feminine 3sg" },
+      { before:"Dawniej",blank:"mieliśmy", after:"tu sklep.",      translation:"We used to have a shop here.",            skill:"1pl·past", hint:"Past 1st person plural" },
+      { before:"Oni",    blank:"mieli",    after:"szczęście.",     translation:"They (m/mixed) were lucky.",              skill:"3pl·m",   hint:"Past masculine 3pl" },
+      { before:"One",    blank:"miały",    after:"mało czasu.",    translation:"They (f/n) had little time.",             skill:"3pl·f",   hint:"Past feminine 3pl" },
+    ]
+  },
+  {
+    id:"iść", base:"iść", pos:"verb · imperf. · motion", meaning:"to go (on foot)",
+    paradigm: { type:"verb",
+      present: [
+        { abbr:"JA",     question:"I",      form:"idę",     usage:"", skill:"1sg" },
+        { abbr:"TY",     question:"you",    form:"idziesz", usage:"", skill:"2sg" },
+        { abbr:"ON/ONA", question:"he/she", form:"idzie",   usage:"", skill:"3sg" },
+        { abbr:"MY",     question:"we",     form:"idziemy", usage:"", skill:"1pl" },
+        { abbr:"WY",     question:"you",    form:"idziecie",usage:"", skill:"2pl" },
+        { abbr:"ONI/ONE",question:"they",   form:"idą",     usage:"", skill:"3pl" },
+      ],
+      past_masc: [
+        { abbr:"JA (m)",question:"I (male)",  form:"szedłem", usage:"", skill:"1sg·m" },
+        { abbr:"ON",    question:"he",        form:"szedł",   usage:"", skill:"3sg·m" },
+        { abbr:"MY",    question:"we",        form:"szliśmy", usage:"", skill:"1pl·past" },
+        { abbr:"ONI",   question:"they (m)",  form:"szli",    usage:"", skill:"3pl·m" },
+      ],
+      past_fem: [
+        { abbr:"JA (f)",question:"I (female)",form:"szłam",  usage:"", skill:"1sg·f" },
+        { abbr:"ONA",   question:"she",      form:"szła",   usage:"", skill:"3sg·f" },
+        { abbr:"ONE",   question:"they (f/n)",form:"szły",   usage:"", skill:"3pl·f" },
+      ]
+    },
+    sentences: [
+      { before:"Jutro",      blank:"idę",      after:"do szkoły.",   translation:"Tomorrow I'm going to school.",                skill:"1sg",     hint:"1st person singular" },
+      { before:"",            blank:"Idę",      after:"na spacer.",   translation:"I'm going for a walk.",                        skill:"1sg",     hint:"1st person singular" },
+      { before:"Właśnie",    blank:"idę",      after:"do pracy.",    translation:"I'm just going to work.",                      skill:"1sg",     hint:"1st person singular" },
+      { before:"Dokąd",      blank:"idziesz",  after:"teraz?",       translation:"Where are you going now?",                     skill:"2sg",     hint:"2nd person singular" },
+      { before:"Czy",        blank:"idziesz",  after:"z nami?",      translation:"Are you coming with us?",                      skill:"2sg",     hint:"2nd person singular" },
+      { before:"Marta",      blank:"idzie",    after:"do sklepu.",   translation:"Marta is going to the shop.",                  skill:"3sg",     hint:"3rd person singular" },
+      { before:"On",         blank:"idzie",    after:"do lekarza.",  translation:"He's going to the doctor.",                    skill:"3sg",     hint:"3rd person singular" },
+      { before:"My wszyscy", blank:"idziemy",  after:"razem.",       translation:"We are all going together.",                   skill:"1pl",     hint:"1st person plural" },
+      { before:"",            blank:"Idziemy",  after:"na obiad.",    translation:"We're going to lunch.",                        skill:"1pl",     hint:"1st person plural" },
+      { before:"Czy wy też", blank:"idziecie", after:"na imprezę?",  translation:"Are you (pl) also going to the party?",        skill:"2pl",     hint:"2nd person plural" },
+      { before:"Oni już",    blank:"idą",      after:"do domu.",     translation:"They are already going home.",                 skill:"3pl",     hint:"3rd person plural" },
+      { before:"Wszyscy",    blank:"idą",      after:"spać.",        translation:"Everyone is going to sleep.",                  skill:"3pl",     hint:"3rd person plural" },
+      { before:"Wczoraj",    blank:"szedłem",  after:"przez park.",  translation:"Yesterday I walked through the park. (m)",     skill:"1sg·m",   hint:"Past masculine 1sg" },
+      { before:"Wczoraj",    blank:"szłam",    after:"przez park.",  translation:"Yesterday I walked through the park. (f)",     skill:"1sg·f",   hint:"Past feminine 1sg" },
+      { before:"On",         blank:"szedł",    after:"powoli.",      translation:"He was walking slowly.",                       skill:"3sg·m",   hint:"Past masculine 3sg" },
+      { before:"Ona",        blank:"szła",     after:"szybko.",      translation:"She was walking quickly.",                     skill:"3sg·f",   hint:"Past feminine 3sg" },
+      { before:"My",         blank:"szliśmy",  after:"całą noc.",    translation:"We walked all night.",                         skill:"1pl·past", hint:"Past 1st person plural" },
+      { before:"Oni",        blank:"szli",     after:"razem.",       translation:"They (m/mixed) were going together.",          skill:"3pl·m",   hint:"Past masculine 3pl" },
+      { before:"One",        blank:"szły",     after:"wolno.",       translation:"They (f) were walking slowly.",                skill:"3pl·f",   hint:"Past feminine 3pl" },
+    ]
+  },
+  {
+    id:"książka", base:"książka", pos:"noun · feminine", meaning:"book",
+    paradigm: { type:"noun",
+      singular: [
+        { abbr:"NOM", question:"co?",    form:"książka",  usage:"subject",       skill:"NOM" },
+        { abbr:"GEN", question:"czego?", form:"książki",  usage:"of, from, no…", skill:"GEN" },
+        { abbr:"DAT", question:"czemu?", form:"książce",  usage:"to, for",       skill:"DAT" },
+        { abbr:"ACC", question:"co?",    form:"książkę",  usage:"direct object", skill:"ACC" },
+        { abbr:"INS", question:"czym?",  form:"książką",  usage:"with, by",      skill:"INS" },
+        { abbr:"LOC", question:"o czym?",form:"książce",  usage:"in, at, about", skill:"LOC" },
+        { abbr:"VOC", question:"—",      form:"książko",  usage:"direct address", skill:"VOC" },
+      ],
+      plural: [
+        { abbr:"NOM·PL", question:"", form:"książki",  usage:"", skill:"NOM·PL" },
+        { abbr:"GEN·PL", question:"", form:"książek",  usage:"", skill:"GEN·PL" },
+        { abbr:"DAT·PL", question:"", form:"książkom", usage:"", skill:"DAT·PL" },
+        { abbr:"ACC·PL", question:"", form:"książki",  usage:"", skill:"ACC·PL" },
+        { abbr:"INS·PL", question:"", form:"książkami",usage:"", skill:"INS·PL" },
+        { abbr:"LOC·PL", question:"", form:"książkach",usage:"", skill:"LOC·PL" },
+        { abbr:"VOC·PL", question:"", form:"książki",  usage:"", skill:"VOC·PL" },
+      ]
+    },
+    sentences: [
+      { before:"To jest dobra",     blank:"książka",  after:".",            translation:"This is a good book.",                  skill:"NOM", hint:"Nominative" },
+      { before:"Ta",                blank:"książka",  after:"jest ciekawa.",translation:"This book is interesting.",              skill:"NOM", hint:"Nominative" },
+      { before:"Nowa",              blank:"książka",  after:"leży na stole.",translation:"A new book is on the table.",          skill:"NOM", hint:"Nominative" },
+      { before:"Nie mam tej",       blank:"książki",  after:".",            translation:"I don't have this book.",                skill:"GEN", hint:"Genitive" },
+      { before:"Szukam tej",        blank:"książki",  after:".",            translation:"I'm looking for this book.",             skill:"GEN", hint:"Genitive" },
+      { before:"Bez tej",           blank:"książki",  after:"nie zdam.",    translation:"Without this book I won't pass.",       skill:"GEN", hint:"Genitive" },
+      { before:"Przyglądam się tej",blank:"książce",  after:".",            translation:"I'm looking at this book closely.",      skill:"DAT", hint:"Dative" },
+      { before:"Nie ufam tej",      blank:"książce",  after:".",            translation:"I don't trust this book.",               skill:"DAT", hint:"Dative" },
+      { before:"Czytam tę",         blank:"książkę",  after:".",            translation:"I'm reading this book.",                 skill:"ACC", hint:"Accusative" },
+      { before:"Kupuję nową",       blank:"książkę",  after:".",            translation:"I'm buying a new book.",                 skill:"ACC", hint:"Accusative" },
+      { before:"Lubię tę",          blank:"książkę",  after:"najbardziej.", translation:"I like this book the most.",             skill:"ACC", hint:"Accusative" },
+      { before:"Idę z tą",          blank:"książką",  after:"do szkoły.",   translation:"I'm going to school with this book.",    skill:"INS", hint:"Instrumental" },
+      { before:"Pod tą",            blank:"książką",  after:"leży list.",   translation:"Under this book there's a letter.",     skill:"INS", hint:"Instrumental" },
+      { before:"Piszę o tej",       blank:"książce",  after:".",            translation:"I'm writing about this book.",           skill:"LOC", hint:"Locative" },
+      { before:"W tej",             blank:"książce",  after:"jest dużo błędów.",translation:"There are many errors in this book.",skill:"LOC",hint:"Locative" },
+      { before:"O,",                blank:"książko",  after:", jakże jesteś piękna!",translation:"Oh book, how beautiful you are!",skill:"VOC",hint:"Vocative" },
+      { before:"Te",                blank:"książki",  after:"są nowe.",     translation:"These books are new.",                   skill:"NOM·PL", hint:"Nominative plural" },
+      { before:"Mam dużo",          blank:"książek",  after:".",            translation:"I have many books.",                     skill:"GEN·PL", hint:"Genitive plural" },
+      { before:"Tym",               blank:"książkom", after:"brakuje okładek.",translation:"These books are missing covers.",    skill:"DAT·PL", hint:"Dative plural" },
+      { before:"Kupuję te",         blank:"książki",  after:".",            translation:"I'm buying these books.",                skill:"ACC·PL", hint:"Accusative plural" },
+      { before:"Przychodzę z",      blank:"książkami",after:".",            translation:"I'm coming with books.",                 skill:"INS·PL", hint:"Instrumental plural" },
+      { before:"W tych",            blank:"książkach",after:"jest mądrość.",translation:"There's wisdom in these books.",        skill:"LOC·PL", hint:"Locative plural" },
+      { before:"Drogie",            blank:"książki",  after:", uczcie nas!",translation:"Dear books, teach us!",                 skill:"VOC·PL", hint:"Vocative plural" },
+    ]
+  },
+];
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SRS ENGINE
+   ═══════════════════════════════════════════════════════════════ */
+const STORAGE_KEY='polski_srs_v2';
+const MASTERY_THRESHOLD=0.8, FAMILIAR_STREAK=3, MASTERED_STREAK=6;
+let state=null;
+
+function skk(w,s){return`${w}__${s}`}
+function defaultSkill(w,s){return{wordId:w,skill:s,correct:0,wrong:0,streak:0,lastSeen:-999,interval:0,ease:2.5,level:0,hintsUsed:0,f1Used:0,f2Used:0}}
+function computeLevel(streak){return streak>=MASTERED_STREAK?3:streak>=FAMILIAR_STREAK?2:streak>=1?1:0}
+function getSkillsForWord(wid){const w=WORDS.find(x=>x.id===wid);if(!w)return[];const s=new Set();w.sentences.forEach(x=>s.add(x.skill));return[...s]}
+
+function initState(){
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved){try{state=JSON.parse(saved);syncState();return}catch(e){}}
+  state={skills:{},unlockedWords:[WORDS[0].id],sessionPosition:0,totalReviewed:0,sessionReviewed:0,recentSentences:{},streak:0};
+  addSkillsForWord(WORDS[0].id);saveState();
+}
+function addSkillsForWord(wid){getSkillsForWord(wid).forEach(s=>{const k=skk(wid,s);if(!state.skills[k])state.skills[k]=defaultSkill(wid,s);const sk=state.skills[k];if(sk.hintsUsed===undefined){sk.hintsUsed=0;sk.f1Used=0;sk.f2Used=0}})}
+function syncState(){state.unlockedWords.forEach(w=>addSkillsForWord(w));if(!state.recentSentences)state.recentSentences={};if(!state.streak)state.streak=0;if(!state.sessionReviewed)state.sessionReviewed=0}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+
+function getNextSkill(){
+  const entries=Object.values(state.skills).filter(s=>state.unlockedWords.includes(s.wordId));
+  entries.sort((a,b)=>{const d=(a.lastSeen+a.interval)-(b.lastSeen+b.interval);return Math.abs(d)<0.5?Math.random()-0.5:d});
+  return entries[0]||null;
+}
+function pickSentence(skill){
+  const w=WORDS.find(x=>x.id===skill.wordId);if(!w)return null;
+  const pool=w.sentences.filter(s=>s.skill===skill.skill);if(!pool.length)return null;
+  const k=skk(skill.wordId,skill.skill),recent=state.recentSentences[k]||[];
+  const unseen=pool.filter((_,i)=>!recent.includes(i)),choices=unseen.length?unseen:pool;
+  const picked=choices[Math.floor(Math.random()*choices.length)];
+  state.recentSentences[k]=[...recent,pool.indexOf(picked)].slice(-3);
+  return picked;
+}
+function recordCorrect(skill,usedF1,usedF2){
+  if(usedF1||usedF2){skill.hintsUsed++;if(usedF1)skill.f1Used++;if(usedF2)skill.f2Used++;
+    if(usedF2){skill.correct++;skill.interval=Math.max(1,skill.interval*1.2);skill.lastSeen=state.sessionPosition}
+    else{skill.streak++;skill.correct++;skill.interval=Math.max(1,skill.interval*(skill.ease*0.6));skill.ease=Math.min(3,skill.ease+0.05);skill.lastSeen=state.sessionPosition}
+  }else{skill.streak++;skill.correct++;skill.interval=Math.max(1,skill.interval*skill.ease);skill.ease=Math.min(3,skill.ease+0.1);skill.lastSeen=state.sessionPosition}
+  skill.level=computeLevel(skill.streak);state.sessionPosition++;state.totalReviewed++;state.sessionReviewed++;
+  if(!usedF2)state.streak++;else state.streak=0;saveState();checkUnlocks();
+}
+function recordWrong(skill){skill.streak=0;skill.wrong++;skill.interval=0;skill.ease=Math.max(1.3,skill.ease-0.2);skill.lastSeen=state.sessionPosition;skill.level=0;state.streak=0;saveState()}
+function getWordMastery(wid){const skills=getSkillsForWord(wid);if(!skills.length)return 0;return skills.filter(s=>{const x=state.skills[skk(wid,s)];return x&&x.level>=2}).length/skills.length}
+function checkUnlocks(){const order=WORDS.map(w=>w.id);const last=state.unlockedWords[state.unlockedWords.length-1];const i=order.indexOf(last);if(i<0||i>=order.length-1)return;if(getWordMastery(last)>=MASTERY_THRESHOLD){const next=order[i+1];state.unlockedWords.push(next);addSkillsForWord(next);saveState();showUnlockToast(next);renderWordNav()}}
+function getDueCount(){return Object.values(state.skills).filter(s=>state.unlockedWords.includes(s.wordId)&&(s.lastSeen+s.interval)<=state.sessionPosition).length}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   UI RENDERING
+   ═══════════════════════════════════════════════════════════════ */
+let currentParadigmWordId=null, paradigmOpen=false;
+
+function renderWordNav(){
+  const nav=document.getElementById('wordNav');nav.innerHTML='';
+  WORDS.forEach(w=>{const pill=document.createElement('div');const unlocked=state.unlockedWords.includes(w.id);const mastery=unlocked?getWordMastery(w.id):0;
+    pill.className=`word-pill ${unlocked?'unlocked':'locked'} ${w.id===currentParadigmWordId?'active':''}`;pill.textContent=w.base;
+    pill.innerHTML+=`<div class="pill-mastery" style="width:${mastery*100}%"></div>`;
+    if(unlocked)pill.addEventListener('click',()=>{showParadigm(w.id);renderWordNav()});nav.appendChild(pill)});
+}
+function renderStats(){
+  let h=`<span class="stat-item"><span class="stat-num">${state.sessionReviewed}</span> reviewed</span><span class="stat-item"><span class="stat-num">${getDueCount()}</span> due</span>`;
+  if(state.streak>=5)h+=`<span class="stat-item">🔥 <span class="stat-num">${state.streak}</span></span>`;
+  document.getElementById('sessionStats').innerHTML=h;
+}
+function showParadigm(wid){
+  currentParadigmWordId=wid;const w=WORDS.find(x=>x.id===wid);if(!w)return;
+  document.getElementById('paradigmToggleLeft').innerHTML=`<span class="p-word">${w.base}</span><span class="p-meta">${w.pos}</span><span class="p-meaning">"${w.meaning}"</span>`;
+  document.getElementById('paradigmBody').innerHTML=buildParadigmHTML(w);
+}
+function buildParadigmHTML(w){
+  const p=w.paradigm;let h='';
+  if(p.type==="noun"){h+=buildT("Singular",p.singular,w.id,"noun")+buildT("Plural",p.plural,w.id,"noun")}
+  else if(p.type==="verb"){h+=buildT("Present",p.present,w.id,"verb");if(p.past_masc)h+=buildT("Past — masc.",p.past_masc,w.id,"verb");if(p.past_fem)h+=buildT("Past — fem./neut.",p.past_fem,w.id,"verb")}
+  else if(p.type==="adj"){["masc","fem","neut","pl"].forEach(k=>{if(p[k])h+=buildT({masc:"Masculine",fem:"Feminine",neut:"Neuter",pl:"Plural"}[k],p[k],w.id,"adj")})}
+  return h;
+}
+function skillMark(wid,s){const x=state.skills[skk(wid,s)];if(!x)return'';if(x.level>=3)return'<span class="skill-check">✓✓</span>';if(x.level>=2)return'<span class="skill-check">✓</span>';return''}
+function buildT(label,rows,wid,type){
+  const cols=type==="noun"?'<th>Case</th><th>Question</th><th>Form</th><th>Used for</th>':type==="verb"?'<th>Person</th><th>Pronoun</th><th>Form</th>':'<th>Case</th><th>Form</th><th></th>';
+  let t=`<table class="paradigm" style="margin-bottom:0.8rem"><thead><tr><th colspan="4" style="color:var(--ink);font-family:'IBM Plex Sans';font-size:0.73rem;text-transform:none;letter-spacing:0;padding-bottom:0.3rem">${label}</th></tr><tr>${cols}</tr></thead><tbody>`;
+  rows.forEach((r,i)=>{const m=skillMark(wid,r.skill);
+    if(type==="noun")t+=`<tr class="${i%2?'highlight-row':''}"><td class="case-name">${r.abbr}</td><td class="case-question">${r.question}</td><td class="case-form">${r.form}${m}</td><td class="case-usage">${r.usage}</td></tr>`;
+    else if(type==="verb")t+=`<tr class="${i%2?'highlight-row':''}"><td class="case-name">${r.abbr}</td><td class="case-question">${r.question}</td><td class="case-form">${r.form}${m}</td></tr>`;
+    else t+=`<tr class="${i%2?'highlight-row':''}"><td class="case-name">${r.abbr}</td><td class="case-form">${r.form}${m}</td><td class="case-usage">${r.usage||''}</td></tr>`;
+  });return t+'</tbody></table>';
+}
+function updateProgressBar(){if(!currentParadigmWordId)return;document.getElementById('progressFill').style.width=`${getWordMastery(currentParadigmWordId)*100}%`}
+function showUnlockToast(wid){const w=WORDS.find(x=>x.id===wid);if(!w)return;const t=document.getElementById('unlockToast');t.textContent=`🔓 New word unlocked: ${w.base} — "${w.meaning}"`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+function openPopup(wid){
+  const w=WORDS.find(x=>x.id===wid);if(!w)return;
+  document.getElementById('paradigmPopupInner').innerHTML=`<button class="popup-close" onclick="closePopup()">✕</button><h3>${w.base} <span style="font-weight:400;font-size:0.82rem;color:var(--muted)">${w.pos} — "${w.meaning}"</span></h3>`+buildParadigmHTML(w);
+  document.getElementById('paradigmPopup').classList.add('show');
+}
+function closePopup(){document.getElementById('paradigmPopup').classList.remove('show')}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   FLASHCARD — No case tag by default. F1=table popup, F2=case hint.
+   ═══════════════════════════════════════════════════════════════ */
+function showNextCard(){
+  const skill=getNextSkill();if(!skill){showEmpty();return}
+  const sentence=pickSentence(skill);if(!sentence){showEmpty();return}
+  if(currentParadigmWordId!==skill.wordId){showParadigm(skill.wordId);renderWordNav()}
+  updateProgressBar();renderStats();renderCard(sentence,skill);
+}
+
+function renderCard(sentence,skill){
+  const area=document.getElementById('flashcardArea');
+  const existing=area.querySelector('.sentence-card');
+  if(existing){existing.classList.remove('visible');existing.classList.add('exiting');setTimeout(()=>buildCard(sentence,skill),250)}
+  else buildCard(sentence,skill);
+}
+
+function buildCard(sentence,skill){
+  const area=document.getElementById('flashcardArea');
+  const word=WORDS.find(w=>w.id===skill.wordId);
+  const level=skill.level;
+  const levelLabels=['new','learning','familiar','mastered'];
+
+  area.innerHTML=`
+    <div class="sentence-card entering" id="activeCard">
+      <div class="card-word-label">
+        <span>${word.base}</span>
+        <span class="skill-level-badge">${levelLabels[level]||''}</span>
+      </div>
+      <div class="sentence-line">
+        ${sentence.before?`<span class="sentence-word">${sentence.before}</span>`:''}
+        <span class="blank-wrap"><input class="blank" id="activeInput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="?"/></span>
+        ${sentence.after?`<span class="sentence-word">${sentence.after}</span>`:''}
+      </div>
+      <div class="translation">${sentence.translation}</div>
+      <div class="card-actions">
+        <button class="check-btn" id="activeBtn">Check</button>
+        <div class="hint-keys">
+          <button class="hint-key" id="hintF1" title="Show paradigm table (F1)"><kbd>F1</kbd>table</button>
+          <button class="hint-key" id="hintF2" title="Show which case/form (F2)"><kbd>F2</kbd>case</button>
+        </div>
+      </div>
+      <div class="hint-text" id="activeHint"></div>
+    </div>`;
+
+  const card=document.getElementById('activeCard'), inp=document.getElementById('activeInput'),
+        btn=document.getElementById('activeBtn'), hint=document.getElementById('activeHint'),
+        f1Btn=document.getElementById('hintF1'), f2Btn=document.getElementById('hintF2');
+  let answered=false, wrongThisRound=0, usedF1=false, usedF2=false;
+
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{card.classList.remove('entering');card.classList.add('visible');inp.focus()}));
+
+  f1Btn.addEventListener('click',()=>{if(answered)return;usedF1=true;f1Btn.classList.add('used');openPopup(skill.wordId)});
+
+  f2Btn.addEventListener('click',()=>{
+    if(answered)return;usedF2=true;f2Btn.classList.add('used');
+    // Show the case/form type, NOT the answer
+    hint.innerHTML=`<span class="case-tag-revealed">${sentence.skill}</span> ${sentence.hint}`;
+    hint.className='hint-text';
+    inp.focus();
+  });
+
+  function doCheck(){
+    if(answered)return;
+    const val=inp.value.trim().toLowerCase(), correct=sentence.blank.toLowerCase();
+    if(val===correct){
+      answered=true;inp.classList.add('correct');card.classList.add('correct');
+      btn.textContent='✓';btn.classList.add('done');
+      hint.innerHTML=`<span class="case-tag-revealed">${sentence.skill}</span> ${sentence.hint}`;
+      hint.className='hint-text show-correct';inp.disabled=true;
+      recordCorrect(skill,usedF1,usedF2);addTrail(sentence,wrongThisRound,word,usedF1,usedF2);
+      updateProgressBar();renderStats();renderWordNav();
+      setTimeout(showNextCard,850);
+    }else{
+      wrongThisRound++;if(wrongThisRound===1)recordWrong(skill);
+      inp.classList.add('wrong');card.classList.add('wrong-flash','shaking');
+      // On wrong: give a nudge, but still don't reveal case unless F2 was used
+      if(!usedF2) hint.textContent='Not quite — try again';
+      else hint.innerHTML=`<span class="case-tag-revealed">${sentence.skill}</span> ${sentence.hint} — try again`;
+      hint.className='hint-text show-wrong';
+      setTimeout(()=>{inp.classList.remove('wrong');card.classList.remove('wrong-flash','shaking');inp.value='';inp.focus()},550);
+    }
+  }
+
+  btn.addEventListener('click',doCheck);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter')doCheck();
+    else if(e.key==='F1'){e.preventDefault();f1Btn.click()}
+    else if(e.key==='F2'){e.preventDefault();f2Btn.click()}
+  });
+}
+
+function addTrail(sentence,wrongs,word,usedF1,usedF2){
+  const trail=document.getElementById('completedTrail'),item=document.createElement('div');item.className='trail-item';
+  const full=`${sentence.before} <span class="trail-answer">${sentence.blank}</span> ${sentence.after}`.trim();
+  const miss=wrongs>0?`<span class="trail-mistake">${wrongs}×</span>`:'';
+  const hints=(usedF1||usedF2)?`<span class="trail-hints">${usedF1?'F1':''}${usedF1&&usedF2?'+':''}${usedF2?'F2':''}</span>`:'';
+  item.innerHTML=`<span class="trail-check">✓</span><span class="trail-sentence">${full}</span>${miss}${hints}<span class="trail-case">${sentence.skill}</span>`;
+  trail.prepend(item);while(trail.children.length>25)trail.removeChild(trail.lastChild);
+}
+
+function showEmpty(){document.getElementById('flashcardArea').innerHTML=`<div style="text-align:center;padding:2rem"><h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:0.4rem">Świetna robota!</h3><p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem">All skills reviewed for now.</p><button class="restart-btn" onclick="continueSession()" style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 1.5rem;border:1.5px solid var(--accent);border-radius:3px;background:transparent;color:var(--accent);cursor:pointer">Continue</button></div>`}
+function continueSession(){const all=Object.values(state.skills).filter(s=>state.unlockedWords.includes(s.wordId));if(!all.length)return;state.sessionPosition=Math.min(...all.map(s=>s.lastSeen+s.interval));saveState();showNextCard()}
+function resetProgress(){if(!confirm('This will erase all progress. Are you sure?'))return;localStorage.removeItem(STORAGE_KEY);location.reload()}
+
+/* ═══ INIT ═══ */
+function init(){
+  initState();
+  document.getElementById('paradigmToggle').addEventListener('click',()=>{paradigmOpen=!paradigmOpen;document.getElementById('paradigmWrap').classList.toggle('open',paradigmOpen)});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closePopup()});
+  renderWordNav();showNextCard();
+}
+init();
+</script>
+</body>
+</html>
