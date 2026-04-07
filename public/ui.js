@@ -1,50 +1,47 @@
 /* ═══════════════════════════════════════════════════════════════
-   ui.js — DOM rendering (reads from SRS.state, never writes localStorage)
+   ui.js — DOM rendering
 
-   Depends on: WORDS (data.js), SRS (srs.js)
+   Depends on: WORDS, SKILL_RULES, CASE_ORDER (data.js), SRS (srs.js)
 
-   Exports (all global):
-     UI.renderWordNav()
-     UI.renderStats()
-     UI.showParadigm(wordId)
-     UI.updateProgressBar()
-     UI.renderCard(sentence, skill, callbacks)
-       callbacks: { onCorrect(usedF1, usedF2), onWrong() }
-     UI.addTrail(sentence, wrongs, word, usedF1, usedF2)
-     UI.showEmpty(onContinue)
-     UI.showUnlockToast(wordId)
-     UI.openPopup(wordId)
-     UI.closePopup()
-     UI.currentParadigmWordId  (read-only)
+   Exports: UI (IIFE module)
    ═══════════════════════════════════════════════════════════════ */
 
 const UI = (() => {
-  let currentParadigmWordId = null;
-  let paradigmOpen = false;
+  let currentWordId = null; // word of the currently shown card (for F1 popup)
 
-  // ── Word nav pills ──
+  /* ── Word selector (toggle pills) ── */
 
   function renderWordNav() {
     const nav = document.getElementById('wordNav');
     nav.innerHTML = '';
-    WORDS.forEach(w => {
-      const pill = document.createElement('div');
-      const unlocked = SRS.state.unlockedWords.includes(w.id);
-      const mastery = unlocked ? SRS.getWordMastery(w.id) : 0;
-      pill.className = `word-pill ${unlocked ? 'unlocked' : 'locked'} ${w.id === currentParadigmWordId ? 'active' : ''}`;
+    // Category label
+    const catLabel = document.createElement('span');
+    catLabel.className = 'nav-category-label';
+    catLabel.textContent = 'Nouns';
+    nav.appendChild(catLabel);
+
+    WORDS.filter(w => w.category === 'noun').forEach(w => {
+      const pill = document.createElement('button');
+      const enabled = SRS.isWordEnabled(w.id);
+      pill.className = `word-pill ${enabled ? 'active' : ''}`;
       pill.textContent = w.base;
-      pill.innerHTML += `<div class="pill-mastery" style="width:${mastery * 100}%"></div>`;
-      if (unlocked) {
-        pill.addEventListener('click', () => {
-          showParadigm(w.id);
-          renderWordNav();
-        });
-      }
+      pill.title = `${w.meaning} — click to ${enabled ? 'disable' : 'enable'}`;
+      pill.addEventListener('click', () => {
+        if (enabled) {
+          // Don't allow disabling the last word
+          if (SRS.state.enabledWords.length <= 1) return;
+          SRS.disableWord(w.id);
+        } else {
+          SRS.enableWord(w.id);
+        }
+        renderWordNav();
+        renderSkillMap();
+      });
       nav.appendChild(pill);
     });
   }
 
-  // ── Session stats ──
+  /* ── Session stats ── */
 
   function renderStats() {
     const s = SRS.state;
@@ -54,128 +51,116 @@ const UI = (() => {
     document.getElementById('sessionStats').innerHTML = html;
   }
 
-  // ── Paradigm panel ──
+  /* ── Skill map (replaces paradigm panel) ── */
 
-  function showParadigm(wordId) {
-    currentParadigmWordId = wordId;
-    const w = WORDS.find(x => x.id === wordId);
-    if (!w) return;
-    document.getElementById('paradigmToggleLeft').innerHTML =
-      `<span class="p-word">${w.base}</span><span class="p-meta">${w.pos}</span><span class="p-meaning">"${w.meaning}"</span>`;
-    document.getElementById('paradigmBody').innerHTML = buildParadigmHTML(w);
-  }
+  function renderSkillMap() {
+    const body = document.getElementById('paradigmBody');
+    const activeSkills = SRS.getActiveSkillIds();
 
-  function buildParadigmHTML(w) {
-    const p = w.paradigm;
-    let h = '';
-    if (p.type === "noun") {
-      h += buildTable("Singular", p.singular, w.id, "noun");
-      h += buildTable("Plural", p.plural, w.id, "noun");
-    } else if (p.type === "verb") {
-      h += buildTable("Present", p.present, w.id, "verb");
-      if (p.past_masc) h += buildTable("Past — masc.", p.past_masc, w.id, "verb");
-      if (p.past_fem) h += buildTable("Past — fem./neut.", p.past_fem, w.id, "verb");
-    } else if (p.type === "adj") {
-      const labels = { masc: "Masculine", fem: "Feminine", neut: "Neuter", pl: "Plural" };
-      ["masc", "fem", "neut", "pl"].forEach(k => {
-        if (p[k]) h += buildTable(labels[k], p[k], w.id, "adj");
+    let html = '';
+    CASE_ORDER.forEach(caseName => {
+      const rules = Object.entries(SKILL_RULES)
+        .filter(([id, r]) => r.case === caseName && activeSkills.includes(id));
+      if (!rules.length) return;
+
+      html += `<div class="skill-case-group">`;
+      html += `<div class="skill-case-header">${caseName}</div>`;
+      rules.forEach(([id, r]) => {
+        const skill = SRS.state.skills[id];
+        const level = skill ? skill.level : 0;
+        const levelCls = ['new', 'learning', 'familiar', 'mastered'][level];
+        const check = level >= 3 ? ' ✓✓' : level >= 2 ? ' ✓' : '';
+        html += `<div class="skill-rule-row">
+          <span class="skill-rule-label">${r.label}<span class="skill-check">${check}</span></span>
+          <span class="skill-rule-level ${levelCls}">${levelCls}</span>
+        </div>`;
       });
-    }
-    return h;
-  }
-
-  function skillMark(wordId, skill) {
-    const x = SRS.state.skills[SRS.skillKey(wordId, skill)];
-    if (!x) return '';
-    if (x.level >= 3) return '<span class="skill-check">✓✓</span>';
-    if (x.level >= 2) return '<span class="skill-check">✓</span>';
-    return '';
-  }
-
-  function buildTable(label, rows, wordId, type) {
-    const cols = type === "noun"
-      ? '<th>Case</th><th>Question</th><th>Form</th><th>Used for</th>'
-      : type === "verb"
-        ? '<th>Person</th><th>Pronoun</th><th>Form</th>'
-        : '<th>Case</th><th>Form</th><th></th>';
-
-    let t = `<table class="paradigm" style="margin-bottom:0.8rem">
-      <thead>
-        <tr><th colspan="4" style="color:var(--ink);font-family:'IBM Plex Sans';font-size:0.73rem;text-transform:none;letter-spacing:0;padding-bottom:0.3rem">${label}</th></tr>
-        <tr>${cols}</tr>
-      </thead><tbody>`;
-
-    rows.forEach((r, i) => {
-      const m = skillMark(wordId, r.skill);
-      const cls = i % 2 ? 'highlight-row' : '';
-      if (type === "noun") {
-        t += `<tr class="${cls}"><td class="case-name">${r.abbr}</td><td class="case-question">${r.question}</td><td class="case-form">${r.form}${m}</td><td class="case-usage">${r.usage}</td></tr>`;
-      } else if (type === "verb") {
-        t += `<tr class="${cls}"><td class="case-name">${r.abbr}</td><td class="case-question">${r.question}</td><td class="case-form">${r.form}${m}</td></tr>`;
-      } else {
-        t += `<tr class="${cls}"><td class="case-name">${r.abbr}</td><td class="case-form">${r.form}${m}</td><td class="case-usage">${r.usage || ''}</td></tr>`;
-      }
+      html += `</div>`;
     });
-    return t + '</tbody></table>';
-  }
 
-  function updateProgressBar() {
-    if (!currentParadigmWordId) return;
-    const mastery = SRS.getWordMastery(currentParadigmWordId);
+    body.innerHTML = html;
+
+    // Update toggle header
+    const enabledCount = SRS.state.enabledWords.length;
+    const totalSkills = activeSkills.length;
+    const familiarCount = activeSkills.filter(id => {
+      const s = SRS.state.skills[id];
+      return s && s.level >= 2;
+    }).length;
+    document.getElementById('paradigmToggleLeft').innerHTML =
+      `<span class="p-word">Grammar Rules</span>` +
+      `<span class="p-meta">${familiarCount}/${totalSkills} familiar</span>` +
+      `<span class="p-meaning">${enabledCount} word${enabledCount !== 1 ? 's' : ''} active</span>`;
+
+    // Update progress bar
+    const mastery = totalSkills > 0 ? familiarCount / totalSkills : 0;
     document.getElementById('progressFill').style.width = `${mastery * 100}%`;
   }
 
-  // ── Paradigm popup (F1) ──
+  /* ── Paradigm popup (F1) ── */
 
   function openPopup(wordId) {
     const w = WORDS.find(x => x.id === wordId);
     if (!w) return;
-    document.getElementById('paradigmPopupInner').innerHTML =
-      `<button class="popup-close" onclick="UI.closePopup()">✕</button>` +
-      `<h3>${w.base} <span style="font-weight:400;font-size:0.82rem;color:var(--muted)">${w.pos} — "${w.meaning}"</span></h3>` +
-      buildParadigmHTML(w);
+    const p = w.paradigm;
+    let html = `<button class="popup-close" onclick="UI.closePopup()">✕</button>`;
+    html += `<h3>${w.base} <span style="font-weight:400;font-size:0.82rem;color:var(--muted)">${w.pos} — "${w.meaning}"</span></h3>`;
+
+    if (p.type === 'noun') {
+      html += buildParadigmTable('Singular', p.singular);
+      html += buildParadigmTable('Plural', p.plural);
+    }
+    // Future: verb/adj paradigm tables
+
+    document.getElementById('paradigmPopupInner').innerHTML = html;
     document.getElementById('paradigmPopup').classList.add('show');
+  }
+
+  function buildParadigmTable(label, rows) {
+    let t = `<table class="paradigm" style="margin-bottom:0.8rem">
+      <thead><tr><th colspan="3" style="color:var(--ink);font-family:'IBM Plex Sans';font-size:0.73rem;text-transform:none;letter-spacing:0;padding-bottom:0.3rem">${label}</th></tr>
+      <tr><th>Case</th><th>Question</th><th>Form</th></tr></thead><tbody>`;
+    rows.forEach((r, i) => {
+      t += `<tr class="${i % 2 ? 'highlight-row' : ''}">
+        <td class="case-name">${r.abbr}</td>
+        <td class="case-question">${r.question || ''}</td>
+        <td class="case-form">${r.form}</td>
+      </tr>`;
+    });
+    return t + '</tbody></table>';
   }
 
   function closePopup() {
     document.getElementById('paradigmPopup').classList.remove('show');
   }
 
-  // ── Unlock toast ──
+  /* ── Flashcard ── */
 
-  function showUnlockToast(wordId) {
-    const w = WORDS.find(x => x.id === wordId);
-    if (!w) return;
-    const toast = document.getElementById('unlockToast');
-    toast.textContent = `🔓 New word unlocked: ${w.base} — "${w.meaning}"`;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
-
-  // ── Flashcard rendering ──
-
-  function renderCard(sentence, skill, callbacks) {
+  function renderCard(picked, skill, callbacks) {
     const area = document.getElementById('flashcardArea');
     const existing = area.querySelector('.sentence-card');
     if (existing) {
       existing.classList.remove('visible');
       existing.classList.add('exiting');
-      setTimeout(() => buildCard(sentence, skill, callbacks), 250);
+      setTimeout(() => buildCard(picked, skill, callbacks), 250);
     } else {
-      buildCard(sentence, skill, callbacks);
+      buildCard(picked, skill, callbacks);
     }
   }
 
-  function buildCard(sentence, skill, callbacks) {
+  function buildCard(picked, skill, callbacks) {
     const area = document.getElementById('flashcardArea');
-    const word = WORDS.find(w => w.id === skill.wordId);
+    const sentence = picked.sentence;
+    const word = WORDS.find(w => w.id === picked.wordId);
+    currentWordId = picked.wordId;
     const level = skill.level;
     const levelLabels = ['new', 'learning', 'familiar', 'mastered'];
+    const ruleInfo = SKILL_RULES[skill.skillId];
 
     area.innerHTML = `
       <div class="sentence-card entering" id="activeCard">
         <div class="card-word-label">
-          <span>${word.base}</span>
+          <span>${word.base} <span style="opacity:0.5">· ${word.meaning}</span></span>
           <span class="skill-level-badge">${levelLabels[level] || ''}</span>
         </div>
         <div class="sentence-line">
@@ -187,8 +172,8 @@ const UI = (() => {
         <div class="card-actions">
           <button class="check-btn" id="activeBtn">Check</button>
           <div class="hint-keys">
-            <button class="hint-key" id="hintF1" title="Show paradigm table (F1)"><kbd>F1</kbd>table</button>
-            <button class="hint-key" id="hintF2" title="Show which case/form (F2)"><kbd>F2</kbd>case</button>
+            <button class="hint-key" id="hintF1" title="Show paradigm table for ${word.base} (F1)"><kbd>F1</kbd>table</button>
+            <button class="hint-key" id="hintF2" title="Show which case/form is needed (F2)"><kbd>F2</kbd>case</button>
           </div>
         </div>
         <div class="hint-text" id="activeHint"></div>
@@ -202,22 +187,19 @@ const UI = (() => {
     const f2Btn = document.getElementById('hintF2');
     let answered = false, wrongThisRound = 0, usedF1 = false, usedF2 = false;
 
-    // Animate in
     requestAnimationFrame(() => requestAnimationFrame(() => {
       card.classList.remove('entering');
       card.classList.add('visible');
       inp.focus();
     }));
 
-    // F1: show paradigm table popup
     f1Btn.addEventListener('click', () => {
       if (answered) return;
       usedF1 = true;
       f1Btn.classList.add('used');
-      openPopup(skill.wordId);
+      openPopup(picked.wordId);
     });
 
-    // F2: reveal which case/form (NOT the answer)
     f2Btn.addEventListener('click', () => {
       if (answered) return;
       usedF2 = true;
@@ -231,7 +213,6 @@ const UI = (() => {
       if (answered) return;
       const val = inp.value.trim().toLowerCase();
       const correct = sentence.blank.toLowerCase();
-
       if (val === correct) {
         answered = true;
         inp.classList.add('correct');
@@ -267,23 +248,23 @@ const UI = (() => {
     });
   }
 
-  // ── Answer trail ──
+  /* ── Trail ── */
 
-  function addTrail(sentence, wrongs, word, usedF1, usedF2) {
+  function addTrail(picked, wrongs, usedF1, usedF2) {
     const trail = document.getElementById('completedTrail');
     const item = document.createElement('div');
     item.className = 'trail-item';
-    const full = `${sentence.before} <span class="trail-answer">${sentence.blank}</span> ${sentence.after}`.trim();
+    const s = picked.sentence;
+    const full = `${s.before} <span class="trail-answer">${s.blank}</span> ${s.after}`.trim();
     const miss = wrongs > 0 ? `<span class="trail-mistake">${wrongs}×</span>` : '';
     const hints = (usedF1 || usedF2)
-      ? `<span class="trail-hints">${usedF1 ? 'F1' : ''}${usedF1 && usedF2 ? '+' : ''}${usedF2 ? 'F2' : ''}</span>`
-      : '';
-    item.innerHTML = `<span class="trail-check">✓</span><span class="trail-sentence">${full}</span>${miss}${hints}<span class="trail-case">${sentence.skill}</span>`;
+      ? `<span class="trail-hints">${usedF1 ? 'F1' : ''}${usedF1 && usedF2 ? '+' : ''}${usedF2 ? 'F2' : ''}</span>` : '';
+    item.innerHTML = `<span class="trail-check">✓</span><span class="trail-sentence">${full}</span>${miss}${hints}<span class="trail-case">${s.skill}</span>`;
     trail.prepend(item);
     while (trail.children.length > 25) trail.removeChild(trail.lastChild);
   }
 
-  // ── Empty / all-done state ──
+  /* ── Empty state ── */
 
   function showEmpty(onContinue) {
     document.getElementById('flashcardArea').innerHTML = `
@@ -295,27 +276,24 @@ const UI = (() => {
     document.getElementById('continueBtn').addEventListener('click', onContinue);
   }
 
-  // ── Paradigm toggle setup ──
+  /* ── Toggle setup ── */
 
   function initToggle() {
+    let open = false;
     document.getElementById('paradigmToggle').addEventListener('click', () => {
-      paradigmOpen = !paradigmOpen;
-      document.getElementById('paradigmWrap').classList.toggle('open', paradigmOpen);
+      open = !open;
+      document.getElementById('paradigmWrap').classList.toggle('open', open);
     });
   }
 
-  // ── Public API ──
-
   return {
-    get currentParadigmWordId() { return currentParadigmWordId; },
+    get currentWordId() { return currentWordId; },
     renderWordNav,
     renderStats,
-    showParadigm,
-    updateProgressBar,
+    renderSkillMap,
     renderCard,
     addTrail,
     showEmpty,
-    showUnlockToast,
     openPopup,
     closePopup,
     initToggle,

@@ -1,343 +1,251 @@
 /* ═══════════════════════════════════════════════════════════════
-   data.js — Word paradigms and sentence pools
+   data.js — Word data and sentence pools
    
    Exports: WORDS (array)
    
-   Each word has:
-     id, base, pos, meaning   — identity
-     paradigm                  — declension/conjugation table
-     sentences[]               — exercise pool, each tagged with `skill`
+   Skills are grammar rules like "GEN:negation" or "INS:prep-z".
+   Words are content — each word's sentences feed into the shared
+   skill pools. The SRS tracks mastery of rules, not word×case.
    
-   Sentences are pools per skill. The SRS engine picks randomly.
-   To add sentences: just append to the array with the right `skill` key.
-   To add words: append to WORDS array — unlock order = array order.
+   To add a word: append to WORDS, add sentences tagged with skill keys.
+   To add a skill: just use a new skill key in sentences — the engine
+   discovers skills from the data automatically.
    ═══════════════════════════════════════════════════════════════ */
 
 const WORDS = [
   {
-    id:"dom", base:"dom", pos:"noun · masc. inanimate", meaning:"house, home",
-    paradigm: { type:"noun",
+    id: "dom", base: "dom", pos: "noun · masc. inanimate", meaning: "house, home",
+    category: "noun",
+    paradigm: {
+      type: "noun",
       singular: [
-        { abbr:"NOM", question:"kto? co?",     form:"dom",    usage:"subject",       skill:"NOM" },
-        { abbr:"GEN", question:"kogo? czego?", form:"domu",   usage:"of, from, no…", skill:"GEN" },
-        { abbr:"DAT", question:"komu? czemu?", form:"domowi", usage:"to, for",       skill:"DAT" },
-        { abbr:"ACC", question:"kogo? co?",    form:"dom",    usage:"direct object", skill:"ACC" },
-        { abbr:"INS", question:"kim? czym?",   form:"domem",  usage:"with, by",      skill:"INS" },
-        { abbr:"LOC", question:"o kim? o czym?",form:"domu",  usage:"in, at, about", skill:"LOC" },
-        { abbr:"VOC", question:"—",            form:"domie",  usage:"direct address", skill:"VOC" },
+        { abbr:"NOM", form:"dom",    question:"kto? co?" },
+        { abbr:"GEN", form:"domu",   question:"kogo? czego?" },
+        { abbr:"DAT", form:"domowi", question:"komu? czemu?" },
+        { abbr:"ACC", form:"dom",    question:"kogo? co?" },
+        { abbr:"INS", form:"domem",  question:"kim? czym?" },
+        { abbr:"LOC", form:"domu",   question:"o kim? o czym?" },
+        { abbr:"VOC", form:"domie",  question:"—" },
       ],
       plural: [
-        { abbr:"NOM·PL", question:"", form:"domy",   usage:"", skill:"NOM·PL" },
-        { abbr:"GEN·PL", question:"", form:"domów",  usage:"", skill:"GEN·PL" },
-        { abbr:"DAT·PL", question:"", form:"domom",  usage:"", skill:"DAT·PL" },
-        { abbr:"ACC·PL", question:"", form:"domy",   usage:"", skill:"ACC·PL" },
-        { abbr:"INS·PL", question:"", form:"domami", usage:"", skill:"INS·PL" },
-        { abbr:"LOC·PL", question:"", form:"domach", usage:"", skill:"LOC·PL" },
-        { abbr:"VOC·PL", question:"", form:"domy",   usage:"", skill:"VOC·PL" },
+        { abbr:"NOM", form:"domy" },
+        { abbr:"GEN", form:"domów" },
+        { abbr:"DAT", form:"domom" },
+        { abbr:"ACC", form:"domy" },
+        { abbr:"INS", form:"domami" },
+        { abbr:"LOC", form:"domach" },
+        { abbr:"VOC", form:"domy" },
       ]
     },
     sentences: [
-      { before:"To jest",           blank:"dom",    after:".",            translation:"This is a house.",                     skill:"NOM", hint:"Nominative" },
-      { before:"Ten",               blank:"dom",    after:"jest stary.",  translation:"This house is old.",                   skill:"NOM", hint:"Nominative" },
-      { before:"Nasz",              blank:"dom",    after:"jest duży.",   translation:"Our house is big.",                    skill:"NOM", hint:"Nominative" },
-      { before:"Nie ma tu żadnego", blank:"domu",   after:".",            translation:"There is no house here.",               skill:"GEN", hint:"Genitive" },
-      { before:"Szukam tego",       blank:"domu",   after:".",            translation:"I'm looking for this house.",           skill:"GEN", hint:"Genitive" },
-      { before:"Idę do",            blank:"domu",   after:".",            translation:"I'm going home.",                       skill:"GEN", hint:"Genitive" },
-      { before:"Wracam z tego",     blank:"domu",   after:".",            translation:"I'm returning from this house.",        skill:"GEN", hint:"Genitive" },
-      { before:"Blisko",            blank:"domu",   after:"jest park.",   translation:"There's a park near the house.",        skill:"GEN", hint:"Genitive" },
-      { before:"Przyglądam się temu",blank:"domowi",after:".",            translation:"I'm looking at this house closely.",    skill:"DAT", hint:"Dative" },
-      { before:"Dziwię się temu",    blank:"domowi",after:".",            translation:"I'm surprised by this house.",          skill:"DAT", hint:"Dative" },
-      { before:"Widzę ten",         blank:"dom",    after:"z daleka.",    translation:"I can see that house from afar.",       skill:"ACC", hint:"Accusative" },
-      { before:"Kupuję ten",        blank:"dom",    after:".",            translation:"I'm buying this house.",                skill:"ACC", hint:"Accusative" },
-      { before:"Znam ten",          blank:"dom",    after:"dobrze.",      translation:"I know this house well.",               skill:"ACC", hint:"Accusative" },
-      { before:"Przed",             blank:"domem",  after:"stoi samochód.",translation:"In front of the house stands a car.", skill:"INS", hint:"Instrumental" },
-      { before:"Za tym",            blank:"domem",  after:"jest ogród.",  translation:"Behind this house there's a garden.",   skill:"INS", hint:"Instrumental" },
-      { before:"Interesuję się tym",blank:"domem",  after:".",            translation:"I'm interested in this house.",         skill:"INS", hint:"Instrumental" },
-      { before:"Nad",               blank:"domem",  after:"latają ptaki.",translation:"Birds fly over the house.",             skill:"INS", hint:"Instrumental" },
-      { before:"Mieszkam w tym",    blank:"domu",   after:".",            translation:"I live in this house.",                 skill:"LOC", hint:"Locative" },
-      { before:"Myślę o tym",       blank:"domu",   after:".",            translation:"I'm thinking about this house.",        skill:"LOC", hint:"Locative" },
-      { before:"W tym",             blank:"domu",   after:"jest ciepło.", translation:"It's warm in this house.",              skill:"LOC", hint:"Locative" },
-      { before:"O",                 blank:"domie",  after:", jak za tobą tęsknię!",translation:"Oh house, how I miss you!",   skill:"VOC", hint:"Vocative" },
-      { before:"Te",                blank:"domy",   after:"są piękne.",   translation:"These houses are beautiful.",           skill:"NOM·PL", hint:"Nominative plural" },
-      { before:"Nowe",              blank:"domy",   after:"rosną szybko.",translation:"New houses are going up quickly.",      skill:"NOM·PL", hint:"Nominative plural" },
-      { before:"Na ulicy jest dużo",blank:"domów",  after:".",            translation:"There are many houses on the street.",  skill:"GEN·PL", hint:"Genitive plural" },
-      { before:"Wśród tych",        blank:"domów",  after:"jest jeden stary.",translation:"Among these houses there's one old one.",skill:"GEN·PL",hint:"Genitive plural" },
-      { before:"Szukamy nowych",    blank:"domów",  after:".",            translation:"We're looking for new houses.",         skill:"GEN·PL", hint:"Genitive plural" },
-      { before:"Przyglądamy się tym",blank:"domom", after:".",            translation:"We're looking at these houses closely.", skill:"DAT·PL", hint:"Dative plural" },
-      { before:"Dziwię się tym",     blank:"domom", after:".",            translation:"I'm surprised by these houses.",        skill:"DAT·PL", hint:"Dative plural" },
-      { before:"Lubię stare",       blank:"domy",   after:".",            translation:"I like old houses.",                    skill:"ACC·PL", hint:"Accusative plural" },
-      { before:"Buduję nowe",       blank:"domy",   after:".",            translation:"I'm building new houses.",              skill:"ACC·PL", hint:"Accusative plural" },
-      { before:"Między tymi",       blank:"domami", after:"jest park.",   translation:"Between these houses there's a park.",  skill:"INS·PL", hint:"Instrumental plural" },
-      { before:"Przed tymi",        blank:"domami", after:"jest parking.",translation:"There's a parking in front of these houses.",skill:"INS·PL",hint:"Instrumental plural" },
-      { before:"W tych",            blank:"domach", after:"mieszkają ludzie.",translation:"People live in these houses.",      skill:"LOC·PL", hint:"Locative plural" },
-      { before:"O tych",            blank:"domach", after:"dużo się mówi.",translation:"People talk a lot about these houses.",skill:"LOC·PL", hint:"Locative plural" },
-      { before:"O",                 blank:"domy",   after:"nasze, stójcie wiecznie!",translation:"Oh our houses, stand forever!",skill:"VOC·PL",hint:"Vocative plural" },
+      // NOM:subject
+      { before:"To jest",           blank:"dom",    after:".",            translation:"This is a house.",                      skill:"NOM:subject",          hint:"Subject of the sentence → Nominative" },
+      { before:"Ten",               blank:"dom",    after:"jest stary.",  translation:"This house is old.",                    skill:"NOM:subject",          hint:"Subject of the sentence → Nominative" },
+      { before:"Nasz",              blank:"dom",    after:"jest duży.",   translation:"Our house is big.",                     skill:"NOM:subject",          hint:"Subject of the sentence → Nominative" },
+      { before:"Te",                blank:"domy",   after:"są piękne.",   translation:"These houses are beautiful.",           skill:"NOM:subject",          hint:"Subject of the sentence → Nominative" },
+      { before:"Nowe",              blank:"domy",   after:"rosną szybko.",translation:"New houses are going up quickly.",      skill:"NOM:subject",          hint:"Subject of the sentence → Nominative" },
+      // GEN:negation
+      { before:"Nie ma tu żadnego", blank:"domu",   after:".",            translation:"There is no house here.",               skill:"GEN:negation",         hint:"Nie ma + negation → Genitive" },
+      { before:"Nie znam tego",     blank:"domu",   after:".",            translation:"I don't know this house.",              skill:"GEN:negation",         hint:"Negated verb → Genitive" },
+      { before:"Nie widzę żadnego", blank:"domu",   after:"w pobliżu.",   translation:"I don't see any house nearby.",         skill:"GEN:negation",         hint:"Negated verb → Genitive" },
+      { before:"Nie ma tu dobrych", blank:"domów",  after:".",            translation:"There are no good houses here.",        skill:"GEN:negation",         hint:"Nie ma + negation → Genitive" },
+      // GEN:prep-od/z/do
+      { before:"Idę do",            blank:"domu",   after:".",            translation:"I'm going home.",                       skill:"GEN:prep-od/z/do",     hint:"do (to/towards) → Genitive" },
+      { before:"Wracam z tego",     blank:"domu",   after:".",            translation:"I'm returning from this house.",        skill:"GEN:prep-od/z/do",     hint:"z (from) → Genitive" },
+      { before:"Daleko od",         blank:"domu",   after:"jest szkoła.", translation:"The school is far from the house.",     skill:"GEN:prep-od/z/do",     hint:"od (from/away from) → Genitive" },
+      // GEN:prep-bez/dla/obok
+      { before:"Blisko",            blank:"domu",   after:"jest park.",   translation:"There's a park near the house.",        skill:"GEN:prep-bez/dla/obok",hint:"blisko (near) → Genitive" },
+      { before:"Obok",              blank:"domu",   after:"rośnie dąb.",  translation:"An oak grows next to the house.",       skill:"GEN:prep-bez/dla/obok",hint:"obok (next to) → Genitive" },
+      { before:"Bez",               blank:"domu",   after:"nie ma co robić.",translation:"Without a house there's nothing to do.",skill:"GEN:prep-bez/dla/obok",hint:"bez (without) → Genitive" },
+      // GEN:quantity
+      { before:"Szukam tego",       blank:"domu",   after:".",            translation:"I'm looking for this house.",           skill:"GEN:quantity",         hint:"szukać (to look for) → Genitive" },
+      { before:"Na ulicy jest dużo",blank:"domów",  after:".",            translation:"There are many houses on the street.",  skill:"GEN:quantity",         hint:"dużo (many/much) → Genitive" },
+      { before:"Wśród tych",        blank:"domów",  after:"jest jeden stary.",translation:"Among these houses there's one old one.",skill:"GEN:quantity",   hint:"wśród (among) → Genitive" },
+      { before:"Szukamy nowych",    blank:"domów",  after:".",            translation:"We're looking for new houses.",         skill:"GEN:quantity",         hint:"szukać (to look for) → Genitive" },
+      // DAT:verb-dative
+      { before:"Przyglądam się temu",blank:"domowi",after:".",            translation:"I'm looking at this house closely.",    skill:"DAT:verb-dative",      hint:"przyglądać się (to scrutinize) → Dative" },
+      { before:"Dziwię się temu",    blank:"domowi",after:".",            translation:"I'm surprised by this house.",          skill:"DAT:verb-dative",      hint:"dziwić się (to be surprised by) → Dative" },
+      { before:"Przyglądamy się tym",blank:"domom", after:".",            translation:"We're looking at these houses closely.", skill:"DAT:verb-dative",      hint:"przyglądać się (to scrutinize) → Dative" },
+      { before:"Dziwię się tym",     blank:"domom", after:".",            translation:"I'm surprised by these houses.",        skill:"DAT:verb-dative",      hint:"dziwić się (to be surprised by) → Dative" },
+      // ACC:direct-object
+      { before:"Widzę ten",         blank:"dom",    after:"z daleka.",    translation:"I can see that house from afar.",       skill:"ACC:direct-object",    hint:"Direct object of widzieć → Accusative" },
+      { before:"Kupuję ten",        blank:"dom",    after:".",            translation:"I'm buying this house.",                skill:"ACC:direct-object",    hint:"Direct object of kupować → Accusative" },
+      { before:"Znam ten",          blank:"dom",    after:"dobrze.",      translation:"I know this house well.",               skill:"ACC:direct-object",    hint:"Direct object of znać → Accusative" },
+      { before:"Lubię stare",       blank:"domy",   after:".",            translation:"I like old houses.",                    skill:"ACC:direct-object",    hint:"Direct object of lubić → Accusative" },
+      { before:"Buduję nowe",       blank:"domy",   after:".",            translation:"I'm building new houses.",              skill:"ACC:direct-object",    hint:"Direct object of budować → Accusative" },
+      // INS:prep-location
+      { before:"Przed",             blank:"domem",  after:"stoi samochód.",translation:"In front of the house stands a car.", skill:"INS:prep-location",    hint:"przed (in front of) → Instrumental" },
+      { before:"Za tym",            blank:"domem",  after:"jest ogród.",  translation:"Behind this house there's a garden.",   skill:"INS:prep-location",    hint:"za (behind) → Instrumental" },
+      { before:"Nad",               blank:"domem",  after:"latają ptaki.",translation:"Birds fly over the house.",             skill:"INS:prep-location",    hint:"nad (above) → Instrumental" },
+      { before:"Pod",               blank:"domem",  after:"leży kamień.", translation:"A stone lies under the house.",         skill:"INS:prep-location",    hint:"pod (under) → Instrumental" },
+      { before:"Między tymi",       blank:"domami", after:"jest park.",   translation:"Between these houses there's a park.",  skill:"INS:prep-location",    hint:"między (between) → Instrumental" },
+      { before:"Przed tymi",        blank:"domami", after:"jest parking.",translation:"In front of these houses is a parking lot.",skill:"INS:prep-location",hint:"przed (in front of) → Instrumental" },
+      // INS:verb-interest
+      { before:"Interesuję się tym",blank:"domem",  after:".",            translation:"I'm interested in this house.",         skill:"INS:verb-interest",    hint:"interesować się (to be interested in) → Instrumental" },
+      // LOC:prep-w/na
+      { before:"Mieszkam w tym",    blank:"domu",   after:".",            translation:"I live in this house.",                 skill:"LOC:prep-w/na",        hint:"w (in, static location) → Locative" },
+      { before:"W tym",             blank:"domu",   after:"jest ciepło.", translation:"It's warm in this house.",              skill:"LOC:prep-w/na",        hint:"w (in, static location) → Locative" },
+      { before:"W tych",            blank:"domach", after:"mieszkają ludzie.",translation:"People live in these houses.",      skill:"LOC:prep-w/na",        hint:"w (in, static location) → Locative" },
+      // LOC:prep-o
+      { before:"Myślę o tym",       blank:"domu",   after:".",            translation:"I'm thinking about this house.",        skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      { before:"O tych",            blank:"domach", after:"dużo się mówi.",translation:"People talk a lot about these houses.",skill:"LOC:prep-o",          hint:"o (about/concerning) → Locative" },
+      { before:"Opowiadam o tym",   blank:"domu",   after:".",            translation:"I'm telling a story about this house.", skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      // VOC:address
+      { before:"O",                 blank:"domie",  after:", jak za tobą tęsknię!",translation:"Oh house, how I miss you!",   skill:"VOC:address",          hint:"Direct address → Vocative" },
+      { before:"O",                 blank:"domy",   after:"nasze, stójcie wiecznie!",translation:"Oh our houses, stand forever!",skill:"VOC:address",       hint:"Direct address → Vocative" },
     ]
   },
   {
-    id:"kobieta", base:"kobieta", pos:"noun · feminine", meaning:"woman",
-    paradigm: { type:"noun",
+    id: "kobieta", base: "kobieta", pos: "noun · feminine", meaning: "woman",
+    category: "noun",
+    paradigm: {
+      type: "noun",
       singular: [
-        { abbr:"NOM", question:"kto?",   form:"kobieta",  usage:"subject",       skill:"NOM" },
-        { abbr:"GEN", question:"kogo?",  form:"kobiety",  usage:"of, from, no…", skill:"GEN" },
-        { abbr:"DAT", question:"komu?",  form:"kobiecie", usage:"to, for",       skill:"DAT" },
-        { abbr:"ACC", question:"kogo?",  form:"kobietę",  usage:"direct object", skill:"ACC" },
-        { abbr:"INS", question:"kim?",   form:"kobietą",  usage:"with, by",      skill:"INS" },
-        { abbr:"LOC", question:"o kim?", form:"kobiecie", usage:"in, at, about", skill:"LOC" },
-        { abbr:"VOC", question:"—",      form:"kobieto!", usage:"direct address", skill:"VOC" },
+        { abbr:"NOM", form:"kobieta",  question:"kto?" },
+        { abbr:"GEN", form:"kobiety",  question:"kogo?" },
+        { abbr:"DAT", form:"kobiecie", question:"komu?" },
+        { abbr:"ACC", form:"kobietę",  question:"kogo?" },
+        { abbr:"INS", form:"kobietą",  question:"kim?" },
+        { abbr:"LOC", form:"kobiecie", question:"o kim?" },
+        { abbr:"VOC", form:"kobieto!", question:"—" },
       ],
       plural: [
-        { abbr:"NOM·PL", question:"", form:"kobiety",   usage:"", skill:"NOM·PL" },
-        { abbr:"GEN·PL", question:"", form:"kobiet",    usage:"", skill:"GEN·PL" },
-        { abbr:"DAT·PL", question:"", form:"kobietom",  usage:"", skill:"DAT·PL" },
-        { abbr:"ACC·PL", question:"", form:"kobiety",   usage:"", skill:"ACC·PL" },
-        { abbr:"INS·PL", question:"", form:"kobietami", usage:"", skill:"INS·PL" },
-        { abbr:"LOC·PL", question:"", form:"kobietach", usage:"", skill:"LOC·PL" },
-        { abbr:"VOC·PL", question:"", form:"kobiety",   usage:"", skill:"VOC·PL" },
+        { abbr:"NOM", form:"kobiety" },
+        { abbr:"GEN", form:"kobiet" },
+        { abbr:"DAT", form:"kobietom" },
+        { abbr:"ACC", form:"kobiety" },
+        { abbr:"INS", form:"kobietami" },
+        { abbr:"LOC", form:"kobietach" },
+        { abbr:"VOC", form:"kobiety" },
       ]
     },
     sentences: [
-      { before:"Ta",                   blank:"kobieta",  after:"jest miła.",       translation:"This woman is kind.",                       skill:"NOM", hint:"Nominative" },
-      { before:"Każda",                blank:"kobieta",  after:"to wie.",          translation:"Every woman knows that.",                   skill:"NOM", hint:"Nominative" },
-      { before:"Młoda",                blank:"kobieta",  after:"czeka na przystanku.",translation:"A young woman waits at the stop.",      skill:"NOM", hint:"Nominative" },
-      { before:"Nie znam tej",         blank:"kobiety",  after:".",                translation:"I don't know this woman.",                  skill:"GEN", hint:"Genitive" },
-      { before:"Bez tej",             blank:"kobiety",  after:"nic nie zrobimy.", translation:"Without this woman we won't do anything.",  skill:"GEN", hint:"Genitive" },
-      { before:"Szukam tej",          blank:"kobiety",  after:".",                translation:"I'm looking for this woman.",                skill:"GEN", hint:"Genitive" },
-      { before:"Daję tę książkę tej", blank:"kobiecie", after:".",                translation:"I give this book to this woman.",           skill:"DAT", hint:"Dative" },
-      { before:"Pomagam tej",         blank:"kobiecie", after:".",                translation:"I'm helping this woman.",                   skill:"DAT", hint:"Dative" },
-      { before:"Dziękuję tej",        blank:"kobiecie", after:".",                translation:"I'm thanking this woman.",                  skill:"DAT", hint:"Dative" },
-      { before:"Widzę tę",            blank:"kobietę",  after:"codziennie.",      translation:"I see this woman every day.",               skill:"ACC", hint:"Accusative" },
-      { before:"Znam tę",             blank:"kobietę",  after:"od lat.",          translation:"I've known this woman for years.",           skill:"ACC", hint:"Accusative" },
-      { before:"Proszę tę",           blank:"kobietę",  after:"o pomoc.",         translation:"I'm asking this woman for help.",           skill:"ACC", hint:"Accusative" },
-      { before:"Idę z tą",            blank:"kobietą",  after:"do kina.",         translation:"I'm going to the cinema with this woman.",  skill:"INS", hint:"Instrumental" },
-      { before:"Rozmawiam z tą",      blank:"kobietą",  after:".",                translation:"I'm talking with this woman.",              skill:"INS", hint:"Instrumental" },
-      { before:"Rozmawiamy o tej",    blank:"kobiecie", after:".",                translation:"We're talking about this woman.",            skill:"LOC", hint:"Locative" },
-      { before:"Myślę o tej",         blank:"kobiecie", after:".",                translation:"I'm thinking about this woman.",             skill:"LOC", hint:"Locative" },
-      { before:"",                     blank:"Kobieto",  after:", masz rację!",    translation:"Woman, you are right!",                    skill:"VOC", hint:"Vocative" },
-      { before:"Droga",               blank:"kobieto",  after:", posłuchaj!",     translation:"Dear woman, listen!",                       skill:"VOC", hint:"Vocative" },
-      { before:"Te",                   blank:"kobiety",  after:"są stąd.",         translation:"These women are from here.",                skill:"NOM·PL", hint:"Nominative plural" },
-      { before:"Na sali jest wiele",  blank:"kobiet",   after:".",                translation:"There are many women in the hall.",          skill:"GEN·PL", hint:"Genitive plural" },
-      { before:"Słucham tych",        blank:"kobiet",   after:"z uwagą.",         translation:"I'm listening to these women carefully.",    skill:"GEN·PL", hint:"Genitive plural" },
-      { before:"Tym",                  blank:"kobietom", after:"pomagamy.",        translation:"We're helping these women.",                skill:"DAT·PL", hint:"Dative plural" },
-      { before:"Dziękuję tym",        blank:"kobietom", after:".",                translation:"I'm thanking these women.",                 skill:"DAT·PL", hint:"Dative plural" },
-      { before:"Widzę te",            blank:"kobiety",  after:"każdego dnia.",    translation:"I see these women every day.",              skill:"ACC·PL", hint:"Accusative plural" },
-      { before:"Rozmawiam z tymi",    blank:"kobietami",after:".",                translation:"I'm talking with these women.",              skill:"INS·PL", hint:"Instrumental plural" },
-      { before:"Opowiadam o tych",    blank:"kobietach",after:".",                translation:"I'm telling about these women.",             skill:"LOC·PL", hint:"Locative plural" },
-      { before:"Drogie",              blank:"kobiety",  after:", posłuchajcie!",  translation:"Dear women, listen!",                      skill:"VOC·PL", hint:"Vocative plural" },
+      // NOM:subject
+      { before:"Ta",                   blank:"kobieta",  after:"jest miła.",          translation:"This woman is kind.",                       skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Każda",                blank:"kobieta",  after:"to wie.",             translation:"Every woman knows that.",                   skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Młoda",                blank:"kobieta",  after:"czeka na przystanku.",translation:"A young woman waits at the stop.",          skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Te",                   blank:"kobiety",  after:"są stąd.",            translation:"These women are from here.",                skill:"NOM:subject",          hint:"Subject → Nominative" },
+      // GEN:negation
+      { before:"Nie znam tej",         blank:"kobiety",  after:".",                   translation:"I don't know this woman.",                  skill:"GEN:negation",         hint:"Negated znać → Genitive" },
+      { before:"Nie ma tu żadnej",     blank:"kobiety",  after:".",                   translation:"There's no woman here.",                    skill:"GEN:negation",         hint:"Nie ma + negation → Genitive" },
+      { before:"Na sali nie ma żadnej",blank:"kobiety",  after:".",                   translation:"There's no woman in the hall.",             skill:"GEN:negation",         hint:"Nie ma + negation → Genitive" },
+      // GEN:prep-bez/dla/obok
+      { before:"Bez tej",             blank:"kobiety",  after:"nic nie zrobimy.",    translation:"Without this woman we won't do anything.",  skill:"GEN:prep-bez/dla/obok",hint:"bez (without) → Genitive" },
+      { before:"Na sali jest wiele",  blank:"kobiet",   after:".",                   translation:"There are many women in the hall.",          skill:"GEN:prep-bez/dla/obok",hint:"wiele (many) → Genitive" },
+      // GEN:quantity
+      { before:"Szukam tej",          blank:"kobiety",  after:".",                   translation:"I'm looking for this woman.",                skill:"GEN:quantity",         hint:"szukać (to look for) → Genitive" },
+      { before:"Słucham tych",        blank:"kobiet",   after:"z uwagą.",            translation:"I'm listening to these women carefully.",    skill:"GEN:quantity",         hint:"słuchać (to listen to) → Genitive" },
+      // DAT:verb-dative
+      { before:"Daję tę książkę tej", blank:"kobiecie", after:".",                   translation:"I give this book to this woman.",           skill:"DAT:verb-dative",      hint:"dawać komuś (to give to someone) → Dative" },
+      { before:"Pomagam tej",         blank:"kobiecie", after:".",                   translation:"I'm helping this woman.",                   skill:"DAT:verb-dative",      hint:"pomagać komuś (to help someone) → Dative" },
+      { before:"Dziękuję tej",        blank:"kobiecie", after:".",                   translation:"I'm thanking this woman.",                  skill:"DAT:verb-dative",      hint:"dziękować komuś (to thank someone) → Dative" },
+      { before:"Tym",                  blank:"kobietom", after:"pomagamy.",           translation:"We're helping these women.",                skill:"DAT:verb-dative",      hint:"pomagać komuś → Dative" },
+      { before:"Dziękuję tym",        blank:"kobietom", after:".",                   translation:"I'm thanking these women.",                 skill:"DAT:verb-dative",      hint:"dziękować komuś → Dative" },
+      // ACC:direct-object
+      { before:"Widzę tę",            blank:"kobietę",  after:"codziennie.",         translation:"I see this woman every day.",               skill:"ACC:direct-object",    hint:"Direct object of widzieć → Accusative" },
+      { before:"Znam tę",             blank:"kobietę",  after:"od lat.",             translation:"I've known this woman for years.",           skill:"ACC:direct-object",    hint:"Direct object of znać → Accusative" },
+      { before:"Proszę tę",           blank:"kobietę",  after:"o pomoc.",            translation:"I'm asking this woman for help.",           skill:"ACC:direct-object",    hint:"Direct object of prosić → Accusative" },
+      { before:"Widzę te",            blank:"kobiety",  after:"każdego dnia.",       translation:"I see these women every day.",              skill:"ACC:direct-object",    hint:"Direct object of widzieć → Accusative" },
+      // INS:prep-z
+      { before:"Idę z tą",            blank:"kobietą",  after:"do kina.",            translation:"I'm going to the cinema with this woman.",  skill:"INS:prep-z",           hint:"z (together with) → Instrumental" },
+      { before:"Rozmawiam z tą",      blank:"kobietą",  after:".",                   translation:"I'm talking with this woman.",              skill:"INS:prep-z",           hint:"z (together with) → Instrumental" },
+      { before:"Rozmawiam z tymi",    blank:"kobietami",after:".",                   translation:"I'm talking with these women.",              skill:"INS:prep-z",           hint:"z (together with) → Instrumental" },
+      // LOC:prep-o
+      { before:"Rozmawiamy o tej",    blank:"kobiecie", after:".",                   translation:"We're talking about this woman.",            skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      { before:"Myślę o tej",         blank:"kobiecie", after:".",                   translation:"I'm thinking about this woman.",             skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      { before:"Opowiadam o tych",    blank:"kobietach",after:".",                   translation:"I'm telling about these women.",             skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      // VOC:address
+      { before:"",                     blank:"Kobieto",  after:", masz rację!",       translation:"Woman, you are right!",                    skill:"VOC:address",          hint:"Direct address → Vocative" },
+      { before:"Droga",               blank:"kobieto",  after:", posłuchaj!",        translation:"Dear woman, listen!",                       skill:"VOC:address",          hint:"Direct address → Vocative" },
+      { before:"Drogie",              blank:"kobiety",  after:", posłuchajcie!",     translation:"Dear women, listen!",                      skill:"VOC:address",          hint:"Direct address → Vocative" },
     ]
   },
   {
-    id:"dobry", base:"dobry", pos:"adjective", meaning:"good",
-    paradigm: { type:"adj",
-      masc: [
-        { abbr:"NOM·M",    question:"masc. sg", form:"dobry",   usage:"subject",       skill:"NOM·M" },
-        { abbr:"GEN·M",    question:"",          form:"dobrego", usage:"of/from",       skill:"GEN·M" },
-        { abbr:"DAT·M",    question:"",          form:"dobremu", usage:"to/for",        skill:"DAT·M" },
-        { abbr:"ACC·M(i)",  question:"",          form:"dobry",   usage:"inanimate obj.",skill:"ACC·M(i)" },
-        { abbr:"ACC·M(a)",  question:"",          form:"dobrego", usage:"animate obj.",  skill:"ACC·M(a)" },
-        { abbr:"INS·M",    question:"",          form:"dobrym",  usage:"with/by",       skill:"INS·M" },
-        { abbr:"LOC·M",    question:"",          form:"dobrym",  usage:"in/at/about",   skill:"LOC·M" },
-      ],
-      fem: [
-        { abbr:"NOM·F", question:"fem. sg", form:"dobra",  usage:"subject", skill:"NOM·F" },
-        { abbr:"GEN·F", question:"",         form:"dobrej", usage:"",        skill:"GEN·F" },
-        { abbr:"DAT·F", question:"",         form:"dobrej", usage:"",        skill:"DAT·F" },
-        { abbr:"ACC·F", question:"",         form:"dobrą",  usage:"",        skill:"ACC·F" },
-        { abbr:"INS·F", question:"",         form:"dobrą",  usage:"",        skill:"INS·F" },
-        { abbr:"LOC·F", question:"",         form:"dobrej", usage:"",        skill:"LOC·F" },
-      ],
-      neut: [
-        { abbr:"NOM·N", question:"neut. sg", form:"dobre",   usage:"", skill:"NOM·N" },
-        { abbr:"GEN·N", question:"",          form:"dobrego", usage:"", skill:"GEN·N" },
-        { abbr:"DAT·N", question:"",          form:"dobremu", usage:"", skill:"DAT·N" },
-        { abbr:"INS·N", question:"",          form:"dobrym",  usage:"", skill:"INS·N" },
-        { abbr:"LOC·N", question:"",          form:"dobrym",  usage:"", skill:"LOC·N" },
-      ],
-      pl: [
-        { abbr:"NOM·PL·V",  question:"masc-pers pl", form:"dobrzy",  usage:"", skill:"NOM·PL·V" },
-        { abbr:"NOM·PL·NV", question:"non-masc pl",  form:"dobre",   usage:"", skill:"NOM·PL·NV" },
-        { abbr:"GEN·PL",    question:"",              form:"dobrych", usage:"", skill:"GEN·PL" },
-        { abbr:"DAT·PL",    question:"",              form:"dobrym",  usage:"", skill:"DAT·PL" },
-        { abbr:"ACC·PL·V",  question:"",              form:"dobrych", usage:"", skill:"ACC·PL·V" },
-        { abbr:"ACC·PL·NV", question:"",              form:"dobre",   usage:"", skill:"ACC·PL·NV" },
-        { abbr:"INS·PL",    question:"",              form:"dobrymi", usage:"", skill:"INS·PL" },
-        { abbr:"LOC·PL",    question:"",              form:"dobrych", usage:"", skill:"LOC·PL" },
-      ]
-    },
-    sentences: [
-      { before:"To jest",    blank:"dobry",   after:"pomysł.",         translation:"That is a good idea. (m: pomysł)",       skill:"NOM·M",    hint:"Nominative masculine" },
-      { before:"To jest",    blank:"dobry",   after:"dzień.",          translation:"It's a good day.",                        skill:"NOM·M",    hint:"Nominative masculine" },
-      { before:"To jest",    blank:"dobra",   after:"książka.",        translation:"That is a good book. (f)",                skill:"NOM·F",    hint:"Nominative feminine" },
-      { before:"To jest",    blank:"dobra",   after:"wiadomość.",      translation:"That is good news. (f)",                  skill:"NOM·F",    hint:"Nominative feminine" },
-      { before:"To jest",    blank:"dobre",   after:"wino.",           translation:"That is a good wine. (n)",                skill:"NOM·N",    hint:"Nominative neuter" },
-      { before:"To jest",    blank:"dobre",   after:"piwo.",           translation:"That is a good beer. (n)",                skill:"NOM·N",    hint:"Nominative neuter" },
-      { before:"Szukam",     blank:"dobrego", after:"lekarza.",        translation:"I'm looking for a good doctor.",          skill:"GEN·M",    hint:"Genitive masculine" },
-      { before:"Nie ma",     blank:"dobrego", after:"powodu.",         translation:"There's no good reason.",                 skill:"GEN·M",    hint:"Genitive masculine" },
-      { before:"Nie ma tu",  blank:"dobrej",  after:"herbaty.",        translation:"There's no good tea here.",               skill:"GEN·F",    hint:"Genitive feminine" },
-      { before:"Bez",        blank:"dobrej",  after:"mapy się zgubisz.",translation:"Without a good map you'll get lost.",   skill:"GEN·F",    hint:"Genitive feminine" },
-      { before:"Cieszę się z",blank:"dobrego",after:"wyniku.",         translation:"I'm happy about a good result. (n)",      skill:"GEN·N",    hint:"Genitive neuter" },
-      { before:"Daję to",    blank:"dobremu", after:"człowiekowi.",    translation:"I'm giving this to a good person.",       skill:"DAT·M",    hint:"Dative masculine" },
-      { before:"Daję to",    blank:"dobrej",  after:"kobiecie.",       translation:"I'm giving this to a good woman.",        skill:"DAT·F",    hint:"Dative feminine" },
-      { before:"Daję to",    blank:"dobremu", after:"dziecku.",        translation:"I'm giving this to a good child. (n)",    skill:"DAT·N",    hint:"Dative neuter" },
-      { before:"Widzę",      blank:"dobry",   after:"film.",           translation:"I see a good movie. (inan. m.)",          skill:"ACC·M(i)", hint:"Accusative masculine inanimate" },
-      { before:"Mam",        blank:"dobrego", after:"przyjaciela.",    translation:"I have a good friend. (anim. m.)",        skill:"ACC·M(a)", hint:"Accusative masculine animate" },
-      { before:"Czytam",     blank:"dobrą",   after:"książkę.",        translation:"I'm reading a good book.",                skill:"ACC·F",    hint:"Accusative feminine" },
-      { before:"Mieszkam z", blank:"dobrym",  after:"kolegą.",         translation:"I live with a good friend (m).",          skill:"INS·M",    hint:"Instrumental masculine" },
-      { before:"Idę z",      blank:"dobrą",   after:"koleżanką.",     translation:"I'm going with a good friend (f).",       skill:"INS·F",    hint:"Instrumental feminine" },
-      { before:"Pod",        blank:"dobrym",  after:"wrażeniem.",      translation:"Under a good impression. (n)",            skill:"INS·N",    hint:"Instrumental neuter" },
-      { before:"Mówię o",    blank:"dobrym",  after:"nauczycielu.",    translation:"I'm talking about a good teacher (m).",   skill:"LOC·M",    hint:"Locative masculine" },
-      { before:"W tej",      blank:"dobrej",  after:"restauracji.",    translation:"In this good restaurant.",                skill:"LOC·F",    hint:"Locative feminine" },
-      { before:"W",          blank:"dobrym",  after:"miejscu.",        translation:"In a good place. (n)",                   skill:"LOC·N",    hint:"Locative neuter" },
-      { before:"To są",      blank:"dobrzy",  after:"ludzie.",         translation:"These are good people. (virile pl)",      skill:"NOM·PL·V", hint:"Nominative plural virile" },
-      { before:"To są",      blank:"dobre",   after:"wiadomości.",     translation:"These are good news. (non-virile pl)",    skill:"NOM·PL·NV",hint:"Nominative plural non-virile" },
-      { before:"Znam wielu", blank:"dobrych", after:"lekarzy.",        translation:"I know many good doctors.",               skill:"GEN·PL",   hint:"Genitive plural" },
-      { before:"Tym",        blank:"dobrym",  after:"ludziom pomagamy.",translation:"We help these good people.",             skill:"DAT·PL",   hint:"Dative plural" },
-      { before:"Znam tych",  blank:"dobrych", after:"ludzi.",          translation:"I know these good people. (vir. acc)",    skill:"ACC·PL·V", hint:"Accusative plural virile" },
-      { before:"Lubię te",   blank:"dobre",   after:"wina.",           translation:"I like these good wines. (non-vir. acc)", skill:"ACC·PL·NV",hint:"Accusative plural non-virile" },
-      { before:"Z",          blank:"dobrymi", after:"przyjaciółmi.",   translation:"With good friends.",                      skill:"INS·PL",   hint:"Instrumental plural" },
-      { before:"W",          blank:"dobrych", after:"restauracjach.",  translation:"In good restaurants.",                    skill:"LOC·PL",   hint:"Locative plural" },
-    ]
-  },
-  {
-    id:"mieć", base:"mieć", pos:"verb · imperfective", meaning:"to have",
-    paradigm: { type:"verb",
-      present: [
-        { abbr:"JA",     question:"I",      form:"mam",    usage:"", skill:"1sg" },
-        { abbr:"TY",     question:"you",    form:"masz",   usage:"", skill:"2sg" },
-        { abbr:"ON/ONA", question:"he/she", form:"ma",     usage:"", skill:"3sg" },
-        { abbr:"MY",     question:"we",     form:"mamy",   usage:"", skill:"1pl" },
-        { abbr:"WY",     question:"you·pl", form:"macie",  usage:"", skill:"2pl" },
-        { abbr:"ONI/ONE",question:"they",   form:"mają",   usage:"", skill:"3pl" },
-      ],
-      past_masc: [
-        { abbr:"JA (m)",question:"I (male)",  form:"miałem",  usage:"", skill:"1sg·m" },
-        { abbr:"TY (m)",question:"you (m)",   form:"miałeś",  usage:"", skill:"2sg·m" },
-        { abbr:"ON",    question:"he",        form:"miał",    usage:"", skill:"3sg·m" },
-        { abbr:"MY",    question:"we",        form:"mieliśmy",usage:"", skill:"1pl·past" },
-        { abbr:"ONI",   question:"they (m)",  form:"mieli",   usage:"", skill:"3pl·m" },
-      ],
-      past_fem: [
-        { abbr:"JA (f)",question:"I (female)",form:"miałam", usage:"", skill:"1sg·f" },
-        { abbr:"ONA",   question:"she",      form:"miała",  usage:"", skill:"3sg·f" },
-        { abbr:"ONE",   question:"they (f/n)",form:"miały",  usage:"", skill:"3pl·f" },
-      ]
-    },
-    sentences: [
-      { before:"Ja",     blank:"mam",      after:"psa.",           translation:"I have a dog.",                          skill:"1sg",     hint:"1st person singular" },
-      { before:"",        blank:"Mam",      after:"pytanie.",       translation:"I have a question.",                     skill:"1sg",     hint:"1st person singular" },
-      { before:"Czy ty", blank:"masz",     after:"czas?",          translation:"Do you have time?",                      skill:"2sg",     hint:"2nd person singular" },
-      { before:"Ty",     blank:"masz",     after:"rację.",         translation:"You are right.",                          skill:"2sg",     hint:"2nd person singular" },
-      { before:"Piotr",  blank:"ma",       after:"nowy samochód.", translation:"Piotr has a new car.",                   skill:"3sg",     hint:"3rd person singular" },
-      { before:"Ona",    blank:"ma",       after:"rację.",         translation:"She is right.",                           skill:"3sg",     hint:"3rd person singular" },
-      { before:"Kto",    blank:"ma",       after:"klucze?",        translation:"Who has the keys?",                       skill:"3sg",     hint:"3rd person singular" },
-      { before:"My",     blank:"mamy",     after:"dużo pracy.",    translation:"We have a lot of work.",                 skill:"1pl",     hint:"1st person plural" },
-      { before:"",        blank:"Mamy",     after:"problem.",       translation:"We have a problem.",                     skill:"1pl",     hint:"1st person plural" },
-      { before:"Czy wy", blank:"macie",    after:"pytania?",       translation:"Do you (pl) have questions?",            skill:"2pl",     hint:"2nd person plural" },
-      { before:"Oni",    blank:"mają",     after:"troje dzieci.",  translation:"They have three children.",              skill:"3pl",     hint:"3rd person plural" },
-      { before:"Wszyscy",blank:"mają",     after:"swoje zdanie.",  translation:"Everyone has their opinion.",            skill:"3pl",     hint:"3rd person plural" },
-      { before:"Kiedyś", blank:"miałem",   after:"rower.",         translation:"I used to have a bicycle. (male)",       skill:"1sg·m",   hint:"Past masculine 1sg" },
-      { before:"",        blank:"Miałem",   after:"sen.",           translation:"I had a dream. (male speaker)",          skill:"1sg·m",   hint:"Past masculine 1sg" },
-      { before:"Kiedyś", blank:"miałam",   after:"rower.",         translation:"I used to have a bicycle. (female)",     skill:"1sg·f",   hint:"Past feminine 1sg" },
-      { before:"Czy",    blank:"miałeś",   after:"czas?",          translation:"Did you have time? (to a male)",         skill:"2sg·m",   hint:"Past masculine 2sg" },
-      { before:"On",     blank:"miał",     after:"na to ochotę.",  translation:"He felt like it.",                        skill:"3sg·m",   hint:"Past masculine 3sg" },
-      { before:"On nie", blank:"miał",     after:"pojęcia.",       translation:"He had no idea.",                         skill:"3sg·m",   hint:"Past masculine 3sg" },
-      { before:"Ona",    blank:"miała",    after:"rację.",         translation:"She was right.",                           skill:"3sg·f",   hint:"Past feminine 3sg" },
-      { before:"Dawniej",blank:"mieliśmy", after:"tu sklep.",      translation:"We used to have a shop here.",            skill:"1pl·past", hint:"Past 1st person plural" },
-      { before:"Oni",    blank:"mieli",    after:"szczęście.",     translation:"They (m/mixed) were lucky.",              skill:"3pl·m",   hint:"Past masculine 3pl" },
-      { before:"One",    blank:"miały",    after:"mało czasu.",    translation:"They (f/n) had little time.",             skill:"3pl·f",   hint:"Past feminine 3pl" },
-    ]
-  },
-  {
-    id:"iść", base:"iść", pos:"verb · imperf. · motion", meaning:"to go (on foot)",
-    paradigm: { type:"verb",
-      present: [
-        { abbr:"JA",     question:"I",      form:"idę",     usage:"", skill:"1sg" },
-        { abbr:"TY",     question:"you",    form:"idziesz", usage:"", skill:"2sg" },
-        { abbr:"ON/ONA", question:"he/she", form:"idzie",   usage:"", skill:"3sg" },
-        { abbr:"MY",     question:"we",     form:"idziemy", usage:"", skill:"1pl" },
-        { abbr:"WY",     question:"you",    form:"idziecie",usage:"", skill:"2pl" },
-        { abbr:"ONI/ONE",question:"they",   form:"idą",     usage:"", skill:"3pl" },
-      ],
-      past_masc: [
-        { abbr:"JA (m)",question:"I (male)",  form:"szedłem", usage:"", skill:"1sg·m" },
-        { abbr:"ON",    question:"he",        form:"szedł",   usage:"", skill:"3sg·m" },
-        { abbr:"MY",    question:"we",        form:"szliśmy", usage:"", skill:"1pl·past" },
-        { abbr:"ONI",   question:"they (m)",  form:"szli",    usage:"", skill:"3pl·m" },
-      ],
-      past_fem: [
-        { abbr:"JA (f)",question:"I (female)",form:"szłam",  usage:"", skill:"1sg·f" },
-        { abbr:"ONA",   question:"she",      form:"szła",   usage:"", skill:"3sg·f" },
-        { abbr:"ONE",   question:"they (f/n)",form:"szły",   usage:"", skill:"3pl·f" },
-      ]
-    },
-    sentences: [
-      { before:"Jutro",      blank:"idę",      after:"do szkoły.",   translation:"Tomorrow I'm going to school.",                skill:"1sg",     hint:"1st person singular" },
-      { before:"",            blank:"Idę",      after:"na spacer.",   translation:"I'm going for a walk.",                        skill:"1sg",     hint:"1st person singular" },
-      { before:"Właśnie",    blank:"idę",      after:"do pracy.",    translation:"I'm just going to work.",                      skill:"1sg",     hint:"1st person singular" },
-      { before:"Dokąd",      blank:"idziesz",  after:"teraz?",       translation:"Where are you going now?",                     skill:"2sg",     hint:"2nd person singular" },
-      { before:"Czy",        blank:"idziesz",  after:"z nami?",      translation:"Are you coming with us?",                      skill:"2sg",     hint:"2nd person singular" },
-      { before:"Marta",      blank:"idzie",    after:"do sklepu.",   translation:"Marta is going to the shop.",                  skill:"3sg",     hint:"3rd person singular" },
-      { before:"On",         blank:"idzie",    after:"do lekarza.",  translation:"He's going to the doctor.",                    skill:"3sg",     hint:"3rd person singular" },
-      { before:"My wszyscy", blank:"idziemy",  after:"razem.",       translation:"We are all going together.",                   skill:"1pl",     hint:"1st person plural" },
-      { before:"",            blank:"Idziemy",  after:"na obiad.",    translation:"We're going to lunch.",                        skill:"1pl",     hint:"1st person plural" },
-      { before:"Czy wy też", blank:"idziecie", after:"na imprezę?",  translation:"Are you (pl) also going to the party?",        skill:"2pl",     hint:"2nd person plural" },
-      { before:"Oni już",    blank:"idą",      after:"do domu.",     translation:"They are already going home.",                 skill:"3pl",     hint:"3rd person plural" },
-      { before:"Wszyscy",    blank:"idą",      after:"spać.",        translation:"Everyone is going to sleep.",                  skill:"3pl",     hint:"3rd person plural" },
-      { before:"Wczoraj",    blank:"szedłem",  after:"przez park.",  translation:"Yesterday I walked through the park. (m)",     skill:"1sg·m",   hint:"Past masculine 1sg" },
-      { before:"Wczoraj",    blank:"szłam",    after:"przez park.",  translation:"Yesterday I walked through the park. (f)",     skill:"1sg·f",   hint:"Past feminine 1sg" },
-      { before:"On",         blank:"szedł",    after:"powoli.",      translation:"He was walking slowly.",                       skill:"3sg·m",   hint:"Past masculine 3sg" },
-      { before:"Ona",        blank:"szła",     after:"szybko.",      translation:"She was walking quickly.",                     skill:"3sg·f",   hint:"Past feminine 3sg" },
-      { before:"My",         blank:"szliśmy",  after:"całą noc.",    translation:"We walked all night.",                         skill:"1pl·past", hint:"Past 1st person plural" },
-      { before:"Oni",        blank:"szli",     after:"razem.",       translation:"They (m/mixed) were going together.",          skill:"3pl·m",   hint:"Past masculine 3pl" },
-      { before:"One",        blank:"szły",     after:"wolno.",       translation:"They (f) were walking slowly.",                skill:"3pl·f",   hint:"Past feminine 3pl" },
-    ]
-  },
-  {
-    id:"książka", base:"książka", pos:"noun · feminine", meaning:"book",
-    paradigm: { type:"noun",
+    id: "książka", base: "książka", pos: "noun · feminine", meaning: "book",
+    category: "noun",
+    paradigm: {
+      type: "noun",
       singular: [
-        { abbr:"NOM", question:"co?",    form:"książka",  usage:"subject",       skill:"NOM" },
-        { abbr:"GEN", question:"czego?", form:"książki",  usage:"of, from, no…", skill:"GEN" },
-        { abbr:"DAT", question:"czemu?", form:"książce",  usage:"to, for",       skill:"DAT" },
-        { abbr:"ACC", question:"co?",    form:"książkę",  usage:"direct object", skill:"ACC" },
-        { abbr:"INS", question:"czym?",  form:"książką",  usage:"with, by",      skill:"INS" },
-        { abbr:"LOC", question:"o czym?",form:"książce",  usage:"in, at, about", skill:"LOC" },
-        { abbr:"VOC", question:"—",      form:"książko",  usage:"direct address", skill:"VOC" },
+        { abbr:"NOM", form:"książka",  question:"co?" },
+        { abbr:"GEN", form:"książki",  question:"czego?" },
+        { abbr:"DAT", form:"książce",  question:"czemu?" },
+        { abbr:"ACC", form:"książkę",  question:"co?" },
+        { abbr:"INS", form:"książką",  question:"czym?" },
+        { abbr:"LOC", form:"książce",  question:"o czym?" },
+        { abbr:"VOC", form:"książko",  question:"—" },
       ],
       plural: [
-        { abbr:"NOM·PL", question:"", form:"książki",  usage:"", skill:"NOM·PL" },
-        { abbr:"GEN·PL", question:"", form:"książek",  usage:"", skill:"GEN·PL" },
-        { abbr:"DAT·PL", question:"", form:"książkom", usage:"", skill:"DAT·PL" },
-        { abbr:"ACC·PL", question:"", form:"książki",  usage:"", skill:"ACC·PL" },
-        { abbr:"INS·PL", question:"", form:"książkami",usage:"", skill:"INS·PL" },
-        { abbr:"LOC·PL", question:"", form:"książkach",usage:"", skill:"LOC·PL" },
-        { abbr:"VOC·PL", question:"", form:"książki",  usage:"", skill:"VOC·PL" },
+        { abbr:"NOM", form:"książki" },
+        { abbr:"GEN", form:"książek" },
+        { abbr:"DAT", form:"książkom" },
+        { abbr:"ACC", form:"książki" },
+        { abbr:"INS", form:"książkami" },
+        { abbr:"LOC", form:"książkach" },
+        { abbr:"VOC", form:"książki" },
       ]
     },
     sentences: [
-      { before:"To jest dobra",     blank:"książka",  after:".",            translation:"This is a good book.",                  skill:"NOM", hint:"Nominative" },
-      { before:"Ta",                blank:"książka",  after:"jest ciekawa.",translation:"This book is interesting.",              skill:"NOM", hint:"Nominative" },
-      { before:"Nowa",              blank:"książka",  after:"leży na stole.",translation:"A new book is on the table.",          skill:"NOM", hint:"Nominative" },
-      { before:"Nie mam tej",       blank:"książki",  after:".",            translation:"I don't have this book.",                skill:"GEN", hint:"Genitive" },
-      { before:"Szukam tej",        blank:"książki",  after:".",            translation:"I'm looking for this book.",             skill:"GEN", hint:"Genitive" },
-      { before:"Bez tej",           blank:"książki",  after:"nie zdam.",    translation:"Without this book I won't pass.",       skill:"GEN", hint:"Genitive" },
-      { before:"Przyglądam się tej",blank:"książce",  after:".",            translation:"I'm looking at this book closely.",      skill:"DAT", hint:"Dative" },
-      { before:"Nie ufam tej",      blank:"książce",  after:".",            translation:"I don't trust this book.",               skill:"DAT", hint:"Dative" },
-      { before:"Czytam tę",         blank:"książkę",  after:".",            translation:"I'm reading this book.",                 skill:"ACC", hint:"Accusative" },
-      { before:"Kupuję nową",       blank:"książkę",  after:".",            translation:"I'm buying a new book.",                 skill:"ACC", hint:"Accusative" },
-      { before:"Lubię tę",          blank:"książkę",  after:"najbardziej.", translation:"I like this book the most.",             skill:"ACC", hint:"Accusative" },
-      { before:"Idę z tą",          blank:"książką",  after:"do szkoły.",   translation:"I'm going to school with this book.",    skill:"INS", hint:"Instrumental" },
-      { before:"Pod tą",            blank:"książką",  after:"leży list.",   translation:"Under this book there's a letter.",     skill:"INS", hint:"Instrumental" },
-      { before:"Piszę o tej",       blank:"książce",  after:".",            translation:"I'm writing about this book.",           skill:"LOC", hint:"Locative" },
-      { before:"W tej",             blank:"książce",  after:"jest dużo błędów.",translation:"There are many errors in this book.",skill:"LOC",hint:"Locative" },
-      { before:"O,",                blank:"książko",  after:", jakże jesteś piękna!",translation:"Oh book, how beautiful you are!",skill:"VOC",hint:"Vocative" },
-      { before:"Te",                blank:"książki",  after:"są nowe.",     translation:"These books are new.",                   skill:"NOM·PL", hint:"Nominative plural" },
-      { before:"Mam dużo",          blank:"książek",  after:".",            translation:"I have many books.",                     skill:"GEN·PL", hint:"Genitive plural" },
-      { before:"Tym",               blank:"książkom", after:"brakuje okładek.",translation:"These books are missing covers.",    skill:"DAT·PL", hint:"Dative plural" },
-      { before:"Kupuję te",         blank:"książki",  after:".",            translation:"I'm buying these books.",                skill:"ACC·PL", hint:"Accusative plural" },
-      { before:"Przychodzę z",      blank:"książkami",after:".",            translation:"I'm coming with books.",                 skill:"INS·PL", hint:"Instrumental plural" },
-      { before:"W tych",            blank:"książkach",after:"jest mądrość.",translation:"There's wisdom in these books.",        skill:"LOC·PL", hint:"Locative plural" },
-      { before:"Drogie",            blank:"książki",  after:", uczcie nas!",translation:"Dear books, teach us!",                 skill:"VOC·PL", hint:"Vocative plural" },
+      // NOM:subject
+      { before:"To jest dobra",     blank:"książka",  after:".",             translation:"This is a good book.",                  skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Ta",                blank:"książka",  after:"jest ciekawa.", translation:"This book is interesting.",              skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Nowa",              blank:"książka",  after:"leży na stole.",translation:"A new book is on the table.",           skill:"NOM:subject",          hint:"Subject → Nominative" },
+      { before:"Te",                blank:"książki",  after:"są nowe.",      translation:"These books are new.",                   skill:"NOM:subject",          hint:"Subject → Nominative" },
+      // GEN:negation
+      { before:"Nie mam tej",       blank:"książki",  after:".",             translation:"I don't have this book.",                skill:"GEN:negation",         hint:"Negated mieć → Genitive" },
+      { before:"Nie ma tu żadnej",  blank:"książki",  after:".",             translation:"There's no book here.",                  skill:"GEN:negation",         hint:"Nie ma + negation → Genitive" },
+      // GEN:prep-bez/dla/obok
+      { before:"Bez tej",           blank:"książki",  after:"nie zdam.",     translation:"Without this book I won't pass.",       skill:"GEN:prep-bez/dla/obok",hint:"bez (without) → Genitive" },
+      // GEN:quantity
+      { before:"Szukam tej",        blank:"książki",  after:".",             translation:"I'm looking for this book.",             skill:"GEN:quantity",         hint:"szukać → Genitive" },
+      { before:"Mam dużo",          blank:"książek",  after:".",             translation:"I have many books.",                     skill:"GEN:quantity",         hint:"dużo (many) → Genitive" },
+      // DAT:verb-dative
+      { before:"Przyglądam się tej",blank:"książce",  after:".",             translation:"I'm looking at this book closely.",      skill:"DAT:verb-dative",      hint:"przyglądać się → Dative" },
+      { before:"Nie ufam tej",      blank:"książce",  after:".",             translation:"I don't trust this book.",               skill:"DAT:verb-dative",      hint:"ufać komuś/czemuś (to trust) → Dative" },
+      { before:"Tym",               blank:"książkom", after:"brakuje okładek.",translation:"These books are missing covers.",    skill:"DAT:verb-dative",      hint:"brakować czemuś (to be missing) → Dative" },
+      // ACC:direct-object
+      { before:"Czytam tę",         blank:"książkę",  after:".",             translation:"I'm reading this book.",                 skill:"ACC:direct-object",    hint:"Direct object of czytać → Accusative" },
+      { before:"Kupuję nową",       blank:"książkę",  after:".",             translation:"I'm buying a new book.",                 skill:"ACC:direct-object",    hint:"Direct object of kupować → Accusative" },
+      { before:"Lubię tę",          blank:"książkę",  after:"najbardziej.",  translation:"I like this book the most.",             skill:"ACC:direct-object",    hint:"Direct object of lubić → Accusative" },
+      { before:"Kupuję te",         blank:"książki",  after:".",             translation:"I'm buying these books.",                skill:"ACC:direct-object",    hint:"Direct object of kupować → Accusative" },
+      // INS:prep-location
+      { before:"Pod tą",            blank:"książką",  after:"leży list.",    translation:"Under this book there's a letter.",     skill:"INS:prep-location",    hint:"pod (under) → Instrumental" },
+      // INS:prep-z
+      { before:"Idę z tą",          blank:"książką",  after:"do szkoły.",    translation:"I'm going to school with this book.",    skill:"INS:prep-z",           hint:"z (together with / carrying) → Instrumental" },
+      { before:"Przychodzę z",      blank:"książkami",after:".",             translation:"I'm coming with (my) books.",             skill:"INS:prep-z",           hint:"z (together with) → Instrumental" },
+      // LOC:prep-w/na
+      { before:"W tej",             blank:"książce",  after:"jest dużo błędów.",translation:"There are many errors in this book.",skill:"LOC:prep-w/na",        hint:"w (in, static) → Locative" },
+      { before:"W tych",            blank:"książkach",after:"jest mądrość.", translation:"There's wisdom in these books.",        skill:"LOC:prep-w/na",        hint:"w (in, static) → Locative" },
+      // LOC:prep-o
+      { before:"Piszę o tej",       blank:"książce",  after:".",             translation:"I'm writing about this book.",           skill:"LOC:prep-o",           hint:"o (about/concerning) → Locative" },
+      // VOC:address
+      { before:"O,",                blank:"książko",  after:", jakże jesteś piękna!",translation:"Oh book, how beautiful you are!",skill:"VOC:address",        hint:"Direct address → Vocative" },
+      { before:"Drogie",            blank:"książki",  after:", uczcie nas!",translation:"Dear books, teach us!",                 skill:"VOC:address",          hint:"Direct address → Vocative" },
     ]
   },
 ];
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SKILL_RULES — Defines the grammar rules (skills) and their
+   grouping into cases. This is what drives the rule-explanation
+   panel and the skill selector UI.
+   ═══════════════════════════════════════════════════════════════ */
+
+const SKILL_RULES = {
+  "NOM:subject":          { case: "NOM", label: "Subject",                     rule: "The subject of the sentence — who/what does the action — takes Nominative." },
+  "GEN:negation":         { case: "GEN", label: "Negation",                    rule: "When a verb is negated (nie ma, nie znam, nie widzę…), the object shifts to Genitive." },
+  "GEN:prep-od/z/do":     { case: "GEN", label: "Prepositions: do, z, od",     rule: "The prepositions do (to/towards), z (from), od (away from) always require Genitive." },
+  "GEN:prep-bez/dla/obok":{ case: "GEN", label: "Prepositions: bez, dla, obok", rule: "bez (without), dla (for), obok (next to), blisko (near), wśród (among) require Genitive." },
+  "GEN:quantity":         { case: "GEN", label: "Quantity & seeking",          rule: "After quantity words (dużo, wiele, mało) and verbs like szukać (seek), słuchać (listen to) → Genitive." },
+  "DAT:verb-dative":      { case: "DAT", label: "Dative verbs",               rule: "Verbs meaning 'give to', 'help', 'thank', 'trust', 'look closely at' take a Dative object: pomagać, dziękować, ufać, przyglądać się, dziwić się, dawać." },
+  "ACC:direct-object":    { case: "ACC", label: "Direct object",              rule: "The direct object of most verbs (widzieć, kupować, znać, lubić, czytać, budować…) takes Accusative." },
+  "INS:prep-location":    { case: "INS", label: "Location prepositions",       rule: "przed (in front of), za (behind), nad (above), pod (under), między (between) → Instrumental for static location." },
+  "INS:prep-z":           { case: "INS", label: "Preposition: z (with)",       rule: "z meaning 'together with' or 'accompanied by' requires Instrumental." },
+  "INS:verb-interest":    { case: "INS", label: "Verbs of interest",           rule: "interesować się (to be interested in), zajmować się (to deal with) → Instrumental." },
+  "LOC:prep-w/na":        { case: "LOC", label: "Prepositions: w, na (static)", rule: "w (in) and na (on/at) for static location (not motion towards) → Locative." },
+  "LOC:prep-o":           { case: "LOC", label: "Preposition: o (about)",      rule: "o meaning 'about/concerning' (myśleć o, mówić o, pisać o) → Locative." },
+  "VOC:address":          { case: "VOC", label: "Direct address",              rule: "When calling out to someone/something directly (O domie! Kobieto!) → Vocative. Archaic in modern speech but still used." },
+};
+
+/* Cases in display order */
+const CASE_ORDER = ["NOM", "GEN", "DAT", "ACC", "INS", "LOC", "VOC"];
