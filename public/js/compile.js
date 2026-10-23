@@ -388,6 +388,18 @@
 
   /* ── Generated: find the base word (rączka → ręka) ── */
 
+  // Is the base hidden by a sound change? A prefix the base lacks doesn't count:
+  // przedszkole ← szkoła (ł → l) is, współpraca ← praca and bezdomny ← dom are not.
+  function disguised(mem) {
+    let pre = '';
+    for (const p of mem.seg.split('|')) {
+      if (p.endsWith('-') && !p.startsWith('-')) pre += p.slice(0, -1).toLowerCase(); else break;
+    }
+    const w = mem.w.replace(/ się$/, '');
+    if (pre && w.toLowerCase().startsWith(pre) && !mem.from.toLowerCase().startsWith(pre)) return nontrivial(w.slice(pre.length), mem.from);
+    return nontrivial(w, mem.from);
+  }
+
   function genRoots() {
     const rule = PL.RULES['ROOT:base'];
     if (!rule) return;
@@ -395,7 +407,7 @@
       if (!mem.from || mem.noroot || !mem.rules.length) return;
       const r = PL.RULES[mem.rules[0]];
       if (!r || r.module !== rule.module) return;
-      if (/ /.test(mem.from) || !nontrivial(mem.w, mem.from)) return;   // only when the base is disguised
+      if (/ /.test(mem.from) || !disguised(mem)) return;
       addItem({
         type: 'lemma', fmt: 'type', rule: rule.id, nest: nest.id, member: mem.i, root: true,
         pre: '', word: mem.w, post: '', tr: mem.m,

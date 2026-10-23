@@ -128,13 +128,15 @@ the Progress tab).
 and reports: answers that aren't forms of the cue word, case/tense rules
 answered with the wrong case/tense, missing translations, stray braces,
 duplicate sentences, choice cards with too few options, options that give
-the answer away by punctuation, and rules with too few exercises. Whether
+the answer away by punctuation, word splits that don't spell the word, and
+rules with too few exercises. Whether
 the Polish is natural and the explanations true still needs a fluent reader.
 
 ## Possible next steps
 
 - More families (*-wiedzieć, -nieść, -trzeć, -jąć…*) and more nouns.
 - Numbers and their cases (*dwa koty, pięć kotów*) as their own module.
-- Aspect in context: choose *pisałem* or *napisałem* in a short story.
+- Longer aspect drills: a short story where every blank is *pisałem* or
+  *napisałem*.
 - An offline-installable version (a service worker and a manifest — still
   no dependencies).

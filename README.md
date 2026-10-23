@@ -41,8 +41,9 @@ Sections (switch them on and off with the pills, or per group in Progress):
   nad-, o-, u-, na-, wz-, and aspect; 25 word families such as
   *iść → wyjść, przyjść, odejść…* with every word split into its parts.
 - **Word building** — nouns from verbs, people, places, tools, qualities,
-  diminutives, adjectives, comparatives, adverbs, participles, compounds,
-  and "find the base word" when a sound change hides it.
+  diminutives, adjectives, comparatives, adverbs, participles, prefixes on
+  nouns (*przedszkole, pojutrze, pradziadek*), compounds, and "find the base
+  word" when a sound change hides it.
 - **Small words** — greetings, politeness, reactions, particles, linking
   words, wishes, shops, phone, feelings, casual speech.
 
