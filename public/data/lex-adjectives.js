@@ -27,8 +27,8 @@ PL.pattern('pron', {
 
 /* ── Regular adjectives ── */
 
-PL.adj('dobry', { m: 'good', vir: 'dobrzy', comp: 'lepszy', adv: 'dobrze' });
-PL.adj('zły', { m: 'bad; angry', vir: 'źli', comp: 'gorszy', adv: 'źle' });
+PL.adj('dobry', { m: 'good', vir: 'dobrzy', comp: 'lepszy', compM: 'better', adv: 'dobrze' });
+PL.adj('zły', { m: 'bad; angry', vir: 'źli', comp: 'gorszy', compM: 'worse', adv: 'źle' });
 PL.adj('nowy', { m: 'new', vir: 'nowi', comp: 'nowszy' });
 PL.adj('stary', { m: 'old', vir: 'starzy', comp: 'starszy' });
 PL.adj('młody', { m: 'young', vir: 'młodzi', comp: 'młodszy', adv: 'młodo' });

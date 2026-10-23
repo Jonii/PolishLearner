@@ -140,6 +140,9 @@
         if (cueL || PL.LEX[it.lemma]) PL.warn(`${it.rule}: "${ans}" is not a known form (cue "${it.cue}") in "${it.pre}{…}${it.post}"`);
         return;
       }
+      // Alternatives may come from a sibling word (Włóż / Załóż kurtkę); only the main answer
+      // has to belong to the cue.
+      if (ans !== it.a) return;
       const lem = (it.lemma || '').replace(/ się$/, '');
       const related = o => o === it.cue || derivesFrom(o, it.cue) || o === lem || (PL.LEX[o] && PL.LEX[o].compOf === it.cue);
       if (cueL && !owners.some(related)) {
@@ -354,9 +357,23 @@
     return / się$/.test(w) ? [w.replace(/ się$/, '')] : [];
   }
 
-  // For a sentence built on a derived word, show the plainest family word as the cue.
+  // The hint word for a family sentence: the family's main word (nest.cue) if the member is built
+  // on it, otherwise the plainest real word the member is built on (popatrzeć → patrzeć, not oglądać).
   function rootCue(mem, nest) {
-    return nest.cue || mem.from || nest.base || nest.root;
+    if (!nest.cue) return mem.from || nest.base || nest.root;
+    const bare = w => w.replace(/ się$/, '');
+    const onCue = w => bare(w) === nest.cue || derivesFrom(bare(w), nest.cue);
+    if (onCue(mem.w)) return nest.cue;
+    let plainest = mem.from;
+    let w = mem.from;
+    for (let i = 0; w && i < 8; i++) {
+      if (onCue(w)) return nest.cue;
+      const L = PL.LEX[bare(w)];
+      if (!(L && L.hidden)) plainest = w;
+      const m = nest.members.find(x => x.w === w);
+      w = m && m.from ? m.from : (L && L.base) || null;
+    }
+    return plainest || nest.cue;
   }
 
   function meaningOf(word, nest) {
@@ -456,7 +473,7 @@
     } else if (it.type === 'decode') {
       wrong = decodeDistractors(it, n);
     } else if (it.type === 'meaning') {
-      const pool = PL.PHRASES.filter(p => p.rule !== it.rule && !overlaps(p.en, it.a)).map(p => p.en);
+      const pool = PL.PHRASES.filter(p => p.rule !== it.rule && unlike(p.en, it.a)).map(p => p.en);
       wrong = pickDistinct(pool, n, answers);
     } else if (it.type === 'cloze') {
       wrong = clozeDistractors(it, n);
@@ -491,7 +508,7 @@
       }
     } else if (it.type === 'say') {
       const pool = it.opts && it.opts.length ? it.opts
-        : PL.PHRASES.filter(p => p.rule !== it.rule).map(p => p.pl);
+        : PL.PHRASES.filter(p => p.rule !== it.rule && unlike(p.en, it.tr)).map(p => p.pl);
       wrong = pickDistinct(pool, n, answers);
     }
     if (!wrong.length) return null;
@@ -544,7 +561,7 @@
   //   'to put, lay (pf.)' → ['to put', 'lay'];  'to go (on foot), walk — now, one way' → ['to go', 'walk']
   function glosses(m) {
     return m.toLowerCase().replace(/\s[—–]\s.*$/, '').replace(/\([^)]*\)/g, '')
-      .split(/[;,]/).map(g => g.trim()).filter(Boolean);
+      .split(/[;,]/).map(g => g.replace(/[!?.…]+/g, '').trim()).filter(Boolean);
   }
 
   // Two meanings share a gloss: as options, the learner could not tell them apart.
@@ -552,6 +569,16 @@
     const b = glosses(m2);
     return glosses(m1).some(g => b.includes(g));
   }
+
+  // Phrase meanings are short, so compare words: "See you (later)" and "See ya" are too close.
+  const STOP = new Set(('a an the to of for in on at it is be am are was i me my you your we he she they ' +
+    'them his her its and or with that this so as by do what how i\'m it\'s don\'t let\'s that\'s there\'s').split(' '));
+  function sharesWord(m1, m2) {
+    const words = m => m.toLowerCase().replace(/[^a-z\' ]+/g, ' ').split(/\s+/).filter(w => w && !STOP.has(w));
+    const b = new Set(words(m2));
+    return words(m1).some(w => b.has(w));
+  }
+  const unlike = (m1, m2) => !overlaps(m1, m2) && !sharesWord(m1, m2);
 
   // Is a family member's meaning a fair wrong option for `me`? Not if the meanings overlap —
   // unless telling them apart is the point: a verb against a non-verb ("to approach" /
@@ -585,11 +612,11 @@
   function patternFor(it) {
     const L = PL.LEX[it.lemma];
     const r = PL.RULES[it.rule];
-    if (r && r.pattern && PL.PATTERNS[r.pattern]) return PL.PATTERNS[r.pattern];
-    if (L && L.cls && PL.PATTERNS[L.cls]) return PL.PATTERNS[L.cls];
     const g = r && PL.GROUP[r.group];
-    if (g && g.pattern && PL.PATTERNS[g.pattern]) return PL.PATTERNS[g.pattern];
-    return null;
+    const table = id => (id && PL.PATTERNS[id]) || null;
+    // Past, future, imperative, conditional: the tense's table, not the verb's present-tense class.
+    const tense = r && /^(past|fut|imp|cond)$/.test(r.kind || '');
+    return table(r && r.pattern) || (tense && table(g && g.pattern)) || table(L && L.cls) || table(g && g.pattern);
   }
 
   /* ── Compile ── */

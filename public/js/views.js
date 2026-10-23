@@ -67,7 +67,7 @@ const Views = (() => {
     let html = `<h3>${md(p.t)}</h3>`;
     if (p.intro) html += `<p class="p-intro">${md(p.intro)}</p>`;
     if (p.kind === 'noun') html += nounPattern(p, models.slice(0, 2));
-    else if (p.kind === 'verb') html += verbPattern(p, models.slice(0, p.tense === 'pres' ? 2 : 1));
+    else if (p.kind === 'verb') html += verbPattern(p, models.slice(0, { pres: 2, imp: 3 }[p.tense] || 1));
     else if (p.kind === 'adj') html += adjTable(PL.LEX[models[0]]);
     else if (p.kind === 'list') html += listPattern(p);
     else if (p.kind === 'pron') html += pronPattern(p);

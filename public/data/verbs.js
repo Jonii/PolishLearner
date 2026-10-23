@@ -15,7 +15,7 @@ PL.module('verbs', {
 });
 
 PL.groups('verbs', [
-  { id: 'PRES', t: 'Present tense', pl: 'czas teraźniejszy', intro: 'Six persons, a few patterns. Look at the infinitive to guess the pattern: *-ać → -am*, *-ować → -uję*, *-awać → -aję*, *-ić / -yć → -ę, -isz*; the rest (*-ę, -esz*) usually change their stem.' },
+  { id: 'PRES', t: 'Present tense', pl: 'czas teraźniejszy', intro: 'Six persons, a few patterns. Look at the infinitive to guess the pattern: *-ać → -am*, *-ować → -uję*, *-awać → -aję*, *-ić / -yć* and most *-eć → -ę, -isz / -ysz* (but the short *pić, bić, myć, żyć, kryć → piję, pijesz*); the rest (*-ę, -esz*) usually change their stem.' },
   { id: 'PAST', t: 'Past tense', pl: 'czas przeszły', pattern: 'v-past', intro: 'Replace *-ć* with *-ł* and add a person ending. The ending shows the gender of the subject — including "I" and "you".' },
   { id: 'FUT', t: 'Future', pl: 'czas przyszły', pattern: 'v-fut', intro: 'Imperfective verbs: *będę* + infinitive. Perfective verbs: the present-tense form already means the future.' },
   { id: 'IMP', t: 'Imperative', pl: 'tryb rozkazujący', pattern: 'v-imp', intro: 'Commands and requests: *czytaj!, czytajmy!, czytajcie!* — and the polite *proszę* + infinitive.' },
@@ -33,19 +33,19 @@ PL.rules('verbs', 'PRES', {
   'PRES:am': { o: 2, f: 3, kind: 'pres', pattern: 'v-am', t: 'Present: -ać → -am, -asz, -ają',
     x: 'Most verbs in *-ać* keep the *a*: czyt-am, czyt-asz, czyt-a, czyt-amy, czyt-acie, czyt-ają. (Some *-ać* verbs change their stem instead — see *-ę, -esz*.)' },
   'PRES:uje': { o: 3, f: 3, kind: 'pres', pattern: 'v-uje', t: 'Present: -ować → -uję, -ujesz',
-    x: 'Every verb in *-ować* swaps *-owa-* for *-uj-*: prac-ować → prac-uję, prac-ujesz … prac-ują. Many verbs in *-ywać / -iwać* do the same: pokaz-ywać → pokaz-uję.' },
+    x: 'Practically every verb in *-ować* swaps *-owa-* for *-uj-*: prac-ować → prac-uję, prac-ujesz … prac-ują (the everyday exception: *chować*, to hide → *chowam*). Many verbs in *-ywać / -iwać* do the same: pokaz-ywać → pokaz-uję (but *odpoczywać → odpoczywam*).' },
   'PRES:isz': { o: 4, f: 3, kind: 'pres', pattern: 'v-isz', t: 'Present: -ić / -yć / -eć → -ę, -isz / -ysz',
-    x: '*mówić → mówię, mówisz, mówi … mówią*; *uczyć → uczę, uczysz*; *widzieć → widzę, widzisz*. "I" ends in *-ę*, "they" in *-ą*; the others have *i* (or *y* after cz, sz, rz, ż).' },
+    x: '*mówić → mówię, mówisz, mówi … mówią*; *uczyć → uczę, uczysz*; *widzieć → widzę, widzisz*. "I" ends in *-ę*, "they" in *-ą*; the others have *i* (or *y* after cz, sz, rz, ż). Not the one-syllable *pić, bić, myć, żyć* — those go *piję, pijesz*.' },
   'PRES:modal': { o: 5, f: 3, kind: 'pres', t: '*chcieć, móc, musieć, woleć* + infinitive',
-    x: 'These verbs are followed by an infinitive: *Chcę iść. Mogę pomóc. Muszę pracować. Wolę zostać.* Their own forms: chcę / chcesz; mogę / możesz (g → ż); muszę / musisz; wolę / wolisz.' },
+    x: 'These verbs are followed by an infinitive (*chcieć* and *woleć* can also take a noun: *Wolę herbatę*): *Chcę iść. Mogę pomóc. Muszę pracować. Wolę zostać.* Their own forms: chcę / chcesz; mogę / możesz (g → ż); muszę / musisz; wolę / wolisz.' },
   'PRES:esz': { o: 6, f: 3, kind: 'pres', pattern: 'v-esz', t: 'Present: -ę, -esz with a changing stem',
     x: 'Endings *-ę, -esz, -e, -emy, -ecie, -ą*, but the stem shifts: *pisać → piszę, piszesz*; *brać → biorę, bierzesz*; *jechać → jadę, jedziesz*; *iść → idę, idziesz*; *pić → piję, pijesz*. Learn the "I" and "you" forms and the rest follows.' },
   'PRES:em': { o: 7, f: 2, kind: 'pres', pattern: 'v-em', t: 'Present: -em, -esz (rozumieć, jeść, wiedzieć)',
     x: '*umieć, rozumieć*: -em, -esz … -eją (*rozumiem, rozumieją*). The old irregulars *jeść, wiedzieć* and *powiedzieć* also start with *-em* but end in *-dzą*: *jem … jedzą, wiem … wiedzą*.' },
   'PRES:aje': { o: 8, f: 2, kind: 'pres', pattern: 'v-aje', t: 'Present: -awać → -aję',
-    x: 'Verbs in *-awać* lose the *w*: *dawać → daję, dajesz*; *wstawać → wstaję*; *sprzedawać → sprzedaję*; *dostawać → dostaję*.' },
+    x: 'Verbs in *-awać* drop *-wa-* in the present (the imperative keeps it: *dawaj!, wstawaj!*): *dawać → daję, dajesz*; *wstawać → wstaję*; *sprzedawać → sprzedaję*; *dostawać → dostaję*.' },
   'PRES:alt': { o: 9, f: 2, kind: 'pres', pattern: 'v-isz', t: 'Shift in "I" and "they": chodzę, proszę, płacę',
-    x: 'In *-ić* verbs whose stem ends in s, z, c, dz, ść, źdź, the "I" and "they" forms harden the consonant: *prosić → proszę / proszą* (but *prosisz*), *chodzić → chodzę*, *płacić → płacę*, *wozić → wożę*, *jeździć → jeżdżę*.' },
+    x: 'In *-ić* and *-eć* verbs whose stem ends in s, z, c, dz, ść, źdź, the "I" and "they" forms harden the consonant: *prosić → proszę / proszą* (but *prosisz*), *chodzić → chodzę*, *płacić → płacę*, *wozić → wożę*, *jeździć → jeżdżę*, *siedzieć → siedzę*.' },
 });
 
 PL.rules('verbs', 'PAST', {
@@ -54,7 +54,7 @@ PL.rules('verbs', 'PAST', {
   'PAST:pl': { o: 11, f: 3, kind: 'past', t: 'Past plural: -li (men, mixed) / -ły (others)',
     x: 'In the plural the split is not masculine/feminine but **virile**: *-li* if the group contains at least one man (*byliśmy, czytali*), *-ły* for women, children, animals and things (*byłyśmy, dzieci czytały*).' },
   'PAST:e-a': { o: 12, f: 2, kind: 'past', t: '-eć verbs: miał, chciała — but mieli',
-    x: 'Verbs in *-eć* show *a* in the past (*mieć → miał, miała; chcieć → chciał*), except in the virile plural, where the *e* returns: *mieli, chcieli, widzieli*.' },
+    x: 'Most verbs in *-eć* show *a* in the past (*mieć → miał, miała; chcieć → chciał*), except in the virile plural, where the *e* returns: *mieli, chcieli, widzieli*. (Not all: *umrzeć → umarł, umarli*.)' },
   'PAST:irr': { o: 13, f: 2, kind: 'past', t: 'Irregular past: szedł, mógł, jadł, wziął',
     x: 'A few common verbs have their own past stem: *iść → szedł / szła / szli*, *móc → mógł / mogła*, *jeść → jadł / jedli*, *nieść → niósł / niosła*, *wziąć → wziął / wzięła*, *zacząć → zaczął / zaczęła*, *pomóc → pomógł*.' },
 });
@@ -67,12 +67,12 @@ PL.rules('verbs', 'FUT', {
 });
 
 PL.rules('verbs', 'IMP', {
-  'IMP:sg': { o: 16, f: 3, kind: 'imp', t: 'Commands: czytaj! pisz! mów!',
-    x: 'Take the "they" form and drop *-ą*: *czytaj-ą → czytaj!*, *pisz-ą → pisz!*, *mówi-ą → mów!*, *robi-ą → rób!* If the leftover ends awkwardly, add *-ij / -yj*: *zamkn-ą → zamknij!*' },
+  'IMP:sg': { o: 16, f: 3, kind: 'imp', t: 'Commands: czytaj! pisz! mów! chodź!',
+    x: 'Take the "he / she" form and drop its last vowel — a soft consonant stays soft: *pisze → pisz!*, *mówi → mów!*, *robi → rób!* (o → ó), *chodzi → chodź!*, *idzie → idź!*, *prosi → proś!*, *bierze → bierz!* After *-a* add *-j*: *czyta → czytaj!*, *da → daj!* If the leftover ends awkwardly, add *-ij / -yj*: *zamknie → zamknij!*, *śpi → śpij!*' },
   'IMP:pl': { o: 20, f: 2, kind: 'imp', t: 'Let\'s (-my) and you all (-cie)',
     x: 'Add *-my* for "let\'s" (*chodźmy! zróbmy!*) and *-cie* for several people (*czytajcie! zamknijcie!*).' },
-  'IMP:irr': { o: 18, f: 2, kind: 'imp', t: 'Irregular commands: bądź, jedz, jedź, weź',
-    x: 'Learn these by heart: *bądź!* (be), *miej!* (have), *jedz!* (eat), *jedź!* (go / drive), *weź!* (take), *daj!* (give), *chodź!* (come), *idź!* (go), *pomóż!* (help), *powiedz!* (say), *usiądź!* (sit down), *śpij!* (sleep).' },
+  'IMP:irr': { o: 18, f: 2, kind: 'imp', t: 'Irregular commands: bądź, miej, jedz, weź, powiedz',
+    x: 'A few verbs break the rule — learn them by heart: *bądź!* (be), *miej!* (have), *jedz!* (eat — not the regular *jedź!*, go / drive, from *jedzie*), *weź!* (take), *powiedz!* (say). Verbs in *-awać* keep *-wa-*: *dawaj!, wstawaj!*' },
   'IMP:polite': { o: 17, f: 3, kind: 'inf', t: 'Polite requests: *Proszę* + infinitive',
     x: 'Signs, officials and polite speech use *proszę* (please) + infinitive instead of a command: *Proszę usiąść. Proszę czekać. Proszę mówić wolniej.*' },
 });
@@ -84,14 +84,14 @@ PL.rules('verbs', 'COND', {
 
 PL.rules('verbs', 'MOT', {
   'MOT:det': { o: 21, f: 3, t: 'Now, one way (iść) vs regularly (chodzić)',
-    x: 'Pairs of motion verbs: *iść / chodzić* (on foot), *jechać / jeździć* (by vehicle), *lecieć / latać* (fly), *biec / biegać* (run), *płynąć / pływać* (swim, sail), *nieść / nosić* (carry). The first is one trip in one direction, happening now; the second is habitual, back and forth, or ability: *Idę do szkoły* (I\'m on my way) vs *Chodzę do szkoły* (I attend school).' },
+    x: 'Pairs of motion verbs: *iść / chodzić* (on foot), *jechać / jeździć* (by vehicle), *lecieć / latać* (fly), *biec / biegać* (run), *płynąć / pływać* (swim, sail), *nieść / nosić* (carry). The first is one trip in one direction — happening now, or a single trip planned for a set time (*Jutro lecę do Helsinek*); the second is habitual, back and forth, or ability: *Idę do szkoły* (I\'m on my way) vs *Chodzę do szkoły* (I attend school).' },
   'MOT:foot': { o: 22, f: 3, t: 'On foot (iść) or by vehicle (jechać)',
     x: '*iść / chodzić* = to go on foot; *jechać / jeździć* = to go by car, bus, train, bike. *Idę do sklepu* (walking), *jadę do pracy* (driving / by bus).' },
 });
 
 PL.rules('verbs', 'POL', {
   'POL:pan': { o: 23, f: 3, t: 'Polite "you": *pan / pani / państwo* + 3rd person',
-    x: 'Polite "you" is *pan* (to a man), *pani* (to a woman), *państwo* (to a group or a couple), and the verb goes in the **third** person: *Czy pani ma czas?* (Do you have time?), *Skąd pan jest?*, *Co państwo piją?* (plural).' },
+    x: 'Polite "you" is *pan* (to a man), *pani* (to a woman), *państwo* (to a mixed group or a couple; a group of women is *panie*, of men *panowie*), and the verb goes in the **third** person: *Czy pani ma czas?* (Do you have time?), *Skąd pan jest?*, *Co państwo piją?* (plural).' },
 });
 
 PL.rules('verbs', 'LEMV', {
@@ -220,7 +220,7 @@ PL.items('PRES:alt', [
 ]);
 
 PL.items('PAST:sg', [
-  ['czytać', 'Wczoraj {czytałem} ciekawą książkę.', 'Yesterday I (m.) read an interesting book.'],
+  ['czytać', 'Wczoraj {czytałem} ciekawą książkę.', 'Yesterday I (m.) was reading an interesting book.'],
   ['pisać', 'Anna {pisała} list do babci.', 'Anna was writing a letter to grandma.'],
   ['być', 'Gdzie {byłeś} wczoraj?', 'Where were you yesterday? (to a man)'],
   ['mieszkać', 'Kiedyś {mieszkałam} w Gdańsku.', 'I (f.) used to live in Gdańsk.'],
@@ -244,7 +244,7 @@ PL.items('PAST:pl', [
   ['kupić', 'Anna i Ewa {kupiły} bilety.', 'Anna and Ewa bought the tickets.'],
   ['śpiewać', 'Studenci {śpiewali} polskie piosenki.', 'The students sang Polish songs.'],
   ['pracować', 'Anna i Marek {pracowali} razem.', 'Anna and Marek worked together.', { n: 'One man in the group is enough for the virile *-li*.' }],
-  ['być', 'Ja i moja siostra {byłyśmy} tam razem.', 'My sister and I (both women) were there together.'],
+  ['być', 'Moja siostra i ja {byłyśmy} tam razem.', 'My sister and I (both women) were there together.'],
 ]);
 
 PL.items('PAST:e-a', [
@@ -256,7 +256,7 @@ PL.items('PAST:e-a', [
   ['widzieć', 'Nic nie {widzieliśmy}.', 'We (m. / mixed) didn\'t see anything.'],
   ['myśleć', 'O czym {myślałeś}?', 'What were you thinking about? (to a man)'],
   ['wiedzieć', 'Nie {wiedziałam}!', 'I (f.) didn\'t know!'],
-  ['rozumieć', 'Nie {rozumieli}, co mówię.', 'They didn\'t understand what I was saying.'],
+  ['rozumieć', 'Nie {rozumieli}, co mówię.', 'They (m. / mixed) didn\'t understand what I was saying.'],
   ['umieć', 'Kiedyś {umiałem} grać na gitarze.', 'I (m.) used to be able to play the guitar.'],
 ]);
 
@@ -295,7 +295,7 @@ PL.items('FUT:pf', [
   ['zobaczyć', 'Jeszcze {zobaczymy}!', 'We\'ll see about that!'],
   ['wrócić', 'Kiedy {wrócisz}?', 'When will you be back?'],
   ['pomóc', 'Na pewno ci {pomogę}.', 'I\'ll definitely help you.'],
-  ['dać', '{Dam} ci znać.', 'I\'ll let you know.', { n: 'Literally "I\'ll give you a sign".' }],
+  ['dać', '{Dam} ci znać.', 'I\'ll let you know.', { n: 'Literally "I\'ll give you to know": *dać* + infinitive = to let someone do something (*Daj mi skończyć* — let me finish).' }],
   ['wziąć', '{Weźmiesz} mnie ze sobą?', 'Will you take me with you?'],
   ['zjeść', 'Co {zjecie} na obiad?', 'What will you (all) have for lunch?'],
   ['zacząć', 'Kiedy {zaczniemy}?', 'When shall we start?'],
@@ -313,6 +313,13 @@ PL.items('IMP:sg', [
   ['zobaczyć', '{Zobacz}, jak tu pięknie!', 'Look how beautiful it is here!'],
   ['dzwonić', 'Nie {dzwoń} tak późno!', 'Don\'t call so late!'],
   ['kupić', '{Kup} mleko, proszę.', 'Buy some milk, please.'],
+  ['chodzić', '{Chodź} tutaj!', 'Come here!'],
+  ['iść', '{Idź} już spać!', 'Go to bed now!'],
+  ['jechać', '{Jedź} ostrożnie!', 'Drive carefully!'],
+  ['pomóc', '{Pomóż} mi, proszę!', 'Help me, please!', { n: '*pomoże → pomóż*: o → ó, like *robi → rób*.' }],
+  ['usiąść', '{Usiądź}, proszę.', 'Sit down, please.'],
+  ['spać', '{Śpij} dobrze!', 'Sleep well!'],
+  ['dać', '{Daj} mi chwilę.', 'Give me a moment.'],
 ]);
 
 PL.items('IMP:pl', [
@@ -329,16 +336,10 @@ PL.items('IMP:pl', [
 PL.items('IMP:irr', [
   ['być', '{Bądź} cicho!', 'Be quiet!'],
   ['jeść', '{Jedz} powoli!', 'Eat slowly!'],
-  ['jechać', '{Jedź} ostrożnie!', 'Drive carefully!'],
   ['wziąć', '{Weź} parasol!', 'Take an umbrella!'],
-  ['dać', '{Daj} mi chwilę.', 'Give me a moment.'],
-  ['chodzić', '{Chodź} tutaj!', 'Come here!'],
-  ['pomóc', '{Pomóż} mi, proszę!', 'Help me, please!'],
   ['mieć', '{Miej} litość!', 'Have mercy!'],
   ['powiedzieć', '{Powiedz} prawdę!', 'Tell the truth!'],
-  ['usiąść', '{Usiądź}, proszę.', 'Sit down, please.'],
-  ['iść', '{Idź} już spać!', 'Go to bed now!'],
-  ['spać', '{Śpij} dobrze!', 'Sleep well!'],
+  ['wstawać', '{Wstawaj}, już siódma!', 'Get up, it\'s already seven!', { n: '*-awać* verbs keep *-wa-* in the imperative, although the present drops it: *wstaję → wstawaj!*' }],
 ]);
 
 PL.items('IMP:polite', [
@@ -360,7 +361,7 @@ PL.items('COND:by', [
   ['pojechać', 'Gdybym miał czas, {pojechałbym} do Polski.', 'If I (m.) had time, I would go to Poland.'],
   ['być', 'To {byłoby} wspaniałe!', 'That would be wonderful!'],
   ['woleć', '{Wolałabym} zostać w domu.', 'I (f.) would rather stay at home.'],
-  ['chcieć', '{Chcielibyśmy} zamówić.', 'We would like to order.'],
+  ['chcieć', '{Chcielibyśmy} zamówić.', 'We (m. / mixed) would like to order.'],
   ['pomóc', 'Czy {pomógłbyś} mi z tą walizką?', 'Would you help me with this suitcase? (to a man)'],
   ['mieć', 'Czy {mieliby} państwo chwilę?', 'Would you (ladies and gentlemen) have a moment?'],
 ]);
@@ -375,7 +376,7 @@ PL.items('MOT:det', [
   ['nieść / nosić', 'Ona zawsze {nosi} okulary.', 'She always wears glasses.', { n: '*nosić* (carry around) also means "to wear" — clothes you have on habitually.' }],
   ['nieść / nosić', 'Co {niesiesz}? Pomóc ci?', 'What are you carrying? Shall I help you?'],
   ['iść / chodzić', 'Moja córka już {chodzi} do szkoły.', 'My daughter already goes to school.'],
-  ['biec / biegać', 'Gdzie tak {biegniesz}?', 'Where are you rushing off to?'],
+  ['biec / biegać', 'Dokąd tak {biegniesz}?', 'Where are you rushing off to?'],
   ['biec / biegać', 'Rano {biegam} w parku.', 'In the mornings I go running in the park.'],
   ['płynąć / pływać', 'Statek {płynie} do Gdańska.', 'The ship is sailing to Gdańsk.'],
   ['płynąć / pływać', 'Dobrze {pływasz}!', 'You swim well!'],

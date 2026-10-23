@@ -8,6 +8,7 @@
      - sentences filed under a case/tense rule whose answer is not
        in that case/tense (e.g. a "genitive" rule answered with a
        locative form)
+     - word-family splits that don't spell the word
      - rules with too few exercises, items without options, …
 
    Usage:  node tools/check-content.js            summary + warnings
@@ -83,6 +84,17 @@ PL.ITEMS.forEach(it => {
     if (odd.length) warn(`${it.rule}: options styled unlike the answer (${odd.join(' | ')}) — ${txt}`);
   }
 });
+
+// A family member's parts must spell the word. Chips show sounds, so a soft consonant
+// before i is spelt without its accent: czyść|-ić = czyścić. "się" and spaces are ignored.
+const SOFT = { ć: 'c', ś: 's', ń: 'n', ź: 'z' };
+PL.NESTS.forEach(n => n.members.forEach(m => {
+  const spelt = m.seg.split('|').map(p => p.trim().replace(/^-|-$/g, '')).join('')
+    .replace(/([ćśńź])i/g, (_, c) => SOFT[c] + 'i').replace(/się$/, '');
+  const word = m.w.replace(/ się$/, '').replace(/ /g, '');
+  if (spelt.toLowerCase() !== word.toLowerCase()) warn(`nest ${n.id}: the parts ${m.seg} spell "${spelt}", not ${m.w}`);
+  if (m.gl && m.gl.length !== m.seg.split('|').length) warn(`nest ${n.id}: ${m.w} has ${m.gl.length} glosses for ${m.seg.split('|').length} parts`);
+}));
 
 // Same sentence used twice?
 const seen = {};

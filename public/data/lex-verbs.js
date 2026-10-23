@@ -30,13 +30,13 @@ PL.pattern('v-uje', {
   t: 'Present tense: -ować → -uję', kind: 'verb', tense: 'pres',
   rows: ['-uję', '-ujesz', '-uje', '-ujemy', '-ujecie', '-ują'],
   models: ['pracować', 'kupować', 'dziękować', 'pokazywać'],
-  note: 'Every verb in *-ować* (and most in *-ywać / -iwać* that come from other verbs) swaps *-owa-* for *-uj-*: prac-ować → prac-uję. Thousands of verbs, including new loans: *mailować → mailuję*.',
+  note: 'Practically every verb in *-ować* swaps *-owa-* for *-uj-*: prac-ować → prac-uję (exception: *chować → chowam*). Many in *-ywać / -iwać* do the same (*pokazywać → pokazuję*), but not all: *odpoczywać → odpoczywam, nazywać się → nazywam się*. Thousands of verbs, including new loans: *mailować → mailuję*.',
 });
 PL.pattern('v-aje', {
   t: 'Present tense: -awać → -aję', kind: 'verb', tense: 'pres',
   rows: ['-aję', '-ajesz', '-aje', '-ajemy', '-ajecie', '-ają'],
   models: ['dawać', 'wstawać', 'sprzedawać'],
-  note: 'Verbs in *-awać* drop the *w*: da-wać → da-ję, wsta-wać → wsta-ję.',
+  note: 'Verbs in *-awać* drop *-wa-* in the present: da-wa-ć → da-ję, wsta-wa-ć → wsta-ję (the imperative keeps it: dawaj!, wstawaj!).',
 });
 PL.pattern('v-isz', {
   t: 'Present tense: -ę, -isz', kind: 'verb', tense: 'pres',
@@ -65,7 +65,7 @@ PL.pattern('v-byc', {
 PL.pattern('v-past', {
   t: 'Past tense: -ł + person ending', kind: 'verb', tense: 'past',
   models: ['czytać', 'mieć', 'pisać'],
-  note: 'Take the infinitive, replace *-ć* with *-ł*, then add the endings. Verbs in *-eć* show *a* everywhere except the virile plural: *miał, miała* but *mieli*. A few have their own stem: iść → szedł/szła/szli, móc → mógł/mogła, jeść → jadł/jedli, nieść → niósł/niosła/nieśli, wziąć → wziął/wzięła.',
+  note: 'Take the infinitive, replace *-ć* with *-ł*, then add the endings. Most verbs in *-eć* show *a* everywhere except the virile plural: *miał, miała* but *mieli*. A few have their own stem: iść → szedł/szła/szli, móc → mógł/mogła, jeść → jadł/jedli, nieść → niósł/niosła/nieśli, wziąć → wziął/wzięła.',
 });
 PL.pattern('v-cond', {
   t: 'Conditional: -ł + by + person ending', kind: 'verb', tense: 'cond',
@@ -74,9 +74,9 @@ PL.pattern('v-cond', {
 });
 PL.pattern('v-imp', {
   t: 'Imperative', kind: 'verb', tense: 'imp',
-  rows: ['stem of "they" form, minus -ą', '+ -my (let’s)', '+ -cie (you all)'],
-  models: ['czytać', 'pisać', 'mówić', 'pić'],
-  note: 'Start from the "they" form and drop *-ą*: czytaj-ą → czytaj!, pisz-ą → pisz!, mówi-ą → mów!, robi-ą → rób! (o → ó). If what remains is hard to pronounce, add *-ij / -yj*: zamkn-ą → zamknij!, śpi-ą → śpij!',
+  rows: ['he / she form − last vowel', '+ -my (let’s)', '+ -cie (you all)'],
+  models: ['czytać', 'pisać', 'chodzić', 'robić'],
+  note: 'Start from the "he / she" form and drop the last vowel; a soft consonant stays soft: pisze → pisz!, mówi → mów!, robi → rób! (o → ó), chodzi → chodź!, idzie → idź!, bierze → bierz!, pomoże → pomóż! After *-a* add *-j*: czyta → czytaj! If what remains is hard to pronounce, add *-ij / -yj*: zamknie → zamknij!, śpi → śpij! Learn separately: bądź, miej, jedz, weź, powiedz, and -awać → -awaj (dawaj!, wstawaj!).',
 });
 PL.pattern('v-fut', {
   t: 'Future of być + compound future', kind: 'verb', tense: 'fut',
@@ -264,7 +264,7 @@ PL.verb('spać', { m: 'to sleep', asp: 'impf', cls: 'v-isz',
   note: 's → ś in the present: *śpię, śpisz*.' });
 PL.verb('dzwonić', { m: 'to ring, call (phone)', asp: 'impf', pair: 'zadzwonić', cls: 'v-isz',
   pres: 'dzwonię dzwonisz dzwoni dzwonimy dzwonicie dzwonią', past: 'dzwonił dzwoniła dzwoniło dzwonili dzwoniły', imp: 'dzwoń dzwońmy dzwońcie' });
-PL.verb('lecieć', { m: 'to fly (one trip, now)', asp: 'impf', cls: 'v-isz',
+PL.verb('lecieć', { m: 'to fly (one trip, one direction)', asp: 'impf', cls: 'v-isz',
   pres: 'lecę lecisz leci lecimy lecicie lecą', past: 'leciał leciała leciało lecieli leciały', imp: 'leć lećmy lećcie' });
 PL.verb('musieć', { m: 'to have to, must', asp: 'impf', cls: 'v-isz',
   pres: 'muszę musisz musi musimy musicie muszą', past: 'musiał musiała musiało musieli musiały' });
@@ -296,11 +296,11 @@ PL.verb('brać', { m: 'to take (impf.)', asp: 'impf', pair: 'wziąć', cls: 'v-e
 PL.verb('wziąć', { m: 'to take (pf.)', asp: 'pf', pair: 'brać', cls: 'v-esz',
   pres: 'wezmę weźmiesz weźmie weźmiemy weźmiecie wezmą', past: 'wziął wzięła wzięło wzięli wzięły', imp: 'weź weźmy weźcie',
   note: 'A different root from *brać*. Future *wezmę, weźmiesz*; past *wziął* (he) but *wzięła* (she).' });
-PL.verb('iść', { m: 'to go on foot (one trip, now); to walk', asp: 'impf', cls: 'v-esz',
+PL.verb('iść', { m: 'to go on foot (one trip, one direction); to walk', asp: 'impf', cls: 'v-esz',
   pres: 'idę idziesz idzie idziemy idziecie idą', past: 'szedł szła szło szli szły', imp: 'idź idźmy idźcie',
   pa: 'idący', ap: 'idąc',
   note: 'Irregular past from another root: *szedł, szła, szli*. Every prefixed verb keeps it: wyjść → wyszedł, przyjść → przyszła.' });
-PL.verb('jechać', { m: 'to go by vehicle (one trip, now); to ride, drive', asp: 'impf', cls: 'v-esz',
+PL.verb('jechać', { m: 'to go by vehicle (one trip, one direction); to ride, drive', asp: 'impf', cls: 'v-esz',
   pres: 'jadę jedziesz jedzie jedziemy jedziecie jadą', past: 'jechał jechała jechało jechali jechały', imp: 'jedź jedźmy jedźcie',
   pa: 'jadący', ap: 'jadąc',
   note: 'Present stem *jad- / jedzi-*: jadę, jedziesz … jadą.' });
@@ -313,10 +313,10 @@ PL.verb('móc', { m: 'to be able to, can', asp: 'impf', cls: 'v-esz',
 PL.verb('chcieć', { m: 'to want', asp: 'impf', cls: 'v-esz',
   pres: 'chcę chcesz chce chcemy chcecie chcą', past: 'chciał chciała chciało chcieli chciały',
   note: 'Past: e → a (*chciał, chciała*) except *chcieli*. Conditional *chciałbym / chciałabym* = I would like.' });
-PL.verb('nieść', { m: 'to carry (one trip, now)', asp: 'impf', cls: 'v-esz',
+PL.verb('nieść', { m: 'to carry (one trip, one direction)', asp: 'impf', cls: 'v-esz',
   pres: 'niosę niesiesz niesie niesiemy niesiecie niosą', past: 'niósł niosła niosło nieśli niosły', past1: 'niosł',
   imp: 'nieś nieśmy nieście', note: 'o / e and ó alternations: niosę, niesiesz; niósł, niosła, nieśli.' });
-PL.verb('wieźć', { m: 'to transport, drive someone (one trip, now)', asp: 'impf', cls: 'v-esz',
+PL.verb('wieźć', { m: 'to transport, drive someone (one trip, one direction)', asp: 'impf', cls: 'v-esz',
   pres: 'wiozę wieziesz wiezie wieziemy wieziecie wiozą', past: 'wiózł wiozła wiozło wieźli wiozły', past1: 'wiozł',
   imp: 'wieź wieźmy wieźcie' });
 PL.verb('żyć', { m: 'to live, be alive', asp: 'impf', cls: 'v-esz',
@@ -327,17 +327,17 @@ PL.verb('kryć', { m: 'to cover, hide', asp: 'impf', cls: 'v-esz',
   pres: 'kryję kryjesz kryje kryjemy kryjecie kryją', past: 'krył kryła kryło kryli kryły', imp: 'kryj kryjmy kryjcie' });
 PL.verb('bić', { m: 'to beat, hit', asp: 'impf', cls: 'v-esz',
   pres: 'biję bijesz bije bijemy bijecie biją', past: 'bił biła biło bili biły', imp: 'bij bijmy bijcie' });
-PL.verb('płynąć', { m: 'to swim, sail, flow (one trip, now)', asp: 'impf', cls: 'v-esz',
+PL.verb('płynąć', { m: 'to swim, sail, flow (one trip, one direction)', asp: 'impf', cls: 'v-esz',
   pres: 'płynę płyniesz płynie płyniemy płyniecie płyną', past: 'płynął płynęła płynęło płynęli płynęły', imp: 'płyń płyńmy płyńcie' });
-PL.verb('biec', { m: 'to run (one trip, now)', asp: 'impf', cls: 'v-esz',
+PL.verb('biec', { m: 'to run (one trip, one direction)', asp: 'impf', cls: 'v-esz',
   pres: 'biegnę biegniesz biegnie biegniemy biegniecie biegną', past: 'biegł biegła biegło biegli biegły', imp: 'biegnij biegnijmy biegnijcie' });
 PL.verb('ciągnąć', { m: 'to pull, drag', asp: 'impf', cls: 'v-esz',
   pres: 'ciągnę ciągniesz ciągnie ciągniemy ciągniecie ciągną', past: 'ciągnął ciągnęła ciągnęło ciągnęli ciągnęły', imp: 'ciągnij ciągnijmy ciągnijcie' });
 PL.verb('kłaść', { m: 'to put, lay (impf.)', asp: 'impf', pair: 'położyć', cls: 'v-esz',
   pres: 'kładę kładziesz kładzie kładziemy kładziecie kładą', past: 'kładł kładła kładło kładli kładły', imp: 'kładź kładźmy kładźcie' });
-PL.verb('słać', { m: 'to send; to spread (a bed)', asp: 'impf', cls: 'v-esz',
+PL.verb('słać', { m: 'to send', asp: 'impf', cls: 'v-esz',
   pres: 'ślę ślesz śle ślemy ślecie ślą', past: 'słał słała słało słali słały', imp: 'ślij ślijmy ślijcie',
-  note: 'Rare on its own today, but the base of *wysłać* (to send), *przysłać*, *przesłać*…' });
+  note: 'Rare on its own today, but the base of *wysłać* (to send), *przysłać*, *przesłać*… (*słać łóżko*, "to make the bed", is a different verb: *ścielę, ścielesz*.)' });
 PL.verb('zacząć', { m: 'to begin (pf.)', asp: 'pf', pair: 'zaczynać', cls: 'v-esz',
   pres: 'zacznę zaczniesz zacznie zaczniemy zaczniecie zaczną', past: 'zaczął zaczęła zaczęło zaczęli zaczęły',
   imp: 'zacznij zacznijmy zacznijcie', note: 'Past: *zaczął* (he) but *zaczęła* (she) — ą / ę.' });
@@ -392,7 +392,7 @@ PL.verb('umyć', { from: ['u', 'myć'], m: 'to wash (pf.)', asp: 'pf', pair: 'my
 PL.verb('pojechać', { from: ['po', 'jechać'], m: 'to go, set off (by vehicle)', asp: 'pf' });
 PL.verb('pójść', { m: 'to go, set off (on foot)', asp: 'pf', cls: 'v-esz',
   pres: 'pójdę pójdziesz pójdzie pójdziemy pójdziecie pójdą', past: 'poszedł poszła poszło poszli poszły', imp: 'pójdź pójdźmy pójdźcie',
-  note: 'po + iść, with the *ó* of the old form: *pójdę* (I\'ll go), *poszedł* (he went).' });
+  note: 'po + iść, with the *ó* of the old form: *pójdę* (I\'ll go), *poszedł* (he went). The imperative *pójdź!* is bookish; in speech people say *idź!* or *chodź!*.' });
 PL.verb('poprosić', { from: ['po', 'prosić'], m: 'to ask for (pf.)', asp: 'pf', pair: 'prosić' });
 PL.verb('pokazać', { m: 'to show (pf.)', asp: 'pf', pair: 'pokazywać', cls: 'v-esz',
   pres: 'pokażę pokażesz pokaże pokażemy pokażecie pokażą', past: 'pokazał pokazała pokazało pokazali pokazały', imp: 'pokaż pokażmy pokażcie' });

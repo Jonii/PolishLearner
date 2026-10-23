@@ -12,11 +12,11 @@
 PL.module('building', {
   t: 'Word building', pl: 'Słowotwórstwo',
   blurb: 'Suffixes and compounds: kawa → kawiarnia, lód → lodówka.',
-  intro: 'Polish builds most of its vocabulary from a few thousand roots and a few dozen suffixes. *-arnia* is a shop (*kawiarnia*), *-arka* a machine (*zmywarka*), *-ość* turns an adjective into a quality (*młody → młodość*), *-ek / -ka* make things small and dear (*dom → domek*). Root vowels and consonants shift along the way (*ręka → rączka → ręczny*) — the "find the base word" exercises train exactly that. Once you see the pieces, a word like *bezprzewodowy* reads itself: *bez-* without, *przewód* wire, *-owy* -ish → wireless.',
+  intro: 'Polish builds most of its vocabulary from a few thousand roots and a few dozen suffixes. *-arnia* is a shop (*kawiarnia*), *-arka* a machine (*zmywarka*), *-ość* turns an adjective into a quality (*młody → młodość*), *-ek / -ka* make things small and dear (*dom → domek*). Root vowels and consonants shift along the way (*ręka → rączka, ręczny*) — the "find the base word" exercises train exactly that. Once you see the pieces, a word like *bezprzewodowy* reads itself: *bez-* without, *przewód* wire, *-owy* adjective ending → wireless.',
 });
 
 PL.groups('building', [
-  { id: 'NOUNV', t: 'Nouns from verbs', pl: 'od czasowników', intro: 'Every verb has a noun of the action in *-nie / -cie*, and prefixed verbs give short nouns without any suffix (*wyjechać → wyjazd*).' },
+  { id: 'NOUNV', t: 'Nouns from verbs', pl: 'od czasowników', intro: 'Almost every verb has a noun of the action in *-nie / -cie*, and prefixed verbs give short nouns without any suffix (*wyjechać → wyjazd*).' },
   { id: 'PEOPLE', t: 'People', pl: 'nazwy osób', intro: 'Who does it, who lives there, and the feminine forms.' },
   { id: 'THINGS', t: 'Places and things', pl: 'miejsca i przedmioty', intro: 'Shops and rooms, open spaces, machines and tools.' },
   { id: 'ABSTR', t: 'Qualities and states', pl: 'cechy i stany', intro: 'Abstract nouns: *-ość* (young → youth), *-stwo* (rich → wealth).' },
@@ -36,10 +36,10 @@ PL.affixes({
   '-ka': 'small / female / thing', '-ek': 'small; result', '-tek': 'result', '-ko': 'small', '-eczka': 'tiny', '-eczko': 'tiny', '-uszko': 'tiny, dear',
   '-arnia': 'shop, place', '-iarnia': 'shop, place', '-alnia': 'room for…', '-elnia': 'room for…', '-nia': 'place', '-isko': 'place, ground', '-owisko': 'place, ground', '-nisko': 'place, ground',
   '-arka': 'machine', '-ówka': 'thing', '-dło': 'tool', '-ość': '-ness', '-ność': '-ness', '-stwo': '-hood, -dom', '-ctwo': '-hood, -dom', '-two': '-hood, -dom', '-estwo': '-dom', '-ota': '-ness',
-  '-owy': 'of, made of', '-owa': '(soup) of', '-ny': 'of, -al', '-czny': 'of, -al', '-ni': 'of', '-ski': 'of (a place)', '-cki': 'of (a place)', '-cy': 'of',
-  '-aty': 'having', '-isty': 'full of', '-liwy': 'tending to', '-ity': 'full of', '-alny': '-able', '-awy': '-ish', '-utki': 'tiny', '-uteńki': 'tiny', '-eńki': 'tiny',
+  '-owy': 'of, made of', '-ny': 'of, -al', '-czny': 'of, -al', '-ni': 'of', '-ski': 'of (a place, people)', '-cki': 'of (a place, people)', '-cy': 'of',
+  '-aty': 'having', '-isty': 'full of', '-liwy': 'tending to', '-ity': 'full of', '-alny': '-able', '-awy': '-ish', '-utki': 'very (fondly)', '-iutki': 'very (fondly)', '-uteńki': 'very (fondly)', '-eńki': 'very (fondly)', '-ysty': 'full of', '-ina': 'poor, dear',
   '-szy': '-er', '-ejszy': '-er', '-iejszy': '-er', 'naj-': 'most',
-  '-ący': '-ing', '-ąc': 'while …-ing', '-ony': '-ed', '-any': '-ed', '-ty': '-ed', '-eć': 'to become', '-ieć': 'to become', '-nąć': 'to become',
+  '-ący': '-ing', '-ąc': 'while …-ing', '-ony': '-ed', '-any': '-ed', '-ty': '-ed', '-eć': '(verb)', '-ieć': '(verb)', '-nąć': '(verb)', '-o': '-ly (adverb)', '-ie': '-ly (adverb)', 'przed-': 'before, in front',
   '-ować': 'to do / make', '-owiec': 'specialist', '-ownik': '-er (person / thing)', '-aniec': 'inhabitant', '-czyni': '(female)', '-yni': '(female)', '-ini': '(female)', '-owa': '(female; soup)',
 });
 
@@ -47,29 +47,29 @@ PL.affixes({
 
 PL.rules('building', 'NOUNV', {
   'NOM:vn': { o: 1, f: 3, t: '*-nie / -cie*: the action as a noun',
-    x: 'Every verb has a noun for the action: *czytać → czytanie* (reading), *pić → picie*, *wyjść → wyjście* (exit). Many of these have turned into ordinary things: *mieszkanie* (a "living" = flat), *zadanie* (task), *zdanie* (sentence), *ubranie* (clothes).' },
+    x: 'Almost every verb has a noun for the action: *czytać → czytanie* (reading), *pić → picie*, *wyjść → wyjście* (exit). Many of these have turned into ordinary things: *mieszkanie* (a "living" = flat), *zadanie* (task), *zdanie* (sentence), *ubranie* (clothes).' },
   'NOM:zero': { o: 2, f: 3, t: 'Short nouns from prefixed verbs: wyjazd, podpis',
-    x: 'Prefixed verbs give nouns with no suffix at all — just the prefix and root, often with a vowel change: *wyjechać → wyjazd*, *podpisać → podpis*, *wybrać → wybór* (o → ó), *wschodzić → wschód*. If you know the verb, you can read the noun.' },
+    x: 'Prefixed verbs give nouns with no suffix at all — just the prefix and root, often with a vowel change: *wyjechać → wyjazd*, *podpisać → podpis*, *wybrać → wybór* (the root shows up as *bór*), *wschodzić → wschód*. If you know the verb, you can read the noun.' },
   'NOM:ek': { o: 7, f: 2, t: 'Nouns in *-ek, -tek, -ka* from verbs',
-    x: 'A result or an event: *wydać → wydatek* (expense), *dodać → dodatek* (supplement), *wnieść → wniosek*, *przystanąć → przystanek* (stop), *przesłać → przesyłka* (parcel), *przeprowadzić się → przeprowadzka* (a move).' },
+    x: 'A result or an event: *wydać → wydatek* (expense), *dodać → dodatek* (supplement), *wnieść → wniosek*, *przystanąć → przystanek* (stop), *przesyłać → przesyłka* (parcel), *przeprowadzić się → przeprowadzka* (a move).' },
 });
 
 PL.rules('building', 'PEOPLE', {
   'SFX:arz': { o: 3, f: 3, t: '*-arz*: someone whose trade it is',
     x: 'A person (often a trade) connected with the base: *lek* (medicine) → *lekarz* (doctor), *piec* (to bake) → *piekarz*, *pisać → pisarz* (writer), *kuchnia → kucharz* (cook), *bramka* (goal) → *bramkarz*.' },
   'SFX:nik': { o: 4, f: 3, t: '*-nik*: a person — or a thing',
-    x: 'Someone or something connected with the base: *praca → pracownik* (employee), *ogród → ogrodnik* (gardener), *przewodzić → przewodnik* (guide). Often a thing: *słowo → słownik* (dictionary), *dzień → dziennik* (diary; daily paper), *budzić → budzik* (alarm clock).' },
+    x: 'Someone or something connected with the base: *praca → pracownik* (employee), *ogród → ogrodnik* (gardener), *przewodzić → przewodnik* (guide). Often a thing: *słowo → słownik* (dictionary), *dzień → dziennik* (diary; daily paper), *ręka → ręcznik* (towel).' },
   'SFX:agent': { o: 9, f: 2, t: 'Who does it: *-acz, -ca, -ciel, -ec*',
-    x: 'Nouns for the doer of an action: *słuchać → słuchacz* (listener), *tłumaczyć → tłumacz* (translator), *kierować → kierowca* (driver), *sprzedawać → sprzedawca*, *nauczyć → nauczyciel*, *kupić → kupiec* (merchant).' },
+    x: 'Nouns for the doer of an action: *słuchać → słuchacz* (listener), *palić → palacz* (smoker), *kierować → kierowca* (driver), *sprzedawać → sprzedawca*, *nauczyć → nauczyciel*, *kupić → kupiec* (merchant).' },
   'SFX:fem': { o: 5, f: 3, t: 'Women: *-ka, -yni, -owa*',
     x: 'Most feminine forms add *-ka*: *student → studentka, Polak → Polka, lekarz → lekarka*, with a consonant change where needed (*kolega → koleżanka*). Nouns in *-ca* take *-czyni* (*sprzedawca → sprzedawczyni*); a few take *-yni* or *-owa* (*mistrz → mistrzyni, król → królowa*).' },
   'SFX:inhab': { o: 14, f: 2, t: 'Where people are from: *-anin, -ak, -ec*',
-    x: 'Inhabitants and nationalities: *Polska → Polak*, *Ameryka → Amerykanin* (plural *-anie*: *Amerykanie*), *Warszawa → warszawiak*, *Kraków → krakowianin*, *Niemcy → Niemiec*, *mieszkać → mieszkaniec* (resident). Women add *-ka*: *Polka, Amerykanka*.' },
+    x: 'Inhabitants and nationalities: *Polska → Polak*, *Ameryka → Amerykanin* (plural *-anie*: *Amerykanie*), *Warszawa → warszawiak*, *Kraków → krakowianin*, *Ukraina → Ukrainiec*, *mieszkać → mieszkaniec* (resident). Women add *-ka*: *Polka, Amerykanka*.' },
 });
 
 PL.rules('building', 'THINGS', {
   'SFX:place': { o: 6, f: 3, t: 'Places: *-arnia, -alnia, -nia*',
-    x: '*-arnia* is a shop or workshop: *kawa → kawiarnia* (café), *księga → księgarnia* (bookshop), *piec → piekarnia* (bakery). *-alnia* is a room or place for an activity: *spać → sypialnia* (bedroom), *jeść → jadalnia* (dining room), *czekać → poczekalnia* (waiting room).' },
+    x: '*-arnia* is a shop or workshop: *kawa → kawiarnia* (café), *księga → księgarnia* (bookshop), *piec → piekarnia* (bakery). *-alnia* is a room or place for an activity: *sypiać* (sleep) *→ sypialnia* (bedroom), *jeść → jadalnia* (dining room), *czekać → poczekalnia* (waiting room).' },
   'SFX:isko': { o: 10, f: 2, t: 'Grounds and sites: *-isko*',
     x: 'An open place where something happens: *lot* (flight) → *lotnisko* (airport), *lód → lodowisko* (ice rink), *kąpiel → kąpielisko* (bathing area), *ogień → ognisko* (bonfire). *-isko* can also make things big and rough: *pies → psisko*.' },
   'SFX:tool': { o: 8, f: 3, t: 'Machines and tools: *-arka, -acz, -ówka, -dło*',
@@ -87,11 +87,11 @@ PL.rules('building', 'DIM', {
   'DIM:m': { o: 12, f: 3, t: 'Diminutives in *-ek, -ik, -yk*',
     x: 'Masculine nouns get small with *-ek* (*dom → domek, kot → kotek*) or *-ik / -yk* after some consonants (*stół → stolik, klucz → kluczyk*). The fleeting *e* of *-ek* disappears again in other forms: *domek → domku*.' },
   'DIM:fn': { o: 13, f: 3, t: 'Diminutives in *-ka, -ko*',
-    x: 'Feminine *-a* → *-ka*, neuter *-o / -e* → *-ko*, usually with a consonant change: *ręka → rączka, noga → nóżka, głowa → główka, okno → okienko, piwo → piwko*. Some became new words: *woda → wódka* ("little water"), *karta → kartka* (sheet of paper).' },
+    x: 'Feminine *-a* → *-ka*, neuter *-o / -e* → *-ko*, often with a vowel or consonant change: *ręka → rączka, noga → nóżka, głowa → główka, okno → okienko, piwo → piwko*. Some became new words: *woda → wódka* ("little water"), *karta → kartka* (sheet of paper).' },
   'DIM:pet': { o: 20, f: 2, t: 'Pet names: Kasia, Tomek, mamusia',
     x: 'Polish first names have everyday short forms, used among friends and family: *Katarzyna → Kasia, Tomasz → Tomek, Jan → Janek / Jaś, Małgorzata → Gosia, Jakub → Kuba, Aleksandra → Ola*. Family words too: *mama → mamusia, tata → tatuś*.' },
   'DIM:aug': { o: 24, f: 1, t: 'Big and rough: *-isko, -ina*',
-    x: '*-isko* makes things big (and a little rough): *pies → psisko* (huge dog), *chłop → chłopisko*. *-ina* adds pity or tenderness: *pies → psina* (poor dog).' },
+    x: '*-isko* makes things big and rough — but often fondly or with pity: *pies → psisko* (big dog; dear old dog), *chłop → chłopisko* (*biedne chłopisko* = the poor guy). *-ina* adds pity or tenderness: *pies → psina* (poor dog).' },
 });
 
 PL.rules('building', 'ADJ', {
@@ -100,7 +100,7 @@ PL.rules('building', 'ADJ', {
   'ADJ:ny': { o: 17, f: 3, t: '*-ny, -czny*: of, connected with',
     x: 'Another adjective suffix, often with a consonant change: *ręka → ręczny* (manual), *noga → nożny* (*piłka nożna* = football), *mleko → mleczny* (dairy), *słońce → słoneczny* (sunny), *rok → roczny* (annual), *głowa → główny* (main).' },
   'ADJ:ski': { o: 18, f: 3, t: '*-ski, -cki*: of a place or people',
-    x: 'Places and people: *Polska → polski, Kraków → krakowski, miasto → miejski* (urban), *wieś → wiejski* (rural), *morze → morski*, *mąż → męski* (men\'s, male), *ludzie → ludzki* (human). Before *-ski*, k / g / c fuse into *-cki / -dzki*: *Niemcy → niemiecki*.' },
+    x: 'Places and people: *Polska → polski, Kraków → krakowski, miasto → miejski* (urban), *wieś → wiejski* (rural), *morze → morski*, *mąż → męski* (men\'s, male), *ludzie → ludzki* (human). Before *-ski*, k / c fuse into *-cki* (*Niemcy → niemiecki*), d / dz into *-dzki* (*ludzie → ludzki*, *Łódź → łódzki*); g just drops (*Bóg → boski*, *Praga → praski*).' },
   'ADJ:aty': { o: 25, f: 1, t: 'Having or full of: *-aty, -isty*',
     x: '*-aty* = having (a lot of) something: *broda → brodaty* (bearded), *skrzydło → skrzydlaty* (winged). *-isty* = full of: *piasek → piaszczysty* (sandy), *mgła → mglisty* (misty), *góra → górzysty* (mountainous).' },
   'ADJ:liwy': { o: 22, f: 2, t: 'Inclined to: *-liwy, -ity*',
@@ -108,16 +108,16 @@ PL.rules('building', 'ADJ', {
   'ADJ:alny': { o: 23, f: 2, t: 'Can be done: *-alny, -ny*',
     x: 'Like English *-able*: *jeść → jadalny* (edible), *pić → pitny* (*woda pitna* = drinking water), *czytać → czytelny* (legible), *słyszeć → słyszalny* (audible), *przenosić → przenośny* (portable).' },
   'ADJ:neg': { o: 19, f: 3, t: '*nie-* and *bez-*: not, without',
-    x: '*nie-* = not: *możliwy → niemożliwy*. *bez-* = without (+ *-ny / -owy*): *dom → bezdomny* (homeless), *płata* (payment) → *bezpłatny* (free of charge), *przewód → bezprzewodowy* (wireless). They stack: *bezpieczny* (safe — "without worry") → *niebezpieczny* (dangerous).' },
+    x: '*nie-* = not: *możliwy → niemożliwy*. *bez-* = without (+ *-ny / -owy*): *dom → bezdomny* (homeless), *płacić* (pay; stem *płat-* as in *płatny*) → *bezpłatny* (free of charge), *przewód → bezprzewodowy* (wireless). They stack: *bezpieczny* (safe — "without worry") → *niebezpieczny* (dangerous).' },
   'ADJ:comp': { o: 21, f: 3, t: 'Comparison: *-szy, -ejszy, naj-*',
     x: 'Add *-szy* (*nowy → nowszy, młody → młodszy*) or, after a cluster, *-ejszy* (*ładny → ładniejszy, trudny → trudniejszy*); consonants shift before them (*drogi → droższy, wysoki → wyższy*). The superlative adds *naj-*: *najnowszy*. Irregular: *dobry → lepszy, zły → gorszy, duży → większy, mały → mniejszy*.' },
-  'ADJ:dim': { o: 26, f: 1, t: 'Tiny and -ish: *-utki, -awy*',
-    x: '*-utki / -uteńki* = small and sweet: *mały → malutki, cichy → cichutki*. *-awy* = -ish: *zielony → zielonkawy* (greenish), *słodki → słodkawy* (sweetish).' },
+  'ADJ:dim': { o: 26, f: 1, t: '*-utki* (very, fondly) and *-awy* (-ish)',
+    x: '*-utki / -uteńki* = "very", said fondly: *mały → malutki* (tiny), *cichy → cichutki* (very quiet), *młody → młodziutki* (very young). *-awy* = -ish: *zielony → zielonkawy* (greenish), *słodki → słodkawy* (sweetish).' },
 });
 
 PL.rules('building', 'ADV', {
   'ADV:o': { o: 27, f: 3, t: 'Adverbs: *-o, -e, -ie*',
-    x: 'Most adjectives make an adverb with *-o* (*szybki → szybko, cichy → cicho*) or *-e / -ie* with a softened consonant (*ładny → ładnie, mądry → mądrze*). Irregular: *dobry → dobrze, zły → źle*. Many are also used as "it is…": *zimno* (it\'s cold), *trudno* (it\'s hard).' },
+    x: 'Most adjectives make an adverb with *-o* (*szybki → szybko, cichy → cicho*) or *-e / -ie* with a softened consonant (*ładny → ładnie, mądry → mądrze*). *dobry → dobrze* follows *mądrze* (r → rz); irregular: *zły → źle*. Many are also used as "it is…": *zimno* (it\'s cold), *trudno* (it\'s hard).' },
   'ADV:po': { o: 28, f: 2, t: '*po* + *-u*: po polsku, po cichu',
     x: 'Languages and manners: *po polsku* (in Polish), *po angielsku, po fińsku*; *po cichu* (quietly), *po prostu* (simply), *po kolei* (in turn), *po swojemu* (your own way).' },
 });
@@ -165,16 +165,16 @@ PL.nest({
 
 PL.nest({
   id: 'reka', root: 'ręk- · rąk- · ręcz-', gloss: 'hand', mod: 'building',
-  roots: { 'ręk': 'hand', 'rącz': 'hand', 'ręcz': 'hand' },
-  intro: 'One root, three faces: *ręk-* (ręka), *rąk-* (rąk, rączka) and *ręcz-* (ręczny). Spotting these alternations is half of reading Polish.',
+  roots: { 'ręk': 'hand', 'rącz': 'hand', 'ręcz': 'hand', 'ręczn': 'hand' },
+  intro: 'One root, four faces: *ręk-* (ręka), *rąk-* (rąk), *rącz-* (rączka) and *ręcz-* (ręczny). Spotting these alternations is half of reading Polish.',
   m: [
     ['ręka', 'ręk|-a', 'hand, arm', null, null],
-    ['rączka', 'rącz|-ka', 'little hand; handle', 'DIM:fn', 'ręka', { n: 'ę → ą and k → cz: the diminutive also names the handle of a cup or a bag.' }],
+    ['rączka', 'rącz|-ka', 'little hand; handle', 'DIM:fn', 'ręka', { n: 'ę → ą and k → cz: the diminutive also names the handle of a bag, a suitcase or a pram (a cup\'s handle is *ucho*, "ear").' }],
     ['ręczny', 'ręcz|-ny', 'hand-, manual', 'ADJ:ny', 'ręka', { pos: 'adj', n: '*hamulec ręczny* = handbrake; *bagaż ręczny* = hand luggage.' }],
-    ['ręcznik', 'ręcz|-nik', 'towel', 'SFX:nik', 'ręczny', { lit: 'the hand-thing' }],
-    ['ręcznie', 'ręcz|-nie', 'by hand', 'ADV:o', 'ręczny', { pos: 'adv' }],
+    ['ręcznik', 'ręcz|-nik', 'towel', 'SFX:nik', 'ręka', { lit: 'the hand-thing' }],
+    ['ręcznie', 'ręczn|-ie', 'by hand', 'ADV:o', 'ręczny', { pos: 'adv' }],
     ['rękaw', 'ręk|-aw', 'sleeve', null, null],
-    ['rękawiczka', 'ręk|-aw|-iczka', 'glove', 'DIM:fn', 'rękaw', { lit: 'little sleeve' }],
+    ['rękawiczka', 'ręk|-aw|-iczka', 'glove', 'DIM:fn', 'rękawica', { fm: 'glove, mitten (big: work, boxing)', lit: 'little glove', n: '*rękaw* (sleeve) → *rękawica* (glove) → *rękawiczka*; c → cz before *-ka*.' }],
   ],
 });
 
@@ -185,7 +185,7 @@ PL.nest({
     ['noga', 'nog|-a', 'leg, foot', null, null],
     ['nóżka', 'nóż|-ka', 'little leg; leg (of furniture); stem (of a glass)', 'DIM:fn', 'noga'],
     ['nożny', 'noż|-ny', 'foot-, of the foot', 'ADJ:ny', 'noga', { pos: 'adj', n: '*piłka nożna* = football ("foot-ball"); *hamulec nożny* = footbrake.' }],
-    ['nogawka', 'nog|-awka', 'trouser leg', 'SFX:tool', 'noga'],
+    ['nogawka', 'nog|-awka', 'trouser leg', null, null],
   ],
 });
 
@@ -196,7 +196,7 @@ PL.nest({
     ['głowa', 'głow|-a', 'head', null, null],
     ['główka', 'głów|-ka', 'little head; header (football)', 'DIM:fn', 'głowa'],
     ['główny', 'głów|-ny', 'main, chief', 'ADJ:ny', 'głowa', { pos: 'adj', lit: 'head-', n: 'The "head" one: *dworzec główny* = main station, *wejście główne* = main entrance.' }],
-    ['głównie', 'głów|-nie', 'mainly', 'ADV:o', 'główny', { pos: 'adv' }],
+    ['głównie', 'główn|-ie', 'mainly', 'ADV:o', 'główny', { pos: 'adv' }],
     ['łamigłówka', 'łam|-i-|głów|-ka', 'puzzle, brain-teaser', 'CMP:compound', null, { lit: 'break-head' }],
   ],
 });
@@ -235,7 +235,7 @@ PL.nest({
     ['lodówka', 'lod|-ówka', 'fridge', 'SFX:tool', 'lód', { lit: 'the ice-thing', ex: [['Mleko jest w {lodówce}.', 'The milk is in the fridge.']] }],
     ['lodowisko', 'lod|-owisko', 'ice rink', 'SFX:isko', 'lód'],
     ['lodowaty', 'lod|-owaty', 'icy, ice-cold', 'ADJ:aty', 'lód', { pos: 'adj' }],
-    ['lodowiec', 'lod|-owiec', 'glacier', null, null],
+    ['lodowiec', 'lod|-owiec', 'glacier', null, null, { gl: ['ice', '(thing)'] }],
     ['lodziarnia', 'lodz|-iarnia', 'ice-cream parlour', 'SFX:place', 'lody'],
   ],
 });
@@ -269,11 +269,11 @@ PL.nest({
 
 PL.nest({
   id: 'lek', root: 'lek- · lecz-', gloss: 'medicine, cure', mod: 'building',
-  roots: { 'lek': 'medicine', 'lecz': 'heal' },
+  roots: { 'lek': 'medicine', 'lecz': 'heal', 'lekar': 'doctor' },
   m: [
     ['lek', 'lek', 'medicine, drug', null, null],
     ['lekarz', 'lek|-arz', 'doctor', 'SFX:arz', 'lek', { lit: 'the medicine-man' }],
-    ['lekarka', 'lek|-arka', 'doctor (woman)', 'SFX:fem', 'lekarz'],
+    ['lekarka', 'lekar|-ka', 'doctor (woman)', 'SFX:fem', 'lekarz'],
     ['lekarstwo', 'lek|-arstwo', 'medicine (a remedy)', 'SFX:stwo', 'lekarz'],
     ['leczyć', 'lecz|-yć', 'to treat, cure', 'VRB:ić', 'lek', { n: 'k → cz before *-yć*.' }],
   ],
@@ -295,12 +295,13 @@ PL.nest({
 
 PL.nest({
   id: 'stary', root: 'star-', gloss: 'old', mod: 'building',
+  roots: { 'star': 'old', 'starz': 'old' },
   m: [
     ['stary', 'star|-y', 'old', null, null, { pos: 'adj' }],
     ['starość', 'star|-ość', 'old age', 'SFX:osc', 'stary'],
     ['starszy', 'star|-szy', 'older', 'ADJ:comp', 'stary', { pos: 'adj', n: '*starszy pan* = an elderly gentleman (politer than *stary*).' }],
-    ['starzec', 'star|-zec', 'old man', 'SFX:agent', 'stary'],
-    ['starzeć się', 'starz|-eć', 'to age, grow old', 'VRB:eć', 'stary'],
+    ['starzec', 'starz|-ec', 'old man', 'SFX:agent', 'stary', { n: 'Literary (*Starzec i morze* — The Old Man and the Sea); in everyday speech *staruszek* or *starszy pan*.' }],
+    ['starzeć się', 'starz|-eć', 'to age, grow old', 'VRB:eć', 'stary', { gl: ['old', 'become'] }],
     ['staruszek', 'star|-uszek', 'little old man', 'DIM:m', 'stary'],
   ],
 });
@@ -324,10 +325,10 @@ PL.nest({
   m: [
     ['biały', 'biał|-y', 'white', null, null, { pos: 'adj' }],
     ['biel', 'biel', 'whiteness, (the colour) white', null, null],
-    ['bieleć', 'biel|-eć', 'to turn white', 'VRB:eć', 'biały', { n: 'ał → el before *-eć*.' }],
+    ['bieleć', 'biel|-eć', 'to turn white', 'VRB:eć', 'biały', { gl: ['white', 'become'], n: 'ał → el before *-eć*.' }],
     ['wybielić', 'wy-|biel|-ić', 'to whiten, bleach', 'VRB:ić', 'biały'],
     ['białawy', 'biał|-awy', 'whitish', 'ADJ:dim', 'biały', { pos: 'adj' }],
-    ['białko', 'biał|-ko', 'egg white; protein', 'DIM:fn', 'biały', { lit: 'the little white (part)' }],
+    ['białko', 'biał|-ko', 'egg white; protein', null, null, { gl: ['white', '(the thing)'], lit: 'the white (part)', n: 'Not "small": *-ko* names the white thing — like *żółtko* (yolk) from *żółty*.' }],
   ],
 });
 
@@ -349,7 +350,7 @@ PL.nest({
     ['słońce', 'słońc|-e', 'sun', null, null],
     ['słoneczko', 'słonecz|-ko', 'little sun; sweetheart', 'DIM:fn', 'słońce', { n: 'Also a term of endearment, like "sunshine".' }],
     ['słoneczny', 'słonecz|-ny', 'sunny; solar', 'ADJ:ny', 'słońce', { pos: 'adj', n: '*układ słoneczny* = the solar system.' }],
-    ['słonecznik', 'słonecz|-nik', 'sunflower', 'SFX:nik', 'słoneczny'],
+    ['słonecznik', 'słonecz|-nik', 'sunflower', 'SFX:nik', 'słońce'],
   ],
 });
 
@@ -372,10 +373,10 @@ PL.nest({
   intro: 'A family with a surprise: cooking (*gotować*) is "making ready", and cash (*gotówka*) is "ready money".',
   m: [
     ['gotowy', 'gotow|-y', 'ready', null, null, { pos: 'adj' }],
-    ['gotować', 'got|-ować', 'to cook; to boil', 'VRB:ić', 'gotowy', { lit: 'make ready' }],
-    ['przygotować', 'przy-|got|-ować', 'to prepare', 'PFX:przy', 'gotować', { ex: [['Kto {przygotował} kolację?', 'Who made dinner?']] }],
-    ['gotowanie', 'got|-owanie', 'cooking', 'NOM:vn', 'gotować'],
-    ['gotowany', 'got|-owany', 'boiled', 'PART:ny', 'gotować', { pos: 'adj', n: '*jajko gotowane* = boiled egg.' }],
+    ['gotować', 'gotow|-ać', 'to cook; to boil', 'VRB:ić', 'gotowy', { lit: 'make ready' }],
+    ['przygotować', 'przy-|gotow|-ać', 'to prepare', 'PFX:przy', 'gotować', { ex: [['Kto {przygotował} kolację?', 'Who prepared dinner?']] }],
+    ['gotowanie', 'gotow|-anie', 'cooking', 'NOM:vn', 'gotować'],
+    ['gotowany', 'gotow|-any', 'boiled', 'PART:ny', 'gotować', { pos: 'adj', n: '*jajko gotowane* = boiled egg.' }],
     ['gotówka', 'gotów|-ka', 'cash', null, null, { lit: '"ready" (money)', n: '*Płacę gotówką* = I\'m paying in cash.' }],
   ],
 });
@@ -388,7 +389,7 @@ PL.nest({
     ['Polska', 'Pol|-ska', 'Poland', null, null],
     ['Polak', 'Pol|-ak', 'Pole (man)', 'SFX:inhab', 'Polska'],
     ['Polka', 'Pol|-ka', 'Pole (woman)', 'SFX:fem', 'Polak'],
-    ['polski', 'pol|-ski', 'Polish', 'ADJ:ski', 'Polska', { pos: 'adj', n: 'Adjectives of nationality are written with a small letter: *język polski*.' }],
+    ['polski', 'pol|-ski', 'Polish', 'ADJ:ski', 'Polska', { pos: 'adj', n: 'Adjectives of nationality are written with a small letter: *język polski*. *Polska* is itself this adjective: *(ziemia) polska*, "the Polish land".' }],
     ['po polsku', 'po|pol|-sku', 'in Polish', 'ADV:po', 'polski', { pos: 'adv', ex: [['Mówisz {po polsku}?', 'Do you speak Polish?']] }],
     ['polszczyzna', 'polszcz|-yzna', 'the Polish language (as a whole)', null, null],
   ],
@@ -400,7 +401,7 @@ PL.nest({
     ['Finlandia', 'Fin|-landia', 'Finland', null, null],
     ['Fin', 'Fin', 'Finn (man)', null, null],
     ['Finka', 'Fin|-ka', 'Finn (woman)', 'SFX:fem', 'Fin'],
-    ['fiński', 'fiń|-ski', 'Finnish', 'ADJ:ski', 'Finlandia', { pos: 'adj', n: 'n → ń before *-ski*.' }],
+    ['fiński', 'fiń|-ski', 'Finnish', 'ADJ:ski', 'Fin', { pos: 'adj', n: 'n → ń before *-ski*.' }],
     ['po fińsku', 'po|fiń|-sku', 'in Finnish', 'ADV:po', 'fiński', { pos: 'adv' }],
   ],
 });
@@ -413,7 +414,7 @@ PL.nest({
   m: [
     ['kwiaciarnia', 'kwiac|-iarnia', 'florist\'s', 'SFX:place', 'kwiat', { fm: 'flower', n: 't → c before *-iarnia*.' }],
     ['cukiernia', 'cukier|-nia', 'pastry shop, cake shop', 'SFX:place', 'cukier'],
-    ['sypialnia', 'syp|-ialnia', 'bedroom', 'SFX:place', 'spać', { lit: 'sleeping-room', n: 'Built on *sypiać*, the "repeatedly" form of *spać* (to sleep).' }],
+    ['sypialnia', 'sypi|-alnia', 'bedroom', 'SFX:place', 'sypiać', { fm: 'to sleep (regularly)', lit: 'sleeping-room', n: 'Built on *sypiać*, the "repeatedly" form of *spać* (to sleep).' }],
     ['jadalnia', 'jad|-alnia', 'dining room', 'SFX:place', 'jeść', { lit: 'eating-room' }],
     ['pralnia', 'pra|-lnia', 'laundry, dry cleaner\'s', 'SFX:place', 'prać', { fm: 'to wash (clothes)' }],
     ['poczekalnia', 'po-|czek|-alnia', 'waiting room', 'SFX:place', 'poczekać'],
@@ -438,12 +439,13 @@ PL.nest({
 
 PL.nest({
   id: 'augment', root: '-isko · -ina', gloss: 'big, rough — or pitiful', mod: 'building',
-  intro: 'The opposite of the diminutive: *-isko* makes things huge (and a little rough), *-ina* makes them pitiful or dear.',
+  roots: { 'ps': 'dog', 'koc': 'cat', 'chłop': 'man', 'dom': 'house' },
+  intro: 'The opposite of the diminutive: *-isko* makes things big and rough — often said fondly or with pity — and *-ina* makes them pitiful or dear.',
   m: [
-    ['psisko', 'ps|-isko', 'huge dog, great big hound', 'DIM:aug', 'pies'],
-    ['kocisko', 'koc|-isko', 'big old tomcat', 'DIM:aug', 'kot', { n: 't → c before *-isko*.' }],
-    ['chłopisko', 'chłop|-isko', 'great big fellow', 'DIM:aug', 'chłop', { fm: 'man, bloke (colloquial)' }],
-    ['domisko', 'dom|-isko', 'huge (ugly) house', 'DIM:aug', 'dom'],
+    ['psisko', 'ps|-isko', 'big dog; (fondly) old dog', 'DIM:aug', 'pies', { gl: ['dog', 'big (rough or fond)'] }],
+    ['kocisko', 'koc|-isko', 'big old tomcat', 'DIM:aug', 'kot', { gl: ['cat', 'big (rough or fond)'], n: 't → c before *-isko*.' }],
+    ['chłopisko', 'chłop|-isko', 'big fellow; (poor / good old) chap', 'DIM:aug', 'chłop', { gl: ['man', 'big (rough or fond)'], fm: 'man, bloke (colloquial)' }],
+    ['domisko', 'dom|-isko', 'huge (ugly) house', 'DIM:aug', 'dom', { gl: ['house', 'big (rough)'] }],
     ['psina', 'ps|-ina', 'poor doggy', 'DIM:aug', 'pies', { n: '*-ina* adds pity or tenderness: *biedna psina* = the poor little dog.' }],
   ],
 });
@@ -458,11 +460,11 @@ PL.nest({
     ['koparka', 'kop|-arka', 'excavator, digger', 'SFX:tool', 'kopać', { fm: 'to dig' }],
     ['suszarka', 'susz|-arka', 'dryer; hairdryer', 'SFX:tool', 'suszyć', { fm: 'to dry' }],
     ['wyszukiwarka', 'wy-|szuk|-iwarka', 'search engine', 'SFX:tool', 'wyszukiwać', { fm: 'to search out' }],
-    ['odkurzacz', 'od-|kurz|-acz', 'vacuum cleaner', 'SFX:tool', 'kurz', { fm: 'dust', lit: 'un-duster', n: '*od-* (off) + *kurz* (dust) + *-acz* (device).' }],
+    ['odkurzacz', 'od-|kurz|-acz', 'vacuum cleaner', 'SFX:tool', 'odkurzać', { fm: 'to dust, to vacuum', lit: 'de-duster', n: '*kurz* (dust) → *odkurzać* (dust off) → *odkurzacz* (the device).' }],
     ['otwieracz', 'otwier|-acz', 'opener (bottle, tin)', 'SFX:tool', 'otwierać'],
     ['zapalniczka', 'za-|pal|-niczka', 'lighter', 'SFX:tool', 'zapalić', { fm: 'to light' }],
     ['budzik', 'budz|-ik', 'alarm clock', 'SFX:nik', 'budzić', { fm: 'to wake (someone)' }],
-    ['czajnik', 'czaj|-nik', 'kettle', 'SFX:nik', 'czaj', { fm: 'tea (Russian чай)', n: 'Borrowed via Russian *чайник* — a "tea-thing", from *чай* (tea).' }],
+    ['czajnik', 'czaj|-nik', 'kettle', null, null, { n: 'Borrowed via Russian *чайник* — a "tea-thing", from *чай* (tea).' }],
   ],
 });
 
@@ -478,13 +480,13 @@ PL.nest({
     ['rolnik', 'rol|-nik', 'farmer', 'SFX:nik', 'rola', { fm: 'farmland (old)' }],
     ['rolnictwo', 'rolni|-ctwo', 'agriculture', 'SFX:stwo', 'rolnik'],
     ['słuchacz', 'słuch|-acz', 'listener', 'SFX:agent', 'słuchać'],
-    ['tłumacz', 'tłum|-acz', 'translator, interpreter', 'SFX:agent', 'tłumaczyć', { fm: 'to translate; to explain' }],
+    ['tłumacz', 'tłumacz', 'translator, interpreter', null, null, { n: 'Not *tłum* (crowd) + *-acz*: an old loanword (Turkic *tılmaç*, also the source of German *Dolmetscher*). The verb *tłumaczyć* is built from the noun.' }],
     ['kierowca', 'kier|-owca', 'driver', 'SFX:agent', 'kierować', { fm: 'to steer, drive' }],
     ['właściciel', 'właść|-iciel', 'owner', 'SFX:agent', 'własny', { fm: 'own' }],
     ['kierowniczka', 'kier|-ownicz|-ka', 'manager (woman)', 'SFX:fem', 'kierownik', { n: 'k → cz before *-ka*.' }],
     ['sprzedawczyni', 'sprzedaw|-czyni', 'shop assistant (woman)', 'SFX:fem', 'sprzedawca'],
     ['koleżanka', 'koleż|-anka', 'friend, colleague (woman)', 'SFX:fem', 'kolega', { n: 'g → ż before *-anka*.' }],
-    ['przyjaciółka', 'przyjaciół|-ka', 'friend (woman)', 'SFX:fem', 'przyjaciel', { n: 'e → ó: *przyjaciel → przyjaciółka*.' }],
+    ['przyjaciółka', 'przyjaciół|-ka', 'friend (woman)', 'SFX:fem', 'przyjaciel', { n: 'e → ó and l → ł: *przyjaciel → przyjaciółka*.' }],
     ['królowa', 'król|-owa', 'queen', 'SFX:fem', 'król', { fm: 'king' }],
     ['studentka', 'student|-ka', 'student (woman)', 'SFX:fem', 'student'],
   ],
@@ -497,7 +499,7 @@ PL.nest({
     ['Amerykanka', 'Ameryk|-anka', 'American (woman)', 'SFX:fem', 'Amerykanin'],
     ['warszawiak', 'warszaw|-iak', 'Varsovian (man)', 'SFX:inhab', 'Warszawa'],
     ['krakowianin', 'krakow|-ianin', 'citizen of Kraków', 'SFX:inhab', 'Kraków'],
-    ['Niemiec', 'Niem|-iec', 'German (man)', 'SFX:inhab', 'Niemcy', { n: 'Old meaning "mute": someone who could not speak (Polish).' }],
+    ['Niemiec', 'Niem|-iec', 'German (man)', 'SFX:inhab', 'niemy', { fm: 'mute', n: 'From *niemy* (mute): someone who could not speak (Polish) — once any foreigner. The country *Niemcy* is simply its plural, "the Germans".' }],
     ['mieszkaniec', 'mieszk|-aniec', 'inhabitant, resident', 'SFX:inhab', 'mieszkać'],
     ['Europejczyk', 'Europ|-ejczyk', 'European (man)', 'SFX:inhab', 'Europa', { fm: 'Europe' }],
   ],
@@ -519,7 +521,7 @@ PL.nest({
     ['bogactwo', 'boga|-ctwo', 'wealth, riches', 'SFX:stwo', 'bogaty'],
     ['dzieciństwo', 'dzieciń|-stwo', 'childhood', 'SFX:stwo', 'dziecko'],
     ['królestwo', 'król|-estwo', 'kingdom', 'SFX:stwo', 'król', { fm: 'king' }],
-    ['państwo', 'pań|-stwo', 'the state; ladies and gentlemen; Mr and Mrs', 'SFX:stwo', 'pan', { n: 'Literally "lordship" — the domain of a *pan*. Hence both "the state" and the polite plural "you".' }],
+    ['państwo', 'pań|-stwo', 'the state; ladies and gentlemen; Mr and Mrs', 'SFX:stwo', 'pan', { n: '*-stwo* does two jobs here: the domain of a *pan* (→ the state), and *pan* + *pani* together (→ Mr and Mrs, ladies and gentlemen, the polite "you"), as in *wujostwo* = uncle and aunt.' }],
     ['małżeństwo', 'małżeń|-stwo', 'marriage; married couple', 'SFX:stwo', 'małżonek', { fm: 'spouse' }],
     ['sąsiedztwo', 'sąsiedz|-two', 'neighbourhood', 'SFX:stwo', 'sąsiad'],
     ['lenistwo', 'leni|-stwo', 'laziness', 'SFX:stwo', 'leniwy', { fm: 'lazy' }],
@@ -532,14 +534,14 @@ PL.nest({
   m: [
     ['kotek', 'kot|-ek', 'kitty, kitten', 'DIM:m', 'kot'],
     ['piesek', 'pies|-ek', 'doggy, little dog', 'DIM:m', 'pies', { n: 'The *ie* stays here (*piesek*), though it drops in *psa*.' }],
-    ['stolik', 'stol|-ik', 'little table; table (in a café)', 'DIM:m', 'stół', { n: 'ó → o: *stół → stolik*. *Stolik dla dwóch osób* = a table for two.' }],
+    ['stolik', 'stol|-ik', 'little table; table (in a café)', 'DIM:m', 'stół', { n: 'ó → o and ł → l: *stół → stolik*. *Stolik dla dwóch osób* = a table for two.' }],
     ['kluczyk', 'klucz|-yk', 'small key; car key', 'DIM:m', 'klucz'],
     ['kwiatek', 'kwiat|-ek', 'little flower', 'DIM:m', 'kwiat', { fm: 'flower' }],
-    ['okienko', 'okien|-ko', 'little window; ticket window, counter', 'DIM:fn', 'okno', { n: 'At the post office you queue *przy okienku*.' }],
+    ['okienko', 'okien|-ko', 'little window; ticket window, counter', 'DIM:fn', 'okno', { n: 'At the post office you queue for the counter (*kolejka do okienka*) and are served *przy okienku*.' }],
     ['piwko', 'piw|-ko', 'a (nice) beer', 'DIM:fn', 'piwo', { n: 'Friendly rather than small: *Idziemy na piwko?*' }],
     ['kartka', 'kart|-ka', 'sheet of paper; card', 'DIM:fn', 'karta', { n: '*kartka z życzeniami* = greeting card.' }],
     ['łyżeczka', 'łyż|-eczka', 'teaspoon', 'DIM:fn', 'łyżka', { fm: 'spoon' }],
-    ['serduszko', 'serd|-uszko', 'little heart', 'DIM:fn', 'serce', { fm: 'heart', n: 'c → d: *serce* (heart) has the old stem *serd-* (compare *serdeczny* = heartfelt).' }],
+    ['serduszko', 'serd|-uszko', 'little heart', 'DIM:fn', 'serce', { fm: 'heart', n: '*serce* was once *serd-ce*: the d dropped out of *serce* but is back in *serd-uszko* (compare *serdeczny* = heartfelt).' }],
     ['jabłuszko', 'jabł|-uszko', 'little apple', 'DIM:fn', 'jabłko'],
     ['oczko', 'ocz|-ko', 'little eye; stitch (knitting); small pond', 'DIM:fn', 'oko', { n: 'k → cz. Also the card game "twenty-one".' }],
     ['myszka', 'mysz|-ka', 'little mouse; (computer) mouse', 'DIM:fn', 'mysz', { fm: 'mouse' }],
@@ -584,8 +586,8 @@ PL.nest({
     ['miejski', 'miej|-ski', 'urban, city-, municipal', 'ADJ:ski', 'miasto', { pos: 'adj', n: 'An irregular-looking pair worth memorising: *miasto → miejski*.' }],
     ['wiejski', 'wiej|-ski', 'rural, country-, village', 'ADJ:ski', 'wieś', { pos: 'adj' }],
     ['morski', 'mor|-ski', 'sea-, maritime', 'ADJ:ski', 'morze', { pos: 'adj' }],
-    ['nadmorski', 'nad-|mor|-ski', 'seaside', 'ADJ:ski', 'morze', { pos: 'adj', noroot: true }],
-    ['męski', 'mę|-ski', 'men\'s, male, masculine', 'ADJ:ski', 'mąż', { pos: 'adj', n: 'ą → ę: *mąż → męski*.' }],
+    ['nadmorski', 'nad-|mor|-ski', 'seaside', 'ADJ:ski', 'morze', { pos: 'adj', noroot: true, n: '*nad morzem* = at the seaside (*nad* = on the shore of).' }],
+    ['męski', 'mę|-ski', 'men\'s, male, masculine', 'ADJ:ski', 'mąż', { pos: 'adj', n: 'ą → ę: *mąż → męski*. *Mąż* once meant simply "man" (still in *mąż stanu* = statesman).' }],
     ['ludzki', 'ludz|-ki', 'human; humane', 'ADJ:ski', 'ludzie', { pos: 'adj', fm: 'people' }],
     ['niebieski', 'nieb|-ieski', 'blue; heavenly', 'ADJ:ski', 'niebo', { pos: 'adj', fm: 'sky, heaven', lit: 'sky-ish' }],
     ['boski', 'bo|-ski', 'divine; (colloquially) gorgeous', 'ADJ:ski', 'Bóg', { pos: 'adj', fm: 'God', n: 'ó → o, and the g disappears into *-ski*.' }],
@@ -620,8 +622,8 @@ PL.nest({
     ['jadalny', 'jad|-alny', 'edible', 'ADJ:alny', 'jeść', { pos: 'adj', n: '*grzyby jadalne* = edible mushrooms.' }],
     ['pitny', 'pit|-ny', 'drinkable', 'ADJ:alny', 'pić', { pos: 'adj', n: '*woda pitna* = drinking water.' }],
     ['słyszalny', 'słysz|-alny', 'audible', 'ADJ:alny', 'słyszeć', { pos: 'adj' }],
-    ['widoczny', 'wid|-oczny', 'visible', 'ADJ:alny', 'widok', { pos: 'adj', fm: 'view, sight' }],
-    ['niemożliwy', 'nie-|możl|-iwy', 'impossible', 'ADJ:neg', 'możliwy', { pos: 'adj', fm: 'possible' }],
+    ['widoczny', 'widocz|-ny', 'visible', 'ADJ:alny', 'widok', { pos: 'adj', fm: 'view, sight' }],
+    ['niemożliwy', 'nie-|moż|-liwy', 'impossible', 'ADJ:neg', 'możliwy', { pos: 'adj', fm: 'possible' }],
     ['bezpieczny', 'bez-|piecz|-ny', 'safe', 'ADJ:neg', 'piecza', { pos: 'adj', fm: 'care, worry (old)', lit: 'without worry', n: 'Free of worries → safe.' }],
     ['niebezpieczny', 'nie-|bez-|piecz|-ny', 'dangerous', 'ADJ:neg', 'bezpieczny', { pos: 'adj', lit: 'not without worry' }],
     ['bezpłatny', 'bez-|płat|-ny', 'free of charge', 'ADJ:neg', 'płacić', { pos: 'adj', lit: 'without payment', n: '*wstęp bezpłatny* = admission free.' }],
@@ -641,12 +643,12 @@ PL.nest({
     ['większy', 'więk|-szy', 'bigger', 'ADJ:comp', 'duży', { pos: 'adj', n: 'Irregular — another root (compare *wielki*).' }],
     ['mniejszy', 'mniej|-szy', 'smaller', 'ADJ:comp', 'mały', { pos: 'adj', n: 'Irregular — another root.' }],
     ['nowszy', 'now|-szy', 'newer', 'ADJ:comp', 'nowy', { pos: 'adj' }],
-    ['ładniejszy', 'ładn|-iejszy', 'prettier, nicer', 'ADJ:comp', 'ładny', { pos: 'adj', n: 'After two consonants: *-iejszy*.' }],
+    ['ładniejszy', 'ładn|-iejszy', 'prettier, nicer', 'ADJ:comp', 'ładny', { pos: 'adj', n: 'After two consonants: *-ejszy*; n softens to ń, spelt *ni*: *ładn- → ładniejszy* (compare *ciepły → cieplejszy*).' }],
     ['trudniejszy', 'trudn|-iejszy', 'more difficult', 'ADJ:comp', 'trudny', { pos: 'adj' }],
     ['cieplejszy', 'ciepl|-ejszy', 'warmer', 'ADJ:comp', 'ciepły', { pos: 'adj', n: 'ł → l before *-ejszy*.' }],
     ['droższy', 'droż|-szy', 'more expensive', 'ADJ:comp', 'drogi', { pos: 'adj', n: 'g → ż before *-szy*.' }],
     ['tańszy', 'tań|-szy', 'cheaper', 'ADJ:comp', 'tani', { pos: 'adj' }],
-    ['wyższy', 'wyż|-szy', 'taller, higher', 'ADJ:comp', 'wysoki', { pos: 'adj', n: 'The *-k-* drops and s → ż: *wysoki → wyższy*.' }],
+    ['wyższy', 'wyż|-szy', 'taller, higher', 'ADJ:comp', 'wysoki', { pos: 'adj', n: 'The *-ok-* drops and s → ż: *wysoki → wyższy*.' }],
     ['dłuższy', 'dłuż|-szy', 'longer', 'ADJ:comp', 'długi', { pos: 'adj' }],
     ['szybszy', 'szyb|-szy', 'faster', 'ADJ:comp', 'szybki', { pos: 'adj', n: 'The *-k-* simply drops: *szybki → szybszy*.' }],
     ['ulepszyć', 'u-|lep|-szyć', 'to improve', 'VRB:ić', 'lepszy', { lit: 'make better' }],
@@ -657,12 +659,12 @@ PL.nest({
 });
 
 PL.nest({
-  id: 'tiny', root: '-utki · -awy', gloss: 'tiny and -ish', mod: 'building',
+  id: 'tiny', root: '-utki · -awy', gloss: 'very (fondly) and -ish', mod: 'building',
   m: [
     ['malutki', 'mal|-utki', 'tiny, teeny', 'ADJ:dim', 'mały', { pos: 'adj', n: 'Also *maleńki, malusieńki* — each more tender.' }],
     ['cichutki', 'cich|-utki', 'very quiet', 'ADJ:dim', 'cichy', { pos: 'adj' }],
     ['zielonkawy', 'zielon|-kawy', 'greenish', 'ADJ:dim', 'zielony', { pos: 'adj' }],
-    ['słodkawy', 'słod|-kawy', 'sweetish', 'ADJ:dim', 'słodki', { pos: 'adj', fm: 'sweet' }],
+    ['słodkawy', 'słodk|-awy', 'sweetish', 'ADJ:dim', 'słodki', { pos: 'adj', fm: 'sweet' }],
     ['szarawy', 'szar|-awy', 'greyish', 'ADJ:dim', 'szary', { pos: 'adj', fm: 'grey' }],
   ],
 });
@@ -670,13 +672,13 @@ PL.nest({
 PL.nest({
   id: 'adverbs', root: '-o · -e · po …-u', gloss: 'adverbs', mod: 'building',
   m: [
-    ['szybko', 'szyb|-ko', 'fast, quickly', 'ADV:o', 'szybki', { pos: 'adv', ex: [['Mówisz za {szybko}!', 'You speak too fast!']] }],
+    ['szybko', 'szybk|-o', 'fast, quickly', 'ADV:o', 'szybki', { pos: 'adv', ex: [['Mówisz za {szybko}!', 'You speak too fast!']] }],
     ['cicho', 'cich|-o', 'quietly; (it is) quiet', 'ADV:o', 'cichy', { pos: 'adv', ex: [['Bądź {cicho}!', 'Be quiet!']] }],
     ['dobrze', 'dobrz|-e', 'well; OK', 'ADV:o', 'dobry', { pos: 'adv', n: 'r → rz before *-e*. *Dobrze!* = OK, fine.' }],
     ['źle', 'źl|-e', 'badly', 'ADV:o', 'zły', { pos: 'adv', n: 'Irregular: *zły → źle*.' }],
     ['ładnie', 'ładn|-ie', 'nicely, prettily', 'ADV:o', 'ładny', { pos: 'adv', ex: [['{Ładnie} dziś wyglądasz!', 'You look nice today!']] }],
     ['mądrze', 'mądrz|-e', 'wisely', 'ADV:o', 'mądry', { pos: 'adv' }],
-    ['głośno', 'głoś|-no', 'loudly', 'ADV:o', 'głośny', { pos: 'adv' }],
+    ['głośno', 'głośn|-o', 'loudly', 'ADV:o', 'głośny', { pos: 'adv' }],
     ['łatwo', 'łatw|-o', 'easily; (it is) easy', 'ADV:o', 'łatwy', { pos: 'adv' }],
     ['zimno', 'zimn|-o', 'coldly; (it is) cold', 'ADV:o', 'zimny', { pos: 'adv', n: '*Zimno mi* = I\'m cold.' }],
     ['wesoło', 'wesoł|-o', 'cheerfully', 'ADV:o', 'wesoły', { pos: 'adv' }],
@@ -684,21 +686,21 @@ PL.nest({
     ['po angielsku', 'po|angiel|-sku', 'in English', 'ADV:po', 'angielski', { pos: 'adv' }],
     ['po cichu', 'po|cich|-u', 'quietly, on the quiet', 'ADV:po', 'cichy', { pos: 'adv' }],
     ['po prostu', 'po|prost|-u', 'simply, just', 'ADV:po', 'prosty', { pos: 'adv', fm: 'simple; straight', n: 'One of the most frequent phrases in spoken Polish.' }],
-    ['po kolei', 'po|kol|-ei', 'in turn, one after another', 'ADV:po', 'kolej', { pos: 'adv', fm: 'turn; railway' }],
+    ['po kolei', 'po|kolei', 'in turn, one after another', 'ADV:po', 'kolej', { pos: 'adv', fm: 'turn; railway', n: '*kolei* is just the locative of *kolej* (turn), not the *-u* pattern of *po polsku*.' }],
   ],
 });
 
 PL.nest({
   id: 'become', root: '-eć · -nąć · -ić', gloss: 'becoming and making', mod: 'building',
   m: [
-    ['czerwienieć', 'czerwien|-ieć', 'to go red, blush', 'VRB:eć', 'czerwony'],
-    ['chudnąć', 'chud|-nąć', 'to lose weight', 'VRB:eć', 'chudy', { fm: 'thin' }],
-    ['siwieć', 'siw|-ieć', 'to go grey', 'VRB:eć', 'siwy', { fm: 'grey (hair)' }],
-    ['ciemnieć', 'ciemn|-ieć', 'to get dark', 'VRB:eć', 'ciemny', { fm: 'dark' }],
-    ['łysieć', 'łys|-ieć', 'to go bald', 'VRB:eć', 'łysy', { fm: 'bald' }],
+    ['czerwienieć', 'czerwien|-ieć', 'to go red, blush', 'VRB:eć', 'czerwony', { gl: ['red', 'become'] }],
+    ['chudnąć', 'chud|-nąć', 'to lose weight', 'VRB:eć', 'chudy', { gl: ['thin', 'become'], fm: 'thin' }],
+    ['siwieć', 'siw|-ieć', 'to go grey', 'VRB:eć', 'siwy', { gl: ['grey', 'become'], fm: 'grey (hair)' }],
+    ['ciemnieć', 'ciemn|-ieć', 'to get dark', 'VRB:eć', 'ciemny', { gl: ['dark', 'become'], fm: 'dark' }],
+    ['łysieć', 'łys|-ieć', 'to go bald', 'VRB:eć', 'łysy', { gl: ['bald', 'become'], fm: 'bald' }],
     ['suszyć', 'susz|-yć', 'to dry', 'VRB:ić', 'suchy', { fm: 'dry', n: 'ch → sz before *-yć*.' }],
     ['słodzić', 'słodz|-ić', 'to sweeten', 'VRB:ić', 'słodki', { fm: 'sweet', n: '*Słodzisz?* = Do you take sugar?' }],
-    ['parkować', 'park|-ować', 'to park', 'VRB:ić', 'parking', { fm: 'car park' }],
+    ['ułatwić', 'u-|łatw|-ić', 'to make easier', 'VRB:ić', 'łatwy', { fm: 'easy', ipf: 'ułatwiać' }],
   ],
 });
 
@@ -715,7 +717,7 @@ PL.nest({
     ['zmęczony', 'zmęcz|-ony', 'tired', 'PART:ny', 'zmęczyć', { pos: 'adj', fm: 'to tire out', lit: 'worn out' }],
     ['zajęty', 'zaję|-ty', 'busy; taken (seat)', 'PART:ny', 'zająć', { pos: 'adj', fm: 'to occupy, take up', n: '*Czy to miejsce jest zajęte?* = Is this seat taken?' }],
     ['smażony', 'smaż|-ony', 'fried', 'PART:ny', 'smażyć', { pos: 'adj', fm: 'to fry' }],
-    ['znany', 'zna|-ny', 'well-known, famous', 'PART:ny', 'znać', { pos: 'adj', lit: 'known' }],
+    ['znany', 'zn|-any', 'well-known, famous', 'PART:ny', 'znać', { pos: 'adj', lit: 'known' }],
     ['zepsuty', 'ze-|psu|-ty', 'broken; spoiled', 'PART:ny', 'zepsuć', { pos: 'adj', fm: 'to break, spoil', ex: [['Winda jest {zepsuta}.', 'The lift is out of order.']] }],
   ],
 });
@@ -731,20 +733,20 @@ PL.nest({
     ['gwiazdozbiór', 'gwiazd|-o-|zbiór', 'constellation', 'CMP:compound', null, { lit: 'star-collection' }],
     ['językoznawca', 'język|-o-|znaw|-ca', 'linguist', 'CMP:compound', null, { lit: 'language-knower' }],
     ['krwiodawca', 'krw|-io-|daw|-ca', 'blood donor', 'CMP:compound', null, { lit: 'blood-giver' }],
-    ['Wielkanoc', 'Wielk|-a-|noc', 'Easter', 'CMP:compound', null, { lit: 'the great night' }],
+    ['Wielkanoc', 'Wielka|noc', 'Easter', 'CMP:compound', null, { lit: 'the great night', n: 'Not a linking vowel: *Wielka* is the adjective, and it still declines — *Wielkanocy* or *Wielkiej Nocy*.' }],
     ['wszechświat', 'wszech|świat', 'universe', 'CMP:calque', null, { lit: 'all-world' }],
   ],
 });
 
 PL.nest({
   id: 'grammar', root: 'grammar words', gloss: 'the names of the cases', mod: 'building',
-  intro: 'Polish grammar terms are calques of Latin — and they explain themselves. *przypadek* (case) is Latin *casus* "a falling"; the seven case names say what each case does.',
+  intro: 'Most Polish grammar terms copy Latin piece by piece (*czasownik* copies German *Zeitwort*) — and they explain themselves. *przypadek* (case) is Latin *casus* "a falling". Three case names are Polish inventions that say what the case does: *dopełniacz, celownik, biernik*.',
   m: [
     ['przypadek', 'przy-|pad|-ek', 'case (grammar); chance, coincidence; incident', 'CMP:calque', 'przypaść', { fm: 'to fall to', lit: 'a falling-to', n: 'Latin *casus* "a fall" (from *cadere*). *Przez przypadek* = by chance.' }],
     ['mianownik', 'mian|-ownik', 'nominative', 'CMP:calque', 'mianować', { fm: 'to name', lit: 'the naming (case)' }],
-    ['dopełniacz', 'do-|pełn|-iacz', 'genitive', 'CMP:calque', 'dopełnić', { fm: 'to complete', lit: 'the completer', n: 'It "completes" another noun: *dom ojca*.' }],
-    ['celownik', 'cel|-ownik', 'dative', 'CMP:calque', 'cel', { fm: 'aim, target', lit: 'the aiming (case)', n: 'It names the target — the receiver.' }],
-    ['biernik', 'bier|-nik', 'accusative', 'CMP:calque', 'bierny', { fm: 'passive', lit: 'the passive one', n: 'The thing that suffers the action.' }],
+    ['dopełniacz', 'do-|pełn|-iacz', 'genitive', null, 'dopełnić', { fm: 'to complete', lit: 'the completer', n: 'Not a calque — the Polish name describes what the case does. It "completes" another noun: *dom ojca*.' }],
+    ['celownik', 'cel|-ownik', 'dative', null, 'cel', { fm: 'aim, target', lit: 'the aiming (case)', n: 'Not a calque — the Polish name describes what the case does. It names the target — the receiver.' }],
+    ['biernik', 'bier|-nik', 'accusative', null, 'bierny', { fm: 'passive', lit: 'the passive one', n: 'Not a calque — the Polish name describes what the case does. The thing that suffers the action.' }],
     ['narzędnik', 'narzęd|-nik', 'instrumental', 'CMP:calque', 'narzędzie', { fm: 'tool', lit: 'the tool (case)' }],
     ['miejscownik', 'miejsc|-ownik', 'locative', 'CMP:calque', 'miejsce', { fm: 'place', lit: 'the place (case)' }],
     ['wołacz', 'woł|-acz', 'vocative', 'CMP:calque', 'wołać', { fm: 'to call', lit: 'the caller' }],
@@ -752,7 +754,7 @@ PL.nest({
     ['czasownik', 'czas|-ownik', 'verb', 'CMP:calque', 'czas', { lit: 'time-word', n: 'Like German *Zeitwort* — a word that has tenses ("times").' }],
     ['przymiotnik', 'przy-|miot|-nik', 'adjective', 'CMP:calque', 'przymiot', { fm: 'attribute, quality', lit: 'thrown-at', n: 'Latin *ad-iectivum* = "thrown to (the noun)".' }],
     ['przysłówek', 'przy-|słów|-ek', 'adverb', 'CMP:calque', 'słowo', { lit: 'by-the-word', n: 'Latin *ad-verbium* = "to the verb". (*słowo* once also meant "verb".)' }],
-    ['zaimek', 'za-|im|-ek', 'pronoun', 'CMP:calque', 'imię', { lit: 'for-a-name', n: 'Latin *pro-nomen* = "for, instead of a name".' }],
+    ['zaimek', 'za-|im|-ek', 'pronoun', 'CMP:calque', 'imię', { gl: ['instead of', 'name', ''], lit: 'for-a-name', n: 'Latin *pro-nomen* = "for, instead of a name".' }],
     ['podmiot', 'pod-|miot', 'subject (of a sentence)', 'CMP:calque', 'miotać', { fm: 'to throw', lit: 'thrown under', n: 'Latin *sub-iectum* = "thrown under".' }],
     ['przedmiot', 'przed-|miot', 'object; (school) subject', 'CMP:calque', 'miotać', { fm: 'to throw', lit: 'thrown in front', n: 'Latin *ob-iectum* = "thrown in front of".' }],
   ],
@@ -762,7 +764,7 @@ PL.nest({
 
 PL.items('ADJ:comp', [
   ['duży', 'Ten dom jest {większy} niż nasz.', 'This house is bigger than ours.'],
-  ['dobry', 'Ta kawa jest {lepsza} niż wczoraj.', 'This coffee is better than yesterday.'],
+  ['dobry', 'Kawa jest dziś {lepsza} niż wczoraj.', 'The coffee is better today than yesterday.'],
   ['tani', 'Pociąg jest {tańszy} niż samolot.', 'The train is cheaper than the plane.'],
   ['młody', 'Mam {młodszego} brata.', 'I have a younger brother.'],
   ['stary', 'Moja {starsza} siostra mieszka w Krakowie.', 'My older sister lives in Kraków.'],

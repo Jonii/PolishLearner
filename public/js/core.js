@@ -234,7 +234,7 @@ const PL = (() => {
     if (d.comp && !lex[d.comp]) {
       // comparative: -szy → -si (lepszy → lepsi, ładniejszy → ładniejsi)
       const cvir = d.comp.replace(/szy$/, 'si');
-      addLex(d.comp, { pos: 'adj', m: `${d.m} (comparative)`, compOf: lemma, forms: adjForms(d.comp, cvir), hidden: true });
+      addLex(d.comp, { pos: 'adj', m: d.compM || `${d.m} (comparative)`, compOf: lemma, forms: adjForms(d.comp, cvir), hidden: true });
     }
   }
 

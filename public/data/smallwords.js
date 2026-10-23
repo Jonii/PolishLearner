@@ -22,7 +22,7 @@ PL.module('small', {
 
 PL.groups('small', [
   { id: 'MEET', t: 'Meeting and parting', pl: 'powitania i pożegnania' },
-  { id: 'POLITE', t: 'Politeness', pl: 'grzeczności' },
+  { id: 'POLITE', t: 'Politeness', pl: 'zwroty grzecznościowe' },
   { id: 'ANSWER', t: 'Yes, no, maybe', pl: 'tak, nie, może' },
   { id: 'REACT', t: 'Reactions', pl: 'reakcje' },
   { id: 'PARTICLE', t: 'Particles', pl: 'partykuły', intro: 'Short words that change the colour of a sentence. They are best learned in sentences — always check the translation.' },
@@ -52,7 +52,7 @@ PL.rules('small', 'ANSWER', {
 });
 PL.rules('small', 'REACT', {
   'SW:react': { o: 5, f: 3, t: 'Reacting: Naprawdę? Szkoda! Trudno!',
-    x: 'Surprise: *Naprawdę? Serio? No coś ty!* Sympathy: *Szkoda!* (what a pity), *Trudno* (oh well — it can\'t be helped). Joy: *Super! Świetnie! Brawo!* And the very Polish shrug: *Zależy* (it depends).' },
+    x: 'Surprise: *Naprawdę? Serio? No coś ty!* Sympathy: *Szkoda!* (what a pity). Resignation: *Trudno* (oh well — it can\'t be helped). Joy: *Super! Świetnie! Brawo!* And the very Polish shrug: *Zależy* (it depends).' },
 });
 PL.rules('small', 'PARTICLE', {
   'SW:particles': { o: 6, f: 3, t: '*chyba, przecież, właśnie, nawet, aż…*',
@@ -70,13 +70,13 @@ PL.rules('small', 'ASK', {
 });
 PL.rules('small', 'WISH', {
   'SW:wish': { o: 8, f: 3, t: 'Wishes: Smacznego! Na zdrowie! Powodzenia!',
-    x: 'Wishes are in the genitive — "(I wish you) of…": *Smacznego!* (enjoy your meal), *Powodzenia!* (good luck), *Wszystkiego najlepszego!* (all the best), *Wesołych Świąt!* (Merry Christmas). *Na zdrowie!* is for toasts and sneezes; *Sto lat!* is the birthday song.' },
+    x: 'Most wishes are in the genitive, because an unspoken *Życzę (ci)…* (I wish you…) takes the genitive: *Smacznego!* (enjoy your meal), *Powodzenia!* (good luck), *Wszystkiego najlepszego!* (all the best), *Wesołych Świąt!* (Merry Christmas). *Na zdrowie!* is for toasts and sneezes; *Sto lat!* is the birthday song.' },
 });
 PL.rules('small', 'PLACES', {
   'SW:shop': { o: 11, f: 3, t: 'In a shop or café',
     x: 'Ask with *Poproszę…* + accusative: *Poproszę kawę*. You will hear *Coś jeszcze?* (anything else?), *Na miejscu czy na wynos?* (eat in or take away?), *Kartą czy gotówką?* (card or cash?). You might answer *To wszystko* (that\'s all) or *Reszty nie trzeba* (keep the change).' },
   'SW:phone': { o: 12, f: 2, t: 'On the phone and in messages',
-    x: 'Answering: *Halo?* or *Słucham?* Asking who it is: *Kto mówi?* Wrong number: *Pomyłka*. Ending: *Do usłyszenia!* ("until hearing") — and in writing: *Pozdrawiam* (best regards), *Daj znać* (let me know), *Odezwę się* (I\'ll be in touch).' },
+    x: 'Answering: *Halo?* or *Słucham?* Asking who it is: *Kto mówi?* Wrong number: *Pomyłka*. Ending: *Do usłyszenia!* ("until hearing") — in writing: *Pozdrawiam* (best regards); in speech and messages alike: *Daj znać* (let me know), *Odezwę się* (I\'ll be in touch).' },
 });
 PL.rules('small', 'FEEL', {
   'SW:feel': { o: 13, f: 3, t: 'Feelings with *mi*: zimno mi, przykro mi',
@@ -92,69 +92,69 @@ PL.rules('small', 'CASUAL', {
 PL.phrases('SW:greet', [
   ['Dzień dobry', 'Good morning / good afternoon (formal hello)', { lit: 'good day', use: 'Used until evening, to anyone you would call *pan / pani*, and when entering a shop.', say: 'You walk into a small shop in the morning. You say:' }],
   ['Dobry wieczór', 'Good evening', { lit: 'good evening', use: 'A greeting on arrival — not a goodbye.', say: 'You walk into a restaurant at 8 pm. You greet the waiter:' }],
-  ['Cześć', 'Hi; bye (informal)', { lit: 'honour', use: 'With friends and anyone you call *ty* — both for hello and goodbye.', say: 'You meet a friend in the street. You say hi:' }],
+  ['Cześć', 'Hi; bye (informal)', { lit: 'honour', use: 'With friends and anyone you call *ty* — both for hello and goodbye.', say: 'You meet a friend in the street. You say hi:', alt: ['Hej', 'Siema', 'Hejka', 'Siemka'] }],
   ['Hej', 'Hey, hi', { use: 'Casual, very common among younger people and in messages.' }],
-  ['Do widzenia', 'Goodbye (formal)', { lit: 'until seeing', use: 'The formal goodbye: leaving a shop, an office, a doctor.', say: 'You leave the doctor\'s surgery. You say:' }],
+  ['Do widzenia', 'Goodbye (formal)', { lit: 'until seeing', use: 'The formal goodbye: leaving a shop, an office, a doctor.', say: 'You leave the doctor\'s surgery. You say:', alt: ['Dziękuję, do widzenia', 'Do widzenia, dziękuję'] }],
   ['Do zobaczenia', 'See you (later)', { lit: 'until seeing', use: 'Neutral; when you expect to meet again.' }],
-  ['Na razie', 'Bye for now', { lit: 'for the time being', use: 'Casual goodbye. On its own, *na razie* also means "for now": *na razie wszystko dobrze* (so far so good).' }],
+  ['Na razie', 'Bye for now', { lit: 'for the time being', use: 'Casual goodbye. Inside a sentence it means "for now, so far": *na razie wszystko dobrze* (so far so good).' }],
   ['Do jutra', 'See you tomorrow', { lit: 'until tomorrow' }],
   ['Pa!', 'Bye! (casual, affectionate)', { use: 'Often doubled: *Pa pa!* Used with family and friends.' }],
-  ['Dobranoc', 'Good night', { lit: 'good night', use: 'Only when going to bed or very late — not a greeting.', say: 'Your child is going to bed. You say:' }],
-  ['Witam', 'Hello (semi-formal); welcome', { lit: 'I greet', use: 'Common at the start of e-mails and by hosts. *Witaj!* = welcome!' }],
+  ['Dobranoc', 'Good night', { lit: 'good night', use: 'Only when going to bed or very late — not a greeting.', say: 'Your child is going to bed. You say:', alt: ['Śpij dobrze', 'Dobranoc, śpij dobrze', 'Kolorowych snów'] }],
+  ['Witam', 'Welcome; hello (from a host)', { lit: 'I welcome', use: 'Properly said by a host to guests. Very common at the start of e-mails, but many Poles find it presumptuous from a stranger — open a formal e-mail with *Dzień dobry*. *Witaj!* = welcome! / hello!' }],
 ]);
 
 PL.phrases('SW:polite', [
   ['Proszę', 'Please; here you are; pardon?', { lit: 'I ask', use: 'Three jobs in one word: asking for something, handing something over, and asking someone to repeat.' }],
-  ['Dziękuję', 'Thank you', { lit: 'I thank', say: 'Someone holds the door for you. You say:' }],
+  ['Dziękuję', 'Thank you', { lit: 'I thank', use: 'Said alone in answer to an offer (*Jeszcze kawy?*) it is often taken as "no, thank you" — unlike Finnish *kiitos*. To accept: *Tak, poproszę* or *Chętnie*.', say: 'Someone holds the door for you. You say:', alt: ['Dzięki', 'Dziękuję bardzo', 'Bardzo dziękuję'] }],
   ['Dzięki', 'Thanks (casual)', { lit: 'thanks (plural noun)' }],
-  ['Nie ma za co', 'You\'re welcome; don\'t mention it', { lit: 'there\'s nothing for which (to thank)', use: 'The standard reply to *dziękuję*.', say: 'Someone thanks you for your help. You answer:' }],
+  ['Nie ma za co', 'You\'re welcome; don\'t mention it', { lit: 'there\'s nothing for which (to thank)', use: 'The standard reply to *dziękuję*.', say: 'Someone thanks you for your help. You answer:', alt: ['Proszę bardzo', 'Proszę', 'Nie ma sprawy', 'Drobiazg', 'Spoko'] }],
   ['Proszę bardzo', 'You\'re welcome; here you are; go ahead', { lit: 'I ask very much' }],
-  ['Przepraszam', 'Excuse me; I\'m sorry', { lit: 'I apologise', use: 'Also to get past someone or to get attention: *Przepraszam, gdzie jest dworzec?*', say: 'You need to get past someone on a crowded tram. You say:' }],
+  ['Przepraszam', 'Excuse me; sorry (apologising)', { lit: 'I apologise', use: 'Also to get past someone or to get attention: *Przepraszam, gdzie jest dworzec?*', say: 'You need to get past someone on a crowded tram. You say:', alt: ['Przepraszam, wysiadam', 'Przepraszam bardzo'] }],
   ['Nic nie szkodzi', 'Never mind; no harm done', { lit: 'nothing harms', use: 'The reply to *przepraszam*.' }],
   ['Bardzo mi miło', 'Nice to meet you', { lit: '(it is) very nice to me' }],
-  ['Mnie również', 'Likewise; me too', { lit: 'to me also', use: 'The answer to *Bardzo mi miło*.' }],
-  ['Z przyjemnością', 'With pleasure', { lit: 'with pleasure' }],
-  ['Nie trzeba', 'There\'s no need; no thanks', { lit: 'it is not needed', use: '*Dziękuję, nie trzeba* = no thanks (e.g. to a bag or a receipt).' }],
+  ['Mnie również', 'Likewise (= nice to meet you too)', { lit: 'to me also', use: 'The answer to *Bardzo mi miło* / *Miło mi* — *mnie* matches the *mi*. After *Lubię jazz*, "me too" is *Ja też*.' }],
+  ['Z przyjemnością', 'With pleasure; gladly', { lit: 'with pleasure' }],
+  ['Nie trzeba', 'There\'s no need; it\'s not necessary', { lit: 'it is not needed', use: '*Dziękuję, nie trzeba* = no thanks (e.g. to a bag or a receipt).' }],
 ]);
 
 PL.phrases('SW:yes', [
   ['Tak', 'Yes'],
   ['No', 'Yeah; well…', { use: 'In speech *no* very often means "yes": *No, jasne!* (Yeah, sure!). It is also a filler, like "well".' }],
-  ['Jasne', 'Sure, of course', { lit: 'clear', say: 'A friend asks if you can help. Say "Sure!":' }],
+  ['Jasne', 'Sure, of course', { lit: 'clear', say: 'A friend asks if you can help. Say "Sure!":', alt: ['Pewnie', 'No jasne', 'No pewnie', 'Oczywiście'] }],
   ['Oczywiście', 'Of course', { lit: 'obviously' }],
   ['Pewnie', 'Sure; probably', { lit: 'certainly' }],
-  ['Chętnie', 'Gladly; I\'d love to', { lit: 'willingly', use: 'The way to accept an invitation.', say: 'A friend asks if you want to go for a coffee. Say "I\'d love to!":' }],
+  ['Chętnie', 'Gladly; I\'d love to', { lit: 'willingly', use: 'The way to accept an invitation.', say: 'A friend asks if you want to go for a coffee. Say "I\'d love to!":', alt: ['Bardzo chętnie', 'Z przyjemnością'] }],
   ['Zgoda', 'Agreed; deal', { lit: 'agreement' }],
-  ['W porządku', 'All right, OK, fine', { lit: 'in order' }],
+  ['W porządku', 'All right; fine', { lit: 'in order' }],
   ['Masz rację', 'You\'re right', { lit: 'you have reason' }],
-  ['Zgadza się', 'That\'s right; correct', { lit: 'it agrees (with itself)' }],
-  ['Owszem', 'Indeed, yes (formal)', { use: 'A slightly formal, emphatic "yes".' }],
+  ['Zgadza się', 'That\'s right; correct', { lit: 'it tallies' }],
+  ['Owszem', 'Yes, actually; indeed', { use: 'A bookish, emphatic "yes" — usually contradicting an expected "no" (*— Nie byłeś tam? — Owszem, byłem.*) or conceding (*Owszem, ale…* = true, but…).' }],
 ]);
 
 PL.phrases('SW:no', [
   ['Nie', 'No; not'],
   ['Nie, dziękuję', 'No, thank you'],
-  ['Raczej nie', 'Probably not; I\'d rather not', { lit: 'rather not' }],
+  ['Raczej nie', 'Probably not; not really', { lit: 'rather not', use: '*raczej* = "more likely", not "prefer": "I\'d rather not" is *Wolałbym nie* (a woman: *Wolałabym nie*).' }],
   ['Chyba nie', 'I don\'t think so', { lit: 'probably not' }],
-  ['Wcale nie', 'Not at all', { lit: 'not at all' }],
+  ['Wcale nie', 'Not at all (= no, not so)', { lit: 'not at all', use: 'Contradicts: *— Jesteś zmęczony? — Wcale nie!* Not a reply to thanks — that is *Nie ma za co*.' }],
   ['Ależ skąd!', 'Not at all! Of course not!', { lit: 'but from where!' }],
-  ['Nie ma mowy!', 'No way!', { lit: 'there is no talk (of it)' }],
+  ['Nie ma mowy!', 'No way! Out of the question!', { lit: 'there is no talk (of it)' }],
   ['Niekoniecznie', 'Not necessarily'],
   ['Wątpię', 'I doubt it', { lit: 'I doubt' }],
-  ['Niestety', 'Unfortunately', { use: 'From *nie* + an old *stety* (happily). People joke: *stety albo niestety* = for better or worse.', say: 'You have to say "unfortunately" (before saying you can\'t come):' }],
+  ['Niestety', 'Unfortunately', { use: 'People joke *stety czy niestety* (for better or worse) — as if there were a word *stety*.', say: 'You have to say "unfortunately" (before saying you can\'t come):' }],
 ]);
 
 PL.phrases('SW:react', [
   ['Naprawdę?', 'Really?', { lit: 'truly?' }],
   ['Serio?', 'Seriously?'],
-  ['Niemożliwe!', 'No way! That\'s impossible!', { lit: 'impossible!' }],
-  ['Szkoda', 'What a pity; (it\'s) a shame', { lit: 'damage, loss', say: 'Your friend can\'t come to your party. You say "What a pity!":' }],
-  ['Trudno', 'Oh well; it can\'t be helped', { lit: '(it is) hard', use: 'Accepting something you can\'t change.' }],
+  ['Niemożliwe!', 'That\'s impossible! No way! (disbelief)', { lit: 'impossible!' }],
+  ['Szkoda', 'What a pity; (it\'s) a shame', { lit: 'damage, loss', say: 'Your friend can\'t come to your party. You say "What a pity!":', alt: ['Jaka szkoda'] }],
+  ['Trudno', 'Oh well; it can\'t be helped', { lit: '(it is) hard', use: 'Accepting something you can\'t change — your own or a shared problem. Said about someone else\'s bad luck it sounds like "tough luck".' }],
   ['Świetnie!', 'Great! Excellent!', { lit: 'brilliantly' }],
   ['Brawo!', 'Well done! Bravo!'],
   ['Nareszcie!', 'At last! Finally!'],
   ['O rany!', 'Oh my! Gosh!', { lit: 'oh, wounds!', use: 'From an old oath by Christ\'s wounds — now completely harmless.' }],
-  ['No coś ty!', 'You don\'t say! No way!', { lit: 'well, what (are) you!' }],
+  ['No coś ty!', 'Come on, no way! (surprise); of course not!', { lit: 'well, what (are) you!' }],
   ['Nic dziwnego', 'No wonder', { lit: 'nothing strange' }],
   ['Zależy', 'It depends', { lit: '(it) depends' }],
   ['Jak miło!', 'How nice!', { lit: 'how nicely!' }],
@@ -179,7 +179,7 @@ PL.phrases('SW:when', [
   ['już', 'already; now; (with nie) any more', { use: '*Już idę!* = I\'m coming! · *Już nie palę* = I don\'t smoke any more.' }],
   ['jeszcze', 'still; yet; more', { use: '*Jeszcze nie* = not yet · *Jeszcze raz!* = once more!' }],
   ['dopiero', 'only (just); not until', { use: '*Dopiero przyszedłem* = I\'ve only just arrived · *Dopiero jutro* = not until tomorrow.' }],
-  ['zaraz', 'in a moment, right away; hang on', { use: '*Zaraz wracam!* = back in a minute! · *Zaraz, zaraz…* = hang on…', say: 'Someone calls you. Say "in a moment!" (one word):' }],
+  ['zaraz', 'in a moment, right away; hang on', { use: '*Zaraz wracam!* = back in a minute! · *Zaraz, zaraz…* = hang on…', say: 'Someone calls you. Say "in a moment!" (one word):', alt: ['Chwileczkę', 'Chwila', 'Moment', 'Momencik', 'Sekundę'] }],
   ['od razu', 'straight away, at once', { lit: 'from (the first) blow' }],
   ['wreszcie', 'at last, finally'],
   ['w końcu', 'finally; after all', { lit: 'in the end' }],
@@ -202,18 +202,18 @@ PL.phrases('SW:link', [
   ['w sumie', 'all in all; actually', { lit: 'in sum' }],
   ['w ogóle', 'at all; in general', { lit: 'in general', use: '*W ogóle nie wiem* = I have no idea at all.' }],
   ['na przykład', 'for example', { lit: 'on (the) example' }],
-  ['tak naprawdę', 'actually, really', { lit: 'so truly' }],
+  ['tak naprawdę', 'actually, in fact; to tell the truth', { lit: 'so truly' }],
   ['mimo to', 'nevertheless', { lit: 'despite that' }],
 ]);
 
 PL.phrases('SW:ask', [
-  ['Słucham?', 'Pardon?; Hello? (answering the phone)', { lit: 'I\'m listening', say: 'You didn\'t catch what someone said. Politely ask "Pardon?":' }],
+  ['Słucham?', 'Pardon?; Hello? (answering the phone)', { lit: 'I\'m listening', say: 'You didn\'t catch what someone said. Politely ask "Pardon?":', alt: ['Proszę', 'Przepraszam'] }],
   ['Jak to?', 'How come? What do you mean?', { lit: 'how that?' }],
   ['Co słychać?', 'What\'s new? How are things?', { lit: 'what is heard?' }],
   ['Co u ciebie?', 'How are you doing?', { lit: 'what (is) at yours?' }],
   ['Jak leci?', 'How\'s it going?', { lit: 'how is it flying?' }],
   ['Jak się masz?', 'How are you?', { lit: 'how do you have yourself?' }],
-  ['Co się stało?', 'What happened? What\'s wrong?', { lit: 'what has happened (itself)?' }],
+  ['Co się stało?', 'What happened? What\'s wrong?', { lit: 'what has become? (*stać się* = to become, happen)' }],
   ['O co chodzi?', 'What\'s the matter? What\'s it about?', { lit: 'what does it walk about?' }],
   ['Która godzina?', 'What time is it?', { lit: 'which hour?' }],
   ['Co to znaczy?', 'What does it mean?'],
@@ -226,7 +226,7 @@ PL.phrases('SW:wish', [
   ['Na zdrowie!', 'Cheers!; Bless you!', { lit: 'to health', use: 'For a toast, and when someone sneezes.', say: 'Someone sneezes. You say:' }],
   ['Sto lat!', 'Happy birthday! (the song)', { lit: 'a hundred years', use: 'The birthday song: "may he / she live a hundred years".' }],
   ['Wszystkiego najlepszego!', 'All the best! Happy birthday!', { lit: '(I wish you) everything best' }],
-  ['Powodzenia!', 'Good luck!', { lit: '(I wish you) success', say: 'Your friend has an exam tomorrow. You say:' }],
+  ['Powodzenia!', 'Good luck!', { lit: '(I wish you) success', say: 'Your friend has an exam tomorrow. You say:', alt: ['Trzymam kciuki', 'Połamania nóg', 'Powodzenia na egzaminie'] }],
   ['Trzymam kciuki!', 'Fingers crossed!', { lit: 'I\'m holding (my) thumbs' }],
   ['Wesołych Świąt!', 'Merry Christmas! Happy Easter!', { lit: '(I wish you) merry holidays' }],
   ['Szczęśliwego Nowego Roku!', 'Happy New Year!', { lit: '(I wish you) a happy new year' }],
@@ -241,7 +241,7 @@ PL.phrases('SW:shop', [
   ['Poproszę…', 'I\'d like…, … please', { lit: 'I will ask (for)', use: 'Followed by the accusative: *Poproszę kawę*, *poproszę bilet*.' }],
   ['Coś jeszcze?', 'Anything else?', { lit: 'something more?' }],
   ['To wszystko', 'That\'s all', { lit: 'this (is) all' }],
-  ['Ile płacę?', 'How much is it? (How much do I owe?)', { lit: 'how much do I pay?', say: 'You want to pay. Ask "How much do I owe?":' }],
+  ['Ile płacę?', 'How much is it? (How much do I owe?)', { lit: 'how much do I pay?', say: 'You want to pay. Ask "How much do I owe?":', alt: ['Ile się należy?', 'Ile jestem winien?', 'Ile jestem winna?', 'Ile płacimy?', 'Ile to będzie?'] }],
   ['Ile to kosztuje?', 'How much does this cost?'],
   ['Reszty nie trzeba', 'Keep the change', { lit: 'the rest is not needed' }],
   ['Kartą czy gotówką?', 'Card or cash?', { lit: 'by card or by cash?' }],
@@ -253,10 +253,10 @@ PL.phrases('SW:shop', [
 
 PL.phrases('SW:phone', [
   ['Halo?', 'Hello? (on the phone)'],
-  ['Kto mówi?', 'Who\'s speaking?', { lit: 'who speaks?' }],
+  ['Kto mówi?', 'Who\'s speaking?', { lit: 'who speaks?', use: 'Rather blunt; politer: *Z kim rozmawiam?* (who am I speaking to?)' }],
   ['Pomyłka', 'Wrong number', { lit: 'a mistake' }],
   ['Oddzwonię', 'I\'ll call (you) back', { lit: 'I\'ll ring back' }],
-  ['Daj znać', 'Let me know', { lit: 'give a sign' }],
+  ['Daj znać', 'Let me know', { lit: 'give (me) to know' }],
   ['Odezwę się', 'I\'ll be in touch', { lit: 'I\'ll make myself heard' }],
   ['Do usłyszenia', 'Talk to you soon (on the phone)', { lit: 'until hearing' }],
   ['Pozdrawiam', 'Best regards (in writing)', { lit: 'I greet' }],
@@ -264,25 +264,25 @@ PL.phrases('SW:phone', [
 ]);
 
 PL.phrases('SW:feel', [
-  ['Zimno mi', 'I\'m cold', { lit: '(it is) cold to me', say: 'Say that you are cold (two words):' }],
+  ['Zimno mi', 'I\'m cold', { lit: '(it is) cold to me', say: 'Say that you are cold (two words):', alt: ['Mnie zimno'] }],
   ['Gorąco mi', 'I\'m hot', { lit: '(it is) hot to me' }],
-  ['Przykro mi', 'I\'m sorry (sympathy)', { lit: '(it is) painful to me', use: 'For bad news, not for apologies — that is *przepraszam*.' }],
+  ['Przykro mi', 'I\'m sorry (to hear that); I regret', { lit: '(it is) painful to me', use: 'Regret and sympathy: bad news (*Przykro mi, że tak się stało*) or a polite refusal (*Przykro mi, nie mamy już biletów*). To apologise for what you did: *przepraszam*.' }],
   ['Wszystko mi jedno', 'I don\'t mind; it\'s all the same to me', { lit: 'all (is) one to me' }],
   ['Nie chce mi się', 'I can\'t be bothered; I don\'t feel like it', { lit: 'it doesn\'t want itself to me' }],
   ['Głupio mi', 'I feel awkward, embarrassed', { lit: '(it is) stupid to me' }],
   ['Wstyd mi', 'I\'m ashamed', { lit: '(it is) shame to me' }],
   ['Nudzi mi się', 'I\'m bored', { lit: 'it bores itself to me' }],
   ['Smutno mi', 'I\'m sad', { lit: '(it is) sad to me' }],
-  ['Brakuje mi ciebie', 'I miss you', { lit: 'you are lacking to me' }],
-  ['Podoba mi się', 'I like it', { lit: 'it pleases me' }],
+  ['Brakuje mi ciebie', 'I miss you', { lit: '(there) is a lack of you to me', use: 'The most common "I miss you" is *Tęsknię za tobą*.' }],
+  ['Podoba mi się', 'I like it', { lit: 'it pleases me', use: 'For what you see or experience (a film, a town). For food: *Smakuje mi*.' }],
   ['Jest mi dobrze', 'I feel good; I\'m comfortable', { lit: 'it is well to me' }],
 ]);
 
 PL.phrases('SW:casual', [
   ['Spoko', 'No worries; cool; OK', { lit: 'from *spokojnie* — calmly' }],
   ['Luz', 'Relax; no stress', { lit: 'slack, looseness' }],
-  ['Siema', 'Hi (very casual)', { lit: 'from *się ma* — "(how) is it going"' }],
-  ['Nara', 'See ya', { lit: 'from *na razie*' }],
+  ['Siema', 'Hi (very casual)', { lit: 'from *(jak) się masz?* — how are you?' }],
+  ['Nara', 'See ya; bye (very casual)', { lit: 'from *na razie*' }],
   ['Masakra', 'A nightmare! Awful!', { lit: 'a massacre' }],
   ['Kurczę!', 'Darn! Damn!', { lit: 'chick (young chicken)', use: 'A polite stand-in for a much ruder word that starts the same way.' }],
   ['Nie ma sprawy', 'No problem', { lit: 'there\'s no matter' }],
@@ -303,7 +303,7 @@ PL.items('SW:greet', [
 
 PL.items('SW:polite', [
   { type: 'respond', s: '— Dziękuję za pomoc!\n— {Nie ma za co}.', t: '— Thanks for the help! — You\'re welcome.', o: ['Smacznego', 'Przepraszam', 'Na zdrowie'] },
-  { type: 'respond', s: '— Przepraszam, że się spóźniłem.\n— {Nic nie szkodzi}.', t: '— Sorry I\'m late. — Never mind.', o: ['Nie ma za co', 'Smacznego', 'Bardzo mi miło'], n: '*Nie ma za co* answers thanks, not an apology.' },
+  { type: 'respond', s: '— Przepraszam, że się spóźniłem.\n— {Nic nie szkodzi}.', t: '— Sorry I\'m late. — Never mind.', o: ['Na zdrowie', 'Smacznego', 'Bardzo mi miło'], n: '*Nic nie szkodzi* or *Nic się nie stało* answer an apology; *Nie ma za co* is the answer to thanks.' },
   { type: 'respond', s: '— To jest mój brat, Piotr.\n— {Bardzo mi miło}.', t: '— This is my brother, Piotr. — Nice to meet you.', o: ['Nic nie szkodzi', 'Smacznego', 'Nie ma za co'] },
   { type: 'respond', s: '— Bardzo mi miło.\n— {Mnie również}.', t: '— Nice to meet you. — Likewise.', o: ['Nie ma za co', 'Przepraszam', 'Na zdrowie'] },
   { type: 'respond', s: '(Handing someone their coffee)\n— {Proszę}.\n— Dziękuję!', t: '— Here you are. — Thank you!', o: ['Przepraszam', 'Dziękuję', 'Nie ma za co'] },
@@ -394,13 +394,13 @@ PL.items('SW:shop', [
   { type: 'respond', s: '— Coś jeszcze?\n— Nie, {to wszystko}.', t: '— Anything else? — No, that\'s all.', o: ['nie ma za co', 'smacznego', 'na zdrowie'] },
   { type: 'respond', s: '— Na miejscu czy {na wynos}?\n— Na wynos, poproszę.', t: '— Eat in or take away? — Take away, please.', o: ['na zdrowie', 'na razie', 'na przykład'] },
   { type: 'respond', s: '— Płaci pan kartą czy {gotówką}?\n— Kartą.', t: '— Are you paying by card or in cash? — By card.', o: ['paragonem', 'resztą', 'rachunkiem'] },
-  { type: 'respond', s: '— To dwadzieścia złotych.\n— Proszę, {reszty nie trzeba}.', t: '— That\'s twenty zloty. — Here you go, keep the change.', o: ['nie ma za co', 'smacznego', 'do usłyszenia'] },
+  { type: 'respond', s: '— To osiemnaście pięćdziesiąt.\n— Proszę, {reszty nie trzeba}.', t: '— That\'s eighteen fifty. — Here you are, keep the change.', o: ['nie ma za co', 'smacznego', 'do usłyszenia'] },
   { type: 'respond', s: '— {Ile płacę}?\n— Trzydzieści złotych.', t: '— How much do I owe you? — Thirty zloty.', o: ['Która godzina', 'Kto mówi', 'Co słychać'] },
 ]);
 
 PL.items('SW:phone', [
   { type: 'respond', s: '— Halo, czy to pan Kowalski?\n— Nie, to {pomyłka}.', t: '— Hello, is that Mr Kowalski? — No, wrong number.', o: ['smacznego', 'powodzenia', 'na zdrowie'] },
-  { type: 'respond', s: '— Teraz nie mogę rozmawiać.\n— Dobrze, {oddzwonię} później.', t: '— I can\'t talk now. — OK, I\'ll call back later.', o: ['smacznego', 'pozdrawiam', 'gratulacje'] },
+  { type: 'respond', s: '— Dzwoniła do ciebie mama.\n— Dobrze, {oddzwonię} później.', t: '— Mum rang you. — OK, I\'ll call her back later.', o: ['smacznego', 'pozdrawiam', 'gratulacje'] },
   { type: 'respond', s: '— No to {do usłyszenia}!\n— Pa!', t: '— Well, talk to you soon! — Bye!', o: ['dzień dobry', 'smacznego', 'na zdrowie'] },
   { type: 'respond', s: '— Jak już będziesz na miejscu, {daj znać}.\n— Jasne.', t: '— When you get there, let me know. — Sure.', o: ['smacznego', 'na zdrowie', 'sto lat'] },
   { type: 'respond', s: '(At the end of an e-mail)\n{Pozdrawiam},\nAnna', t: 'Best regards,\nAnna', o: ['Smacznego', 'Na zdrowie', 'Dobranoc'] },
@@ -408,7 +408,7 @@ PL.items('SW:phone', [
 
 PL.items('SW:feel', [
   { type: 'choice', s: '{Zimno} mi, zamknij okno.', t: 'I\'m cold, close the window.', o: ['Gorąco', 'Smutno', 'Wstyd'] },
-  { type: 'choice', s: '— Gdzie idziemy?\n— Wszystko mi {jedno}.', t: '— Where are we going? — I don\'t mind.', o: ['zimno', 'przykro', 'szkoda'] },
+  { type: 'choice', s: '— Dokąd idziemy?\n— Wszystko mi {jedno}.', t: '— Where are we going? — I don\'t mind.', o: ['zimno', 'przykro', 'szkoda'] },
   { type: 'choice', s: 'Nie {chce} mi się dzisiaj gotować.', t: 'I can\'t be bothered to cook today.', o: ['ma', 'jest', 'wolno'] },
   { type: 'choice', s: '{Przykro} mi, że tak się stało.', t: 'I\'m sorry that happened.', o: ['Zimno', 'Nudno', 'Gorąco'] },
   { type: 'choice', s: '{Głupio} mi, zapomniałem, jak masz na imię.', t: 'I feel awkward, I\'ve forgotten your name.', o: ['Gorąco', 'Zimno', 'Dobrze'] },
@@ -420,7 +420,7 @@ PL.items('SW:feel', [
 PL.items('SW:casual', [
   { type: 'respond', s: '— Sorry, spóźnię się dziesięć minut.\n— {Spoko}!', t: '— Sorry, I\'ll be ten minutes late. — No worries!', o: ['Smacznego', 'Wesołych Świąt', 'Pomyłka'] },
   { type: 'respond', s: '— No to {nara}!\n— Pa!', t: '— See ya! — Bye!', o: ['smacznego', 'masakra', 'gratulacje'] },
-  { type: 'respond', s: '— Staliśmy w korku dwie godziny.\n— {Masakra}!', t: '— We were stuck in traffic for two hours. — What a nightmare!', o: ['Smacznego', 'Spoko', 'Gratulacje'] },
+  { type: 'respond', s: '— Staliśmy w korku dwie godziny.\n— {Masakra}!', t: '— We were stuck in traffic for two hours. — What a nightmare!', o: ['Smacznego', 'Sto lat', 'Gratulacje'] },
   { type: 'respond', s: '— Ugotuję obiad, a ty zrób zakupy.\n— {Nie ma sprawy}!', t: '— I\'ll cook lunch, and you do the shopping. — No problem!', o: ['Masakra', 'Smacznego', 'Przykro mi'] },
   { type: 'respond', s: '— {Kurczę}, zapomniałem kluczy!', t: 'Darn, I forgot my keys!', o: ['Brawo', 'Smacznego', 'Gratulacje'] },
 ]);
