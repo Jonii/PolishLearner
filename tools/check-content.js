@@ -76,6 +76,12 @@ PL.ITEMS.forEach(it => {
     const opts = PL.optionsFor(it);
     if (!opts || opts.length < 3) warn(`${it.rule} [${it.type}]: only ${opts ? opts.length : 0} options — ${it.word || it.a}`);
   }
+  // Hand-written options must not give the answer away by punctuation or a capital letter.
+  if (it.type === 'respond' && it.opts) {
+    const look = s => [(s.match(/[!?.,…]+$/) || [''])[0], /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(s)].join();
+    const odd = it.opts.filter(o => look(o) !== look(it.a));
+    if (odd.length) warn(`${it.rule}: options styled unlike the answer (${odd.join(' | ')}) — ${txt}`);
+  }
 });
 
 // Same sentence used twice?

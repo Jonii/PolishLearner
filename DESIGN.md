@@ -1,225 +1,140 @@
-# Polski — Design & Architecture Document (v2)
+# Polski — design notes
 
-## Philosophy
+## What it is for
 
-**Grammar-first, depth-before-breadth.** Most language apps teach wide vocabulary with
-shallow grammar. Polski inverts this: master every form of one word through real sentences
-before moving to the next. You *feel* how "dom" bends through all seven cases before
-you ever see "kobieta."
+A grinding tool for the *system* of Polish rather than for vocabulary:
 
-**Skills, not sentences.** Progress is tracked at the grammar-skill level (word × case/form),
-not at the individual sentence level. Sentences are disposable examples that exercise a
-skill. You master "dom × INS" — not "Przed ___ stoi samochód."
+- **Rules, at a realistic mix.** Every case trigger, verb class, prefix and
+  suffix is a rule; rules come up by how common they are, and a beginner
+  is not kept away from the hard ones — hints carry the difficulty instead.
+- **Forms early.** Course books for English speakers hide most endings
+  until late. Here the full tables are one keypress away from the start
+  (F1), and the feedback always names the form ("*domu* — genitive of
+  *dom*").
+- **Meaning from parts.** Polish builds most words from a root plus
+  prefixes and suffixes. Words are shown split into their parts with a
+  gloss under each part, so *pod|pis|ać* reads as "under-write → sign" even
+  when the learner has never seen the word, and families (*pisać, napisać,
+  podpis, przepis, opis, długopis…*) can be explored as a whole.
+- **Hints that help without giving it away.** The rule, then the pattern
+  on a *different* model word, then options; only "show" gives the answer.
+- **Small words.** The everyday expressions and particles that make
+  speech sound like speech, with literal meanings.
 
----
+Static files only: free to host, nothing to patch, works offline from disk.
 
-## Core Concepts
-
-### 1. Word
-
-A word with its paradigm and a large pool of example sentences.
-
-```
-Word {
-  id: string
-  base: string
-  pos: string
-  meaning: string
-  paradigm: Paradigm
-  sentences: Sentence[]     // large pool (30-50+ per word)
-}
-```
-
-### 2. Sentence
-
-A fill-in-the-blank exercise. Each sentence targets exactly one grammar skill.
+## Files
 
 ```
-Sentence {
-  before: string
-  blank: string            // correct answer
-  after: string
-  translation: string
-  skill: string            // grammar skill key, e.g. "GEN", "3sg·f"
-  hint: string             // grammar explanation (shown based on proficiency)
-}
+public/
+  index.html          the page; script order matters
+  css/style.css       all styles (light + dark via prefers-color-scheme)
+  css/fonts.css       self-hosted fonts (fonts/, OFL licensed)
+  js/core.js          PL: content registry, lexicon, Polish form helpers
+  js/compile.js       PL.compile(): data → exercises; options for choices
+  data/*.js           the content (see CONTENT.md)
+  js/srs.js           SRS: scheduler, progress, localStorage
+  js/input.js         Input: Polish letters (buttons, Alt+letter)
+  js/card.js          Card: one exercise card, hints, checking, feedback
+  js/views.js         Views: progress, reference, tables, popups
+  js/app.js           App: tabs, routing, the practice loop
+tools/check-content.js  content checker (Node, no packages)
 ```
 
-### 3. Grammar Skill
+Every file is a classic script defining one global (`PL`, `SRS`, `Input`,
+`Card`, `Views`, `App`), so the page runs from `file://` without a server
+or bundler.
 
-The unit of progress. Identified by `wordId + skill key`.
-
-```
-SkillState {
-  wordId: string
-  skill: string            // e.g. "GEN", "ACC·PL", "1sg", "3sg·f"
-  correct: number          // total correct answers across all sentences
-  wrong: number            // total wrong answers
-  streak: number           // current consecutive correct
-  lastSeen: number         // session position when last practiced
-  interval: number         // SRS spacing (in session positions)
-  ease: number             // SM-2 ease factor
-  level: number            // 0=new, 1=learning, 2=familiar, 3=mastered
-}
-```
-
-**Skill levels:**
-- Level 0 (New): Never seen. Full hint shown (case tag + explanation).
-- Level 1 (Learning): streak 1-2. Case tag shown, hint on wrong only.
-- Level 2 (Familiar): streak 3-5. Case tag hidden. Hint on wrong only.
-- Level 3 (Mastered): streak 6+. No hints. Card appears rarely.
-
-### 4. SRS Scheduling (skill-level)
-
-The scheduler picks which **skill** to practice next, then picks a random
-unseen (or least-recently-used) sentence from that skill's pool.
-
-**Algorithm (SM-2 variant on skills):**
-
-On correct:
-  - skill.streak++
-  - skill.correct++
-  - skill.interval = max(1, skill.interval * skill.ease)
-  - skill.ease = min(3.0, skill.ease + 0.1)
-  - skill.lastSeen = sessionPosition
-  - Recalculate skill.level from streak
-
-On wrong:
-  - skill.streak = 0
-  - skill.wrong++
-  - skill.interval = 0 (skill re-enters soon)
-  - skill.ease = max(1.3, skill.ease - 0.2)
-  - skill.lastSeen = sessionPosition
-
-**Card selection:**
-1. Compute `priority = skill.lastSeen + skill.interval` for each skill
-2. Skills where `priority <= sessionPosition` are "due"
-3. Pick the skill with lowest priority (random tiebreak)
-4. From that skill's sentence pool, pick a sentence the learner hasn't
-   seen recently (track last 3 sentence indices per skill)
-
-### 5. Progressive Word Unlocking
-
-Words unlock in teaching order when the previous word reaches mastery:
-
-**Mastery condition:** ≥80% of the word's skills are at level ≥ 2 (familiar)
-
-When a word unlocks:
-- Its skills are initialized at level 0
-- Its sentences enter the pool
-- A toast notification appears
-- All unlocked words' skills are interleaved in one deck
-
-### 6. Hint Fading
-
-The hint system adapts to skill level:
-
-| Skill Level | Case Tag | Hint Text    | On Wrong         |
-|-------------|----------|--------------|------------------|
-| 0 (New)     | Shown    | Always shown | Full explanation  |
-| 1 (Learning)| Shown    | Hidden       | Full explanation  |
-| 2 (Familiar)| Hidden   | Hidden       | Brief hint        |
-| 3 (Mastered)| Hidden   | Hidden       | Brief hint        |
-
-This means early on you see "INS — Instrumental after 'przed'" but later
-you just see the bare sentence and have to figure it out yourself.
-
-### 7. Session Flow
+## Content model
 
 ```
-┌─────────────────────────────────────────┐
-│  Pick next due skill                    │
-│  Pick random sentence for that skill    │
-│  Display card (hints based on level)    │
-│  Learner types answer                   │
-│  → Correct: update skill, advance       │
-│  → Wrong: update skill, stay on card    │
-│  Update paradigm panel if word changed  │
-│  Loop                                   │
-└─────────────────────────────────────────┘
+module  → group → rule → items
+                   ↑
+lexicon (words with full tables) · nests (word families) · phrases
 ```
 
-### 8. Persistence
+- A **rule** is the unit of progress (e.g. "genitive after negation",
+  "*wy-* = out", "*-arnia* = shop").
+- The **lexicon** has every form of every word. All answers are checked
+  against it, and it feeds the tables, the "which form is this?" cards and
+  the wrong-answer diagnosis.
+- **Items** are generated at load time by `PL.compile()`:
 
-localStorage key: `polski_srs_v2`
+| Card | Made from | Asks | Kind |
+|---|---|---|---|
+| fill in | sentence `{blank}` | type the right form of the cue word | production |
+| build | family member + its base | *pisać* + "to sign" → *podpisać* | production |
+| make it imperfective | family member with `ipf` | *wyjść* → *wychodzić* | production |
+| what does it mean | family member | pick the meaning of *przepis* | recognition |
+| … here | family example sentence | meaning of the word in context | recognition |
+| which case / form | case & verb sentences | name the case or form of the highlighted word | recognition |
+| dictionary form | sentences | *poszłam* → *pójść* | production |
+| find the base word | members whose base is disguised | *rączka* ← *ręka* | production |
+| what does it mean | phrase | pick the meaning of *Nie ma za co* | recognition |
+| choose the reply / word | dialogues, gap sentences | pick the reply or particle that fits | recognition |
+| what do you say | phrase with a situation | type the phrase | production |
 
-```
-{
-  skills: { [wordId_skill]: SkillState },
-  unlockedWords: string[],
-  sessionPosition: number,
-  totalReviewed: number,
-  recentSentences: { [wordId_skill]: number[] },  // last N indices
-}
-```
+## Scheduling (`srs.js`)
 
----
+Progress is per rule. Time is counted in cards answered ("positions"),
+not days, so it works for one long session as well as for daily practice.
 
-## UI Structure
+Each answer is graded:
 
-```
-┌──────────────────────────────────────────┐
-│  Header: "Polski" + tagline              │
-├──────────────────────────────────────────┤
-│  Word pills with mastery bars            │
-│  (locked ones grayed + lock icon)        │
-├──────────────────────────────────────────┤
-│  Session stats: reviewed · due · streak  │
-├──────────────────────────────────────────┤
-│  Paradigm reference (collapsible)        │
-│  Switches when card's word changes       │
-│  Cells with mastered skills highlighted  │
-├──────────────────────────────────────────┤
-│  Mastery progress bar (current word)     │
-├──────────────────────────────────────────┤
-│  Active flashcard                        │
-│  - Case tag (shown/hidden by level)      │
-│  - Sentence with blank                   │
-│  - Translation                           │
-│  - Check button + hint area              │
-├──────────────────────────────────────────┤
-│  Recent answers trail                    │
-├──────────────────────────────────────────┤
-│  Footer + reset link                     │
-└──────────────────────────────────────────┘
-```
+| Result | When | Streak | Next time |
+|---|---|---|---|
+| clean | right first time, no hints | +1 | interval × ease (min. 4 cards) |
+| hint | right after the rule or table hint | +½ | interval × 1.3 (min. 3) |
+| choice | right after switching to options | — | 3 cards |
+| wrong | a wrong attempt, or "show" | reset | 2 cards |
 
----
+Level comes from the streak: learning → familiar (3) → mastered (6).
 
-## Teaching Order
+Choosing the next card:
 
-1. **dom** — m. inanimate noun, 7 cases clearly distinct, ACC=NOM
-2. **kobieta** — f. noun, ACC≠NOM, vocative is memorable
-3. **dobry** — adjective, agreement across genders
-4. **mieć** — common verb, present + gendered past
-5. **iść** — irregular verb, suppletive past stem (szedł/szła)
-6. **książka** — f. noun, reinforces feminine patterns
-7. **być** — essential verb "to be", irregular
-8. **nowy** — adjective, reinforces agreement patterns
+1. **Rule.** Due rules are weighted by how overdue they are, how often
+   they were missed, and how common they are. New rules come in while
+   fewer than N rules are still at "learning" (N = 5 / 10 / 20 for the
+   fewer / normal / more setting), with probability 20–55 % per card when
+   reviews are waiting. New rules favour the section with the smallest
+   share of started rules, and come roughly in teaching order.
+2. **Item.** Least-seen items first, missed ones a bit more often, recent
+   ones rarely, the same word seldom twice in a row; recognition cards
+   are favoured while a rule is new, production cards once it is known.
 
----
+Sections and groups can be switched off, and any rule or group can be
+drilled on its own (Progress tab).
 
-## Data: Sentence Pool Design
+State lives in `localStorage` under `polski_v4` (export/import as JSON in
+the Progress tab).
 
-Each word needs **3-5 sentences per grammar skill** to prevent memorization.
-For a noun with ~10 tracked skills (7 sg cases + 3 key pl): ~30-50 sentences.
+## The card (`card.js`)
 
-Sentences should:
-- Cover different prepositions/triggers for the same case
-- Vary from simple to complex
-- Sound natural, not textbook-artificial
-- Include everyday situations
+- Typed answers are compared ignoring capitals, punctuation and extra
+  spaces. An answer that is right except for the Polish letters gets one
+  "Almost — only the Polish letters differ" before it counts as wrong.
+- A wrong answer stays on the card with a diagnosis when the engine can
+  tell what was typed ("*domem* is the instrumental singular of *dom* —
+  this slot needs a different form"; "right root, different prefix").
+- After answering, the card shows the answer, its form, the word's parts
+  with glosses, a note, the rule, a link to the word family, and a Next
+  button. **Nothing advances automatically**; Enter (after a short guard
+  against a double press) or Next moves on.
+- Speech uses the browser's own Polish voice when there is one.
 
----
+## Checking content
 
-## Future Extensions
+`tools/check-content.js` loads the same scripts as the page in a Node `vm`
+and reports: answers that aren't forms of the cue word, case/tense rules
+answered with the wrong case/tense, missing translations, stray braces,
+duplicate sentences, choice cards with too few options, options that give
+the answer away by punctuation, and rules with too few exercises. Whether
+the Polish is natural and the explanations true still needs a fluent reader.
 
-- **Reverse mode:** see full sentence, name the case
-- **Multi-word blanks:** adjective + noun agreement in one sentence
-- **LLM sentence generation:** generate fresh sentences on demand
-- **Learner model:** Bayesian knowledge tracing per skill
-- **Confusable cases:** specifically drill GEN vs LOC when learner mixes them
-- **Audio / TTS:** pronunciation on correct
-- **Dark mode**
-- **Stats dashboard:** accuracy heatmap by case, weakest forms
-- **Export/import progress**
+## Possible next steps
+
+- More families (*-wiedzieć, -nieść, -trzeć, -jąć…*) and more nouns.
+- Numbers and their cases (*dwa koty, pięć kotów*) as their own module.
+- Aspect in context: choose *pisałem* or *napisałem* in a short story.
+- An offline-installable version (a service worker and a manifest — still
+  no dependencies).

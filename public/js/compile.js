@@ -456,7 +456,7 @@
     } else if (it.type === 'decode') {
       wrong = decodeDistractors(it, n);
     } else if (it.type === 'meaning') {
-      const pool = PL.PHRASES.filter(p => p.rule !== it.rule && p.en !== it.a).map(p => p.en);
+      const pool = PL.PHRASES.filter(p => p.rule !== it.rule && !overlaps(p.en, it.a)).map(p => p.en);
       wrong = pickDistinct(pool, n, answers);
     } else if (it.type === 'cloze') {
       wrong = clozeDistractors(it, n);
@@ -540,16 +540,40 @@
     return out;
   }
 
+  // The separate glosses of a meaning, without bracketed notes:
+  //   'to put, lay (pf.)' → ['to put', 'lay'];  'to go (on foot), walk — now, one way' → ['to go', 'walk']
+  function glosses(m) {
+    return m.toLowerCase().replace(/\s[—–]\s.*$/, '').replace(/\([^)]*\)/g, '')
+      .split(/[;,]/).map(g => g.trim()).filter(Boolean);
+  }
+
+  // Two meanings share a gloss: as options, the learner could not tell them apart.
+  function overlaps(m1, m2) {
+    const b = glosses(m2);
+    return glosses(m1).some(g => b.includes(g));
+  }
+
+  // Is a family member's meaning a fair wrong option for `me`? Not if the meanings overlap —
+  // unless telling them apart is the point: a verb against a non-verb ("to approach" /
+  // "approach; attitude"), or a word against its own base when only a bracketed note or the
+  // aspect differs ("to write" / "to write (and finish)", "Pole (man)" / "Pole (woman)").
+  function fairSibling(me, x) {
+    if (!overlaps(me.m, x.m)) return true;
+    if (me.pos !== x.pos && (me.pos === 'v' || x.pos === 'v')) return true;
+    if (x.w !== me.from && me.w !== x.from) return false;
+    return glosses(me.m).join('|') === glosses(x.m).join('|') || [me, x].some(y => /^ASP:/.test(y.rules[0] || ''));
+  }
+
   function decodeDistractors(it, n) {
     const answers = [it.a];
     const nest = NEST[it.nest];
     const me = nest.members[it.member];
-    const sameNest = nest.members.filter(x => x.i !== it.member && x.m !== me.m);
+    const sameNest = nest.members.filter(x => x.i !== it.member && x.m !== me.m && fairSibling(me, x));
     let out = pickDistinct(sameNest.filter(x => x.pos === me.pos).map(x => x.m), n, answers);
     if (out.length < n) out = out.concat(pickDistinct(sameNest.map(x => x.m), n - out.length, answers.concat(out)));
     if (out.length < n) {
       const pool = [];
-      PL.NESTS.forEach(ns => ns.members.forEach(x => { if (ns.id !== nest.id && x.pos === me.pos) pool.push(x.m); }));
+      PL.NESTS.forEach(ns => ns.members.forEach(x => { if (ns.id !== nest.id && x.pos === me.pos && !overlaps(me.m, x.m)) pool.push(x.m); }));
       out = out.concat(pickDistinct(pool, n - out.length, answers.concat(out)));
     }
     return out;

@@ -34,7 +34,8 @@ const Card = (() => {
     let mid;
     if (mode === 'input') mid = `<span class="blank-wrap"><input class="blank" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Answer" /></span>`;
     else if (mode === 'mark') mid = `<mark class="hl">${esc(it.word)}</mark>`;
-    else mid = `<span class="gap">…</span>`;
+    else if (mode === 'gap') mid = `<span class="gap">…</span>`;
+    else mid = `<strong class="ans">${esc(mode)}</strong>`;     // the answer filled in (Reference examples)
     return `${pre}${mid}${post}`;
   }
 

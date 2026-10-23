@@ -421,7 +421,8 @@ input.blank:disabled { opacity: 1; -webkit-text-fill-color: currentColor; }
 .ptable.grid .end { font-size: 0.7rem; }
 .ptable.list td.end { white-space: normal; min-width: 7em; }
 .ptable.nest td { vertical-align: middle; }
-.ptable.nest .anatomy { margin: 0; }
+.ptable.nest .anatomy { margin: 0; flex-wrap: nowrap; }
+.ptable.nest .m-gloss { max-width: 7.5em; }
 .ptable.nest tr.hl-row td { background: var(--hl); }
 .nest-note { font-size: 0.76rem; color: var(--muted); margin-top: 0.15rem; }
 .nest-rule { font-size: 0.7rem; color: var(--muted); max-width: 11em; }
@@ -460,6 +461,7 @@ footer { text-align: center; margin-top: 2.2rem; font-size: 0.7rem; color: var(-
 
 /* ── Small screens ── */
 @media (max-width: 560px) {
+  .ptable.nest .anatomy { flex-wrap: wrap; }
   body { padding: 1rem 0.6rem 1.5rem; }
   .card { padding: 1rem 1rem 1rem; }
   .sentence { font-size: 1.12rem; }

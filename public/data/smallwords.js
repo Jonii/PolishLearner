@@ -294,7 +294,7 @@ PL.phrases('SW:casual', [
 /* ══ Dialogues and fill-the-gap choices ══ */
 
 PL.items('SW:greet', [
-  { type: 'respond', s: '— Dzień dobry!\n— {Dzień dobry}!', t: '— Good morning! — Good morning!', o: ['Dobranoc!', 'Na zdrowie!', 'Smacznego!'], n: 'Polish simply returns the same greeting.' },
+  { type: 'respond', s: '— Dzień dobry!\n— {Dzień dobry}!', t: '— Good morning! — Good morning!', o: ['Dobranoc', 'Na zdrowie', 'Smacznego'], n: 'Polish simply returns the same greeting.' },
   { type: 'respond', s: '(Leaving a shop)\n— Dziękuję, {do widzenia}!', t: 'Thank you, goodbye!', o: ['dzień dobry', 'smacznego', 'proszę bardzo'] },
   { type: 'respond', s: '— Idę spać.\n— {Dobranoc}!', t: '— I\'m going to bed. — Good night!', o: ['Dobry wieczór', 'Dzień dobry', 'Do widzenia'] },
   { type: 'respond', s: '— To na razie, do jutra!\n— {Pa}!', t: '— Well, bye for now, see you tomorrow! — Bye!', o: ['Dzień dobry', 'Witam', 'Smacznego'] },
