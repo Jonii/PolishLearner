@@ -208,15 +208,18 @@ const Card = (() => {
 
   /* ── Options (multiple choice) ── */
 
+  // Returns whether options are on the card.
   function showOptions() {
     const box = document.getElementById('cardOpts');
-    if (!box || cur.opts) return;
+    if (!box) return false;
+    if (cur.opts) return true;
     const opts = PL.optionsFor(cur.it);
-    if (!opts) { box.innerHTML = '<span class="muted">No options for this one.</span>'; return; }
+    if (!opts) { box.innerHTML = '<span class="muted">No options for this one.</span>'; return false; }
     cur.opts = opts;
     box.innerHTML = opts.map((o, i) =>
       `<button class="opt" type="button" data-i="${i}"><kbd>${i + 1}</kbd><span>${esc(o)}</span></button>`).join('');
     box.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => pickOption(+b.dataset.i)));
+    return true;
   }
 
   function pickOption(i) {
@@ -359,10 +362,10 @@ const Card = (() => {
 
   function hintOptions() {
     if (!cur || cur.state !== 'ask' || cur.it.fmt !== 'type') return;
+    if (!showOptions()) return;                // nothing to choose from: no penalty
     cur.usedOpts = true;
     const b = document.getElementById('hintOpts');
     if (b) b.classList.add('used');
-    showOptions();
     focusInput();
   }
 

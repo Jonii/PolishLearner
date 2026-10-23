@@ -396,7 +396,7 @@
       if (p.endsWith('-') && !p.startsWith('-')) pre += p.slice(0, -1).toLowerCase(); else break;
     }
     const w = mem.w.replace(/ się$/, '');
-    if (pre && w.toLowerCase().startsWith(pre) && !mem.from.toLowerCase().startsWith(pre)) return nontrivial(w.slice(pre.length), mem.from);
+    if (pre && w.toLowerCase().startsWith(pre) && !nontrivial(w.slice(pre.length), mem.from)) return false;
     return nontrivial(w, mem.from);
   }
 
@@ -411,7 +411,7 @@
       addItem({
         type: 'lemma', fmt: 'type', rule: rule.id, nest: nest.id, member: mem.i, root: true,
         pre: '', word: mem.w, post: '', tr: mem.m,
-        a: mem.from, alt: [], lemma: mem.from,
+        a: mem.from, alt: mem.rootAlt || [], lemma: mem.from,
         q: 'Which word is it built from?',
         note: mem.n || '', seg: mem.seg,
       });
@@ -501,8 +501,18 @@
     } else if (it.type === 'build') {
       const nest = NEST[it.nest];
       const me = nest.members[it.member];
-      const pool = nest.members.filter(x => x.i !== it.member && x.pos === me.pos && x.w !== it.cue).map(x => x.w);
-      wrong = pickDistinct(pool, n, answers.concat([it.cue]));
+      const cap = w => /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(w);
+      const alike = x => x.pos === me.pos && x.w !== it.cue && cap(x.w) === cap(me.w);
+      wrong = pickDistinct(nest.members.filter(x => x.i !== it.member && alike(x)).map(x => x.w), n, answers.concat([it.cue]));
+      if (wrong.length < n) {
+        // words built by the same rule in other families, then any word of the same kind
+        const same = [], any = [];
+        PL.NESTS.forEach(ns => ns.members.forEach(x => {
+          if (ns !== nest && alike(x)) (x.rules[0] === it.rule ? same : any).push(x.w);
+        }));
+        wrong = wrong.concat(pickDistinct(same, n - wrong.length, answers.concat(wrong, [it.cue])));
+        if (wrong.length < n) wrong = wrong.concat(pickDistinct(any, n - wrong.length, answers.concat(wrong, [it.cue])));
+      }
     } else if (it.type === 'lemma' && it.root) {
       const pool = [];
       PL.NESTS.forEach(ns => ns.members.forEach(x => { if (x.from && !/ /.test(x.from)) pool.push(x.from); }));
@@ -524,7 +534,40 @@
       wrong = pickDistinct(pool, n, answers);
     }
     if (!wrong.length) return null;
+    // An answer that starts the sentence is capitalised; the wrong options must be too.
+    if ((it.type === 'cloze' || it.type === 'build') && /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(it.a)) {
+      wrong = wrong.map(w => w.charAt(0).toUpperCase() + w.slice(1));
+    }
     return shuffle([it.a].concat(wrong.slice(0, n)));
+  }
+
+  // A family word's siblings in the same form as the answer: the same table cell where the
+  // sibling has a table (położyłeś → włożyłeś), otherwise the answer's ending moved onto siblings
+  // that end the same way (przedmieście → przedmieściach, so przedszkole → przedszkolach).
+  function siblingForms(it, me, nest) {
+    const bare = w => w.replace(/ się$/, '');
+    const L = PL.LEX[it.lemma];
+    const keys = L && L.forms ? keysOf(L.lemma, it.a) : [];
+    const pool = [];
+    if (keys.length) {
+      nest.members.forEach(x => {
+        const XL = PL.LEX[bare(x.w)];
+        if (x.i !== it.member && XL && XL.forms && XL.pos === L.pos) keys.forEach(k => (XL.forms[k] || []).forEach(v => pool.push(v)));
+      });
+      if (pool.length >= 2) return pool;
+    }
+    const lemma = bare(me.w), ans = it.a;
+    let i = 0;
+    while (i < lemma.length && i < ans.length && lemma[i].toLowerCase() === ans[i].toLowerCase()) i++;
+    const lemEnd = lemma.slice(i), ansEnd = ans.slice(i);
+    if ((!lemEnd && !ansEnd) || i < 3) return pool;            // a dictionary form, or too different
+    const proper = /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(lemma);
+    nest.members.forEach(x => {
+      const w = bare(x.w);
+      if (x.i === it.member || x.pos !== me.pos || / /.test(w) || /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(w) !== proper) return;
+      if (w.endsWith(lemEnd) && w.length > lemEnd.length + 2) pool.push(w.slice(0, w.length - lemEnd.length) + ansEnd);
+    });
+    return pool;
   }
 
   function clozeDistractors(it, n) {
@@ -543,19 +586,23 @@
     if (it.nest != null) {
       const nest = NEST[it.nest];
       const me = nest.members[it.member];
-      // An inflected family noun: the same case of the sibling nouns that have tables.
-      if (L && L.pos === 'noun') {
-        const keys = keysOf(L.lemma, it.a);
-        const pool = [];
-        nest.members.forEach(x => {
-          const XL = PL.LEX[x.w];
-          if (x.i !== it.member && XL && XL.pos === 'noun') keys.forEach(k => (XL.forms[k] || []).forEach(v => pool.push(v)));
-        });
-        const got = pickDistinct(pool, n, answers);
-        if (got.length >= 2) return got;
+      // 1. siblings in the same form; 2. the word's own dictionary form, if the answer is inflected;
+      // 3. dictionary forms of words of the same kind — this family first, then the others.
+      const bare = w => w.replace(/ się$/, '');
+      const cap = w => /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(w);
+      const inflected = PL.norm(it.a) !== PL.norm(bare(me.w));
+      let out = pickDistinct(siblingForms(it, me, nest), n, answers);
+      if (out.length < n && inflected) out = out.concat(pickDistinct([bare(me.w)], 1, answers.concat(out)));
+      if (out.length < n && (!inflected || out.length < 2)) {
+        const alike = x => x.pos === me.pos && !/ /.test(bare(x.w)) && cap(x.w) === cap(me.w);
+        out = out.concat(pickDistinct(nest.members.filter(x => x.i !== it.member && alike(x)).map(x => bare(x.w)), n - out.length, answers.concat(out)));
+        if (out.length < n && !inflected) {
+          const more = [];
+          PL.NESTS.forEach(ns => ns.members.forEach(x => { if (ns !== nest && alike(x)) more.push(bare(x.w)); }));
+          out = out.concat(pickDistinct(more, n - out.length, answers.concat(out)));
+        }
       }
-      const pool = nest.members.filter(x => x.i !== it.member && x.pos === me.pos).map(x => x.w);
-      return pickDistinct(pool, n, answers);
+      return out;
     }
     if (!L) return [];
     const keys = keysOf(L.lemma, it.a);

@@ -207,11 +207,13 @@ Member row: `[word, segmentation, meaning, rule, base, extra]`.
 | `fm` | meaning of the base if the base is not a family member or in the lexicon |
 | `gl` | per-chip glosses for this one word, if the general ones mislead |
 | `alt` | other accepted answers for the build card |
+| `rootAlt` | other accepted answers for the "find the base word" card |
 | `pos` | `'n'`, `'v'`, `'adj'`, `'adv'` if the guess from the rule is wrong |
 | `nobuild`, `nodecode`, `noroot` | skip that kind of card for this word |
 
 "Find the base word" cards are generated for members whose base is hidden
-by a sound change (*rączka ← ręka, wschód ← wschodzić*).
+by a sound change (*rączka ← ręka, wschód ← wschodzić*); a prefix alone
+doesn't count (*współpraca ← praca* gets no card).
 
 ## Phrases
 

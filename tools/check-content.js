@@ -77,6 +77,12 @@ PL.ITEMS.forEach(it => {
     const opts = PL.optionsFor(it);
     if (!opts || opts.length < 3) warn(`${it.rule} [${it.type}]: only ${opts ? opts.length : 0} options — ${it.word || it.a}`);
   }
+  // F3 options on typed cards: a sentence-initial answer must not be the only capitalised one.
+  if ((it.type === 'cloze' || it.type === 'build') && it.fmt === 'type') {
+    const cap = x => /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(x);
+    const opts = PL.optionsFor(it) || [];
+    if (opts.some(o => cap(o) !== cap(it.a))) warn(`${it.rule}: options capitalised unlike the answer (${opts.join(' | ')}) — ${txt}`);
+  }
   // Hand-written options must not give the answer away by punctuation or a capital letter.
   if (it.type === 'respond' && it.opts) {
     const look = s => [(s.match(/[!?.,…]+$/) || [''])[0], /^[A-ZĄĆĘŁŃÓŚŹŻ]/.test(s)].join();
