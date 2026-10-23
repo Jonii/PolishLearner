@@ -10,7 +10,7 @@
 PL.pattern('adj', {
   t: 'Adjective endings', kind: 'adj',
   models: ['nowy', 'polski', 'dobry'],
-  note: 'Hard stems (nowy): *-y, -ego, -emu, -ym · -a, -ej, -ą · -e · -ych, -ym, -ymi*. After k/g the y becomes i (polski, polskiego, polskich). The masculine accusative is *nowy* for things but *nowego* for people and animals. The virile plural (men or mixed groups) has its own ending with consonant changes: nowi, dobrzy, polscy, drodzy, duzi.',
+  note: 'Hard stems (nowy): *-y, -ego, -emu, -ym · -a, -ej, -ą · -e · -ych, -ym, -ymi*. After k/g, *y* becomes *i* and *e* becomes *ie* (polski, polskie, polskiego, polskich). The masculine accusative is *nowy* for things but *nowego* for people and animals. The virile plural (men or mixed groups) has its own ending with consonant changes: nowi, dobrzy, polscy, drodzy, duzi.',
 });
 
 PL.pattern('det', {
@@ -22,7 +22,7 @@ PL.pattern('det', {
 PL.pattern('pron', {
   t: 'Personal pronouns', kind: 'pron',
   models: ['ja', 'ty', 'on', 'ona', 'my', 'wy', 'oni'],
-  note: 'Short forms (*mi, ci, mu, go, cię*) are the normal unstressed ones; long forms (*mnie, tobie, jemu, jego, ciebie*) are for emphasis or the start of a sentence. After a preposition, third-person pronouns take an **n-**: do niego, z nim, o niej, dla nich.',
+  note: 'Short forms (*mi, ci, mu, go, cię*) are the normal unstressed ones; long forms (*tobie, jemu, jego, ciebie*) are for emphasis, the start of a sentence, and **after prepositions** (*dla ciebie, z tobą*). *mnie* is both: the only genitive / accusative form, used everywhere. After a preposition, third-person pronouns take an **n-**: do niego, z nim, o niej, dla nich.',
 });
 
 /* ── Regular adjectives ── */

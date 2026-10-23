@@ -140,14 +140,17 @@
         if (cueL || PL.LEX[it.lemma]) PL.warn(`${it.rule}: "${ans}" is not a known form (cue "${it.cue}") in "${it.pre}{…}${it.post}"`);
         return;
       }
-      if (cueL && !owners.some(o => o === it.cue || derivesFrom(o, it.cue) || o === it.lemma)) {
+      const lem = (it.lemma || '').replace(/ się$/, '');
+      const related = o => o === it.cue || derivesFrom(o, it.cue) || o === lem || (PL.LEX[o] && PL.LEX[o].compOf === it.cue);
+      if (cueL && !owners.some(related)) {
         PL.warn(`${it.rule}: "${ans}" is a form of ${owners.join('/')}, not of cue "${it.cue}"`);
       }
     });
     // Remember which lexeme the answer belongs to, for hints and diagnostics.
     if (!PL.LEX[it.lemma] || !keysOf(it.lemma, it.a).length) {
       const owners = lemmasOf(it.a);
-      const best = owners.find(o => o === it.cue) || owners.find(o => derivesFrom(o, it.cue)) || owners[0];
+      const lem = (it.lemma || '').replace(/ się$/, '');
+      const best = owners.find(o => o === lem) || owners.find(o => o === it.cue) || owners.find(o => derivesFrom(o, it.cue)) || owners[0];
       if (best) it.lemma = best;
     }
   }
@@ -161,6 +164,7 @@
       type: 'respond', fmt: 'choice', rule,
       pre: b.pre, a: b.a, alt: b.alt, post: b.post, opts,
       tr: d.t || '', note: d.n || '', q: d.q || 'Choose the best reply', hand: true,
+      showTr: !!d.showTr,       // dialogues hide the translation (it would give the reply away)
     });
   }
 
@@ -170,7 +174,8 @@
     addItem({
       type: 'respond', fmt: 'choice', rule,
       pre: b ? b.pre : '', a: b ? b.a : d.a, alt: [], post: b ? b.post : '',
-      opts: d.o || [], tr: d.t || '', note: d.n || '', q: d.q || '', hand: true,
+      opts: d.o || [], tr: d.t || '', note: d.n || '', q: d.q || 'Choose the word that fits', hand: true,
+      showTr: d.showTr !== false,   // fill-the-gap choices need the translation to be unambiguous
     });
   }
 
@@ -243,7 +248,7 @@
   function genLemma() {
     const nounRule = PL.RULES['LEM:noun'], verbRule = PL.RULES['LEM:verb'], pverbRule = PL.RULES['LEM:pverb'];
     const seen = new Set();
-    ITEMS.filter(it => it.type === 'cloze' && it.hand).forEach(src => {
+    ITEMS.filter(it => it.type === 'cloze' && (it.hand || it.nest != null)).forEach(src => {
       const L = PL.LEX[src.lemma];
       if (!L || L.hidden) return;
       let rule = null;
@@ -253,10 +258,14 @@
       const key = `${PL.norm(src.a)}>${L.lemma}`;
       if (seen.has(key)) return;   // one item per form is plenty
       seen.add(key);
+      // Reflexive verbs: accept the dictionary entry with or without "się".
+      const alt = [];
+      if (/ się$/.test(L.lemma)) alt.push(L.lemma.replace(/ się$/, ''));
+      else if (L.pos === 'verb' && /\bsię\b/.test(src.pre + src.post)) alt.push(L.lemma + ' się');
       addItem({
         type: 'lemma', fmt: 'type', rule, src: src.id,
         pre: src.pre, word: src.a, post: src.post, tr: src.tr,
-        a: L.lemma, alt: [], lemma: L.lemma,
+        a: L.lemma, alt, lemma: L.lemma,
         q: 'What is the dictionary form of the highlighted word?',
         note: L.note || '',
       });
@@ -289,15 +298,24 @@
     });
     PL.NESTS.forEach(nest => {
       nest.members.forEach(mem => {
-        if (mem.from && !meaningOf(mem.from, nest)) PL.warn(`nest ${nest.id}: base "${mem.from}" of ${mem.w} has no meaning (add it to the nest or the lexicon)`);
+        if (mem.from && !mem.fm && !meaningOf(mem.from, nest)) PL.warn(`nest ${nest.id}: base "${mem.from}" of ${mem.w} has no meaning (add fm, or add it to the nest or the lexicon)`);
         const rule = mem.rules[0];
         if (!rule || !PL.RULES[rule]) return;
         if (mem.from && !mem.nobuild) {
           addItem({
             type: 'build', fmt: 'type', rule, nest: nest.id, member: mem.i,
-            cue: mem.from, cueM: meaningOf(mem.from, nest) || '',
-            a: mem.w, alt: mem.alt || [], tr: mem.m, lit: mem.lit || '',
+            cue: mem.from, cueM: mem.fm || meaningOf(mem.from, nest) || '',
+            a: mem.w, alt: withoutSie(mem.w).concat(mem.alt || []), tr: mem.m, lit: mem.lit || '',
             q: 'Build the word', note: mem.n || '', seg: mem.seg,
+          });
+        }
+        // Perfective member with an imperfective partner: "make it imperfective".
+        if (mem.ipf && PL.RULES['ASP:ipf']) {
+          addItem({
+            type: 'build', fmt: 'type', rule: 'ASP:ipf', nest: nest.id, member: mem.i, ipf: true,
+            cue: mem.w, cueM: mem.m,
+            a: mem.ipf, alt: withoutSie(mem.ipf), tr: `${mem.m} — imperfective: ongoing, repeated`,
+            q: 'Make it imperfective', note: mem.n || '', seg: mem.seg,
           });
         }
         if (!mem.nodecode) {
@@ -332,6 +350,10 @@
     });
   }
 
+  function withoutSie(w) {
+    return / się$/.test(w) ? [w.replace(/ się$/, '')] : [];
+  }
+
   // For a sentence built on a derived word, show the plainest family word as the cue.
   function rootCue(mem, nest) {
     return nest.cue || mem.from || nest.base || nest.root;
@@ -345,6 +367,26 @@
     const L = PL.LEX[word];
     if (L && L.m) return L.m;
     return '';
+  }
+
+  /* ── Generated: find the base word (rączka → ręka) ── */
+
+  function genRoots() {
+    const rule = PL.RULES['ROOT:base'];
+    if (!rule) return;
+    PL.NESTS.forEach(nest => nest.members.forEach(mem => {
+      if (!mem.from || mem.noroot || !mem.rules.length) return;
+      const r = PL.RULES[mem.rules[0]];
+      if (!r || r.module !== rule.module) return;
+      if (/ /.test(mem.from) || !nontrivial(mem.w, mem.from)) return;   // only when the base is disguised
+      addItem({
+        type: 'lemma', fmt: 'type', rule: rule.id, nest: nest.id, member: mem.i, root: true,
+        pre: '', word: mem.w, post: '', tr: mem.m,
+        a: mem.from, alt: [], lemma: mem.from,
+        q: 'Which word is it built from?',
+        note: mem.n || '', seg: mem.seg,
+      });
+    }));
   }
 
   /* ── Phrases: meaning + say ── */
@@ -418,11 +460,25 @@
       wrong = pickDistinct(pool, n, answers);
     } else if (it.type === 'cloze') {
       wrong = clozeDistractors(it, n);
+    } else if (it.type === 'build' && it.ipf) {
+      // other imperfectives, preferably with the same prefix, so the prefix gives nothing away
+      const pfx = (it.seg || '').split('|')[0];
+      const all = [];
+      PL.NESTS.forEach(ns => ns.members.forEach(x => { if (x.ipf && x.ipf !== it.a) all.push(x); }));
+      const same = all.filter(x => x.seg.split('|')[0] === pfx).map(x => x.ipf);
+      wrong = pickDistinct(same, 2, answers.concat([it.cue]));
+      wrong = wrong.concat(pickDistinct([it.cue], 1, answers.concat(wrong)));
+      if (wrong.length < n) wrong = wrong.concat(pickDistinct(all.map(x => x.ipf), n - wrong.length, answers.concat(wrong)));
     } else if (it.type === 'build') {
       const nest = NEST[it.nest];
       const me = nest.members[it.member];
       const pool = nest.members.filter(x => x.i !== it.member && x.pos === me.pos && x.w !== it.cue).map(x => x.w);
       wrong = pickDistinct(pool, n, answers.concat([it.cue]));
+    } else if (it.type === 'lemma' && it.root) {
+      const pool = [];
+      PL.NESTS.forEach(ns => ns.members.forEach(x => { if (x.from && !/ /.test(x.from)) pool.push(x.from); }));
+      wrong = pickDistinct(pool.filter(w => w[0] === it.a[0]), n, answers.concat([it.word]));
+      if (wrong.length < n) wrong = wrong.concat(pickDistinct(pool, n - wrong.length, answers.concat(wrong, [it.word])));
     } else if (it.type === 'lemma') {
       const L = PL.LEX[it.a];
       const pool = Object.values(PL.LEX)
@@ -458,6 +514,17 @@
     if (it.nest != null) {
       const nest = NEST[it.nest];
       const me = nest.members[it.member];
+      // An inflected family noun: the same case of the sibling nouns that have tables.
+      if (L && L.pos === 'noun') {
+        const keys = keysOf(L.lemma, it.a);
+        const pool = [];
+        nest.members.forEach(x => {
+          const XL = PL.LEX[x.w];
+          if (x.i !== it.member && XL && XL.pos === 'noun') keys.forEach(k => (XL.forms[k] || []).forEach(v => pool.push(v)));
+        });
+        const got = pickDistinct(pool, n, answers);
+        if (got.length >= 2) return got;
+      }
       const pool = nest.members.filter(x => x.i !== it.member && x.pos === me.pos).map(x => x.w);
       return pickDistinct(pool, n, answers);
     }
@@ -510,6 +577,7 @@
     compilePhrases();
     genIdentify();
     genLemma();
+    genRoots();
     PL.RULE_LIST.forEach(r => {
       const list = BY_RULE[r.id] || [];
       r.count = list.length;

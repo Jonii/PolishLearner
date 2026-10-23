@@ -16,7 +16,7 @@ PL.module('cases', {
 
 PL.groups('cases', [
   { id: 'NOM', t: 'Nominative', pl: 'mianownik · kto? co?', intro: 'The dictionary form. The subject of the sentence, and what comes after *to jest*.' },
-  { id: 'ACC', t: 'Accusative', pl: 'biernik · kogo? co?', intro: 'The direct object, and the goal of a movement after *na / w*. Feminine *-a* → *-ę*; masculine things look like the nominative, masculine people and animals like the genitive.' },
+  { id: 'ACC', t: 'Accusative', pl: 'biernik · kogo? co?', intro: 'The direct object, and the goal of a movement after *na* (plus a few set phrases with *w*). Feminine *-a* → *-ę*; masculine things look like the nominative, masculine people and animals like the genitive.' },
   { id: 'GEN', t: 'Genitive', pl: 'dopełniacz · kogo? czego?', intro: 'The busiest case: absence and negation, "of", quantities, and the most common prepositions (*do, z, od, bez, dla, u*).' },
   { id: 'DAT', t: 'Dative', pl: 'celownik · komu? czemu?', intro: 'The receiver ("to whom?"), a handful of verbs like *pomagać* and *dziękować*, and the person who feels something: *zimno mi*.' },
   { id: 'INS', t: 'Instrumental', pl: 'narzędnik · (z) kim? (z) czym?', intro: '"With" (*z*), position (*przed, za, nad, pod, między*), what someone is (*jestem lekarzem*) and the means (*jadę autobusem*). Endings: *-em* (masc. & neut.), *-ą* (fem.), *-ami* (plural).' },
@@ -36,7 +36,7 @@ PL.pattern('alternations', {
     ['ó ↔ o', '*stół → stołu, samochód → samochodu, mój → moja, móc → mogę*'],
     ['ą ↔ ę', '*ręka → rąk, mąż → męża, wziął → wzięła, miesiąc → miesięcy*'],
     ['a ↔ e', '*miasto → w mieście, las → w lesie, obiad → po obiedzie, sąsiad → sąsiedzi*'],
-    ['o ↔ e', '*niosę → niesiesz, kościół → w kościele, brać → bierzesz*'],
+    ['o ↔ e', '*niosę → niesiesz, kościół → w kościele, biorę → bierzesz*'],
     ['k → c / cz', '*książka → w książce, Polak → Polacy, ręka → ręczny*'],
     ['g → dz / ż', '*noga → w nodze, kolega → koledzy, noga → nóżka*'],
     ['t → ci / c', '*kobieta → kobiecie, student → studenci, płacić → płacę*'],
@@ -44,7 +44,7 @@ PL.pattern('alternations', {
     ['r → rz', '*siostra → siostrze, dobry → dobrzy, ser → serze*'],
     ['ł → l', '*stół → na stole, szkoła → w szkole, miły → mili*'],
     ['s / z → ś / ź / sz / ż', '*las → lesie, prosić → proszę, wozić → wożę*'],
-    ['completely different word', '*człowiek → ludzie, rok → lata, dziecko → dzieci, iść → szedł, brać → wziąć*'],
+    ['completely different word', '*człowiek → ludzie, rok → lata, dobry → lepszy, iść → szedł, brać → wziąć*'],
   ],
 });
 
@@ -62,8 +62,8 @@ PL.rules('cases', 'ACC', {
     x: 'The thing the verb acts on directly (*what* do you see / have / buy?) is in the accusative. Feminine *-a* → *-ę*: *mam siostrę, piję kawę*. Masculine things and neuter nouns look like the nominative: *mam dom, otwieram okno*.' },
   'ACC:anim': { o: 9, f: 3, kind: 'ACC', t: 'Men and animals: accusative = genitive',
     x: 'For masculine people and animals the accusative borrows the genitive form: *widzę psa* (not *pies*), *znam twojego brata*. In the plural only men do this (*znam tych studentów*) — animals go back to the normal form: *lubię koty*.' },
-  'ACC:motion': { o: 8, f: 3, kind: 'ACC', t: '*na / w* + accusative: where to?',
-    x: 'Movement **to** a place (*dokąd?* where to?) uses *na* or *w* + accusative: *idę na pocztę, jadę w góry, połóż to na stół*. Being somewhere (*gdzie?*) uses the locative instead: *jestem na poczcie*.' },
+  'ACC:motion': { o: 8, f: 3, kind: 'ACC', t: '*na* + accusative: where to?',
+    x: 'Places you are **na** (*na poczcie, na plaży, na koncercie*) are gone **to** with *na* + accusative: *idę na pocztę, na plażę, na koncert*. Places you are **w** are usually gone to with *do* + genitive instead (*w szkole → do szkoły, w Polsce → do Polski*); *w* + accusative survives only in set phrases like *w góry* (to the mountains) and *w podróż*.' },
   'ACC:prep': { o: 19, f: 2, kind: 'ACC', t: '*przez, za, po, o* + accusative',
     x: '*przez* = through, across; because of (*przez park, przez ciebie*). *za* = for — thanks or payment (*dziękuję za pomoc, płacę za kawę*), and "in" a time (*za tydzień*). *po* = to go and get (*idę po chleb*). *prosić o* = to ask for (*proszę o rachunek*).' },
   'ACC:time': { o: 24, f: 2, kind: 'ACC', t: 'Days and lengths of time',
@@ -78,9 +78,9 @@ PL.rules('cases', 'GEN', {
   'GEN:of': { o: 10, f: 3, kind: 'GEN', t: '"of": owner and whole',
     x: 'The owner, or the whole something belongs to, comes **after** in the genitive: *samochód ojca* (father\'s car), *koniec filmu* (the end of the film), *centrum miasta* (the city centre).' },
   'GEN:quantity': { o: 11, f: 3, kind: 'GEN', t: 'Quantities: dużo, mało, ile, pięć…',
-    x: 'After words of quantity — *dużo, mało, trochę, ile, wiele, kilka* — containers (*szklanka, kilo*) and numbers from five up, the noun is genitive (plural for things you can count): *dużo czasu, szklanka wody, pięć książek*.' },
+    x: 'After words of quantity — *dużo, mało, trochę, ile, wiele, kilka* — containers and measures (*szklanka, butelka, kilo*) and numbers from five up, the noun is genitive (plural for things you can count): *dużo czasu, szklanka wody, pięć książek*. (Numbers ending in 2–4, like 22 or 34, take the nominative again: *dwadzieścia dwie książki*.)' },
   'GEN:do-z-od': { o: 5, f: 3, kind: 'GEN', t: '*do, z, od* — to, from',
-    x: '*do* = to, into (*idę do domu, do sklepu*). *z* = from, out of (*wracam z pracy*). *od* = from a person, since a time (*list od mamy, od poniedziałku*). All three always take the genitive.' },
+    x: '*do* = to, into (*idę do domu, do sklepu*). *z* = from, out of (*wracam z pracy*). *od* = from a person, since a time (*list od mamy, od poniedziałku*). *do* and *od* always take the genitive; *z* takes it when it means "from" — meaning "with", it takes the instrumental.' },
   'GEN:bez-dla': { o: 15, f: 2, kind: 'GEN', t: '*bez, dla, u, obok, podczas…*',
     x: 'Many prepositions always take the genitive: *bez* (without), *dla* (for), *u* (at someone\'s: *u babci*), *obok, koło, blisko* (next to, near), *podczas* (during), *zamiast* (instead of), *oprócz* (apart from), *wśród* (among), *naprzeciwko* (opposite).' },
   'GEN:verbs': { o: 17, f: 2, kind: 'GEN', t: 'Verbs that take the genitive',
@@ -93,7 +93,7 @@ PL.rules('cases', 'DAT', {
   'DAT:verbs': { o: 18, f: 2, kind: 'DAT', t: 'Verbs that take the dative',
     x: '*pomagać* (help), *dziękować* (thank), *ufać* (trust), *wierzyć* (believe), *przeszkadzać* (disturb), *przyglądać się* (look closely at), *podobać się* (to please = to be liked) and *smakować* (to taste good to) take the dative: *pomagam bratu, dziękuję pani*.' },
   'DAT:feel': { o: 21, f: 2, kind: 'DAT', t: 'Feelings: zimno mi, dziecku jest smutno',
-    x: 'States and feelings put the person in the dative: *Zimno mi* (I\'m cold), *Dziecku jest smutno* (the child is sad), *Podoba mi się* (I like it — "it pleases me"), *Chce mi się pić* (I feel like a drink).' },
+    x: 'States and feelings put the person in the dative: *Zimno mi* (I\'m cold), *Dziecku jest smutno* (the child is sad), *Podoba mi się* (I like it — "it pleases me"), *Chce mi się pić* (I\'m thirsty).' },
   'DAT:prep': { o: 31, f: 1, kind: 'DAT', t: '*dzięki, przeciwko, wbrew, ku*',
     x: 'A few prepositions take the dative: *dzięki* (thanks to), *przeciw(ko)* (against), *wbrew* (contrary to), *ku* (towards — literary).' },
 });
@@ -113,7 +113,7 @@ PL.rules('cases', 'INS', {
 
 PL.rules('cases', 'LOC', {
   'LOC:w-na': { o: 3.5, f: 3, kind: 'LOC', t: '*w / na* + locative: where?',
-    x: 'Being somewhere (*gdzie?* where?) is *w* (in) or *na* (on, at) + locative: *w domu, w Polsce, w szkole, na stole, na poczcie, na wsi*. Movement **to** a place uses the accusative instead (*idę na pocztę*).' },
+    x: 'Being somewhere (*gdzie?* where?) is *w* (in) or *na* (on, at) + locative: *w domu, w Polsce, w szkole, na stole, na poczcie, na wsi*. Going **to** the place changes the phrase: *w* + locative → *do* + genitive (*w szkole → do szkoły*), *na* + locative → *na* + accusative (*na poczcie → na pocztę*).' },
   'LOC:o': { o: 6, f: 3, kind: 'LOC', t: '*o* + locative = about',
     x: '*o* meaning "about" takes the locative: *myślę o pracy, książka o Polsce, mówimy o filmie*.' },
   'LOC:po-przy': { o: 22, f: 2, kind: 'LOC', t: '*po* (after, around) and *przy* (by, at)',
@@ -145,12 +145,12 @@ PL.rules('cases', 'PLUR', {
   'PL:nom': { o: 12.5, f: 3, t: 'Making the plural: -y, -i, -e, -a',
     x: 'Most masculine and feminine nouns take *-y* or *-i* (*domy, kobiety, książki*), soft stems *-e* (*pokoje, ulice*), neuter nouns *-a* (*okna, miasta*). Men get special virile forms: *student → studenci, Polak → Polacy, pan → panowie*.' },
   'PL:gen': { o: 28, f: 2, t: 'Genitive plural: domów, książek, okien',
-    x: 'Masculine nouns mostly take *-ów* (*domów, panów*). Feminine and neuter nouns in *-a / -o* simply lose the ending, often slipping in an *e* or turning *o* into *ó*: *kobiet, książek, okien, sióstr, szkół*. Soft stems take *-i / -y*: *lekcji, nocy, kluczy*.' },
+    x: 'Masculine nouns mostly take *-ów* (*domów, panów*). Feminine and neuter nouns in *-a / -o* simply lose the ending, often slipping in an *e* or turning *o* into *ó*: *kobiet, książek, okien, sióstr, szkół, ulic*. Masculine soft stems, feminines ending in a consonant and nouns in *-ja / -ia* take *-i / -y*: *kluczy, nocy, lekcji*.' },
 });
 
 PL.rules('cases', 'LEM', {
   'LEM:noun': { o: 16.5, f: 2, t: 'Find the dictionary form (nouns, pronouns)',
-    x: 'To look a word up you need its nominative singular. Undo the ending, then undo the sound changes: fleeting *e* (*psa → pies*), *o → ó* (*stołu → stół*), *ę → ą* (*rąk → ręka*), softening (*w mieście → miasto*), and remember the few irregular plurals (*ludzie → człowiek*).' },
+    x: 'To look a word up you need its nominative singular. Undo the ending, then undo the sound changes: fleeting *e* (*psa → pies*), *o → ó* (*stołu → stół*), *ą → ę* (*rąk → ręka*), softening (*w mieście → miasto*), and remember the few irregular plurals (*ludzie → człowiek*).' },
 });
 
 /* ══ Sentences ══ */
@@ -198,7 +198,7 @@ PL.items('ACC:anim', [
   ['kot', 'Widzę czarnego {kota} na dachu.', 'I can see a black cat on the roof.'],
   ['lekarz', 'Musimy wezwać {lekarza}.', 'We need to call a doctor.'],
   ['Marek', 'Kocham {Marka}.', 'I love Marek.'],
-  ['student', 'Nauczyciel pyta nowego {studenta}.', 'The teacher is asking the new student.'],
+  ['student', 'Profesor pyta nowego {studenta}.', 'The professor is asking the new student a question.'],
   ['syn', 'Mają jednego {syna} i dwie córki.', 'They have one son and two daughters.'],
   ['przyjaciel', 'Zapraszam {przyjaciela} na kolację.', 'I\'m inviting a friend to dinner.'],
   ['student', 'Znam tych {studentów}.', 'I know these students.'],
@@ -209,7 +209,7 @@ PL.items('ACC:anim', [
 PL.items('ACC:motion', [
   ['poczta', 'Idę na {pocztę}.', 'I\'m going to the post office.'],
   ['góra', 'W sierpniu jedziemy w {góry}.', 'In August we\'re going to the mountains.'],
-  ['stół', 'Połóż klucze na {stół}.', 'Put the keys on the table.', { n: 'Movement onto the table → accusative. Once they are lying there: *klucze leżą na stole* (locative).' }],
+  ['stół', 'Kot wskoczył na {stół}.', 'The cat jumped onto the table.', { n: 'Movement onto the table → accusative. Once it is sitting there: *kot siedzi na stole* (locative).' }],
   ['koncert', 'Idziemy dziś na {koncert}.', 'We\'re going to a concert today.'],
   ['plaża', 'Dzieci biegną na {plażę}.', 'The children are running to the beach.'],
   ['mecz', 'Idziesz z nami na {mecz}?', 'Are you coming with us to the match?'],
@@ -259,9 +259,9 @@ PL.items('GEN:negation', [
   ['film', 'Nie widziałem tego {filmu}.', 'I haven\'t seen this film.'],
   ['książka', 'Nie znam tej {książki}.', 'I don\'t know this book.'],
   ['samochód', 'Nie mamy {samochodu}.', 'We don\'t have a car.'],
-  ['brat', 'Nie mam {brata}, tylko siostrę.', 'I don\'t have a brother, only a sister.', { n: 'Same verb, two cases: *nie mam brata* (negated → genitive), *mam siostrę* (accusative).' }],
+  ['siostra', 'Nie mam {siostry}, tylko brata.', 'I don\'t have a sister, only a brother.', { n: 'Compare *mam siostrę* (accusative) with *nie mam siostry* (negated → genitive).' }],
   ['telefon', 'Nie słyszę {telefonu}.', 'I can\'t hear the phone.'],
-  ['pies', 'Nie lubię tego {psa}.', 'I don\'t like this dog.'],
+  ['miasto', 'Nie lubię tego {miasta}.', 'I don\'t like this town.'],
   ['herbata', 'Dziękuję, nie chcę {herbaty}.', 'No thanks, I don\'t want any tea.'],
   ['pogoda', 'Nie lubię takiej {pogody}.', 'I don\'t like weather like this.'],
 ]);
@@ -348,7 +348,7 @@ PL.items('DAT:verbs', [
   ['brat', 'Zawsze pomagam {bratu}.', 'I always help my brother.'],
   ['pani', 'Dziękuję {pani} bardzo!', 'Thank you very much (madam)!'],
   ['lekarz', 'Ufam mojemu {lekarzowi}.', 'I trust my doctor.'],
-  ['dziecko', 'Nie przeszkadzaj {dziecku}, ono śpi.', 'Don\'t disturb the child, it\'s asleep.'],
+  ['dziecko', 'Nie przeszkadzaj {dziecku}, bo śpi.', 'Don\'t disturb the child, it\'s asleep.'],
   ['człowiek', 'Nie wierzę temu {człowiekowi}.', 'I don\'t believe this man.'],
   ['mama', 'Ta sukienka bardzo podoba się {mamie}.', 'Mum really likes this dress.', { n: '*podobać się* works "backwards": the dress *pleases* mum. The thing liked is the subject; the person is in the dative.' }],
   ['sąsiad', 'Przyglądam się nowemu {sąsiadowi}.', 'I\'m taking a good look at the new neighbour.'],
@@ -483,7 +483,7 @@ PL.items('VOC:address', [
 ]);
 
 PL.items('PRON:short', [
-  ['ty', 'Kocham {cię}.', 'I love you.'],
+  ['ty', 'Kocham {cię|ciebie}.', 'I love you.'],
   ['ja', 'Daj {mi} spokój!', 'Leave me alone!', { n: 'Literally "give me peace".' }],
   ['on', 'Znam {go} od lat.', 'I\'ve known him for years.'],
   ['ona', 'Pomóż {jej}, proszę.', 'Help her, please.'],
@@ -494,7 +494,7 @@ PL.items('PRON:short', [
   ['on', 'Powiedz {mu}, że czekam.', 'Tell him I\'m waiting.'],
   ['ty', 'Czy mogę {ci} pomóc?', 'Can I help you?'],
   ['ja', 'Możesz {mnie} odwieźć do domu?', 'Can you drive me home?'],
-  ['one', 'Dzieci? Widzę {je} w ogrodzie.', 'The kids? I can see them in the garden.', { n: '*dzieci* are not a group of men, so "them" is *je* (non-virile), not *ich*.' }],
+  ['one', 'Dzieci? Widzę {je} w ogrodzie.', 'The kids? I can see them in the garden.', { n: '*dzieci* is the plural of neuter *dziecko*, so it is non-virile: "them" is *je*, not *ich* — even if they are all boys.' }],
 ]);
 
 PL.items('PRON:n-forms', [
@@ -544,7 +544,7 @@ PL.items('ADJ:virile', [
   ['szczęśliwy', 'Byliśmy bardzo {szczęśliwi}.', 'We were very happy.'],
   ['zmęczony', 'Dziewczyny są {zmęczone}.', 'The girls are tired.'],
   ['wysoki', 'Moi bracia są bardzo {wysocy}.', 'My brothers are very tall.'],
-  ['drogi', '{Drodzy} Państwo!', 'Ladies and gentlemen!'],
+  ['drogi', '{Drodzy} Państwo!', 'Ladies and gentlemen!', { c: 'VOC', n: 'An address, so strictly this is the vocative — for adjectives it looks exactly like the nominative.' }],
 ]);
 
 PL.items('PL:nom', [
@@ -559,7 +559,7 @@ PL.items('PL:nom', [
   ['przyjaciel', 'Moi {przyjaciele} mieszkają w Warszawie.', 'My friends live in Warsaw.'],
   ['dziecko', '{Dzieci} bawią się w ogrodzie.', 'The children are playing in the garden.'],
   ['sąsiad', 'Nasi {sąsiedzi} są bardzo mili.', 'Our neighbours are very nice.'],
-  ['ręka', 'Umyj {ręce} przed jedzeniem!', 'Wash your hands before eating!'],
+  ['ręka', 'Moje {ręce} są zimne.', 'My hands are cold.'],
 ]);
 
 PL.items('PL:gen', [

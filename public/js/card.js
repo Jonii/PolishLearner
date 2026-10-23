@@ -34,8 +34,7 @@ const Card = (() => {
     let mid;
     if (mode === 'input') mid = `<span class="blank-wrap"><input class="blank" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Answer" /></span>`;
     else if (mode === 'mark') mid = `<mark class="hl">${esc(it.word)}</mark>`;
-    else if (mode === 'gap') mid = `<span class="gap">…</span>`;
-    else mid = `<strong class="ans">${esc(mode)}</strong>`;
+    else mid = `<span class="gap">…</span>`;
     return `${pre}${mid}${post}`;
   }
 
@@ -55,8 +54,13 @@ const Card = (() => {
       else if (p.startsWith('-')) { role = 'sfx'; text = p.slice(1); }
       let gloss = own ? (own[i] || '') : '';
       if (!own) {
-        if (role === 'root') gloss = nest && nest.root.replace(/-/g, '') === p ? nest.gloss : (PL.AFFIX[p] || '');
-        else gloss = PL.AFFIX[p] || '';
+        if (role === 'root') {
+          gloss = (nest && nest.roots && nest.roots[p])
+            || (nest && nest.root.replace(/-/g, '') === p ? nest.gloss : '')
+            || PL.AFFIX[p] || '';
+        } else {
+          gloss = PL.AFFIX[p] || '';
+        }
       }
       if (!all && role !== 'root') gloss = '';
       return `<span class="m-chip ${role}"><span class="m-text">${esc(text)}</span>${gloss ? `<span class="m-gloss">${esc(gloss)}</span>` : ''}</span>`;
@@ -119,9 +123,18 @@ const Card = (() => {
         body = `<div class="sentence">${sentence(it, 'mark')}</div>`;
         break;
       case 'lemma':
-        body = `<div class="sentence">${sentence(it, 'mark')}</div>
-          <div class="build-line"><span class="from"><span class="from-w">${esc(it.word)}</span></span><span class="arrow">→</span>
-          <span class="blank-wrap"><input class="blank" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Dictionary form" /></span></div>`;
+        if (it.root) {
+          body = `<div class="build-line">
+              <span class="from"><span class="from-w big">${esc(it.word)}</span><span class="from-m">${esc(it.tr)}</span></span>
+              <span class="arrow">←</span>
+              <span class="blank-wrap"><input class="blank" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Base word" /></span>
+            </div>${anatomy(it.seg, it.nest, it.member, false)}`;
+          showTr = false;
+        } else {
+          body = `<div class="sentence">${sentence(it, 'mark')}</div>
+            <div class="build-line"><span class="from"><span class="from-w">${esc(it.word)}</span></span><span class="arrow">→</span>
+            <span class="blank-wrap"><input class="blank" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Dictionary form" /></span></div>`;
+        }
         break;
       case 'meaning':
         body = `<div class="word-big phrase">${esc(it.word)}</div>`;
@@ -129,7 +142,7 @@ const Card = (() => {
         break;
       case 'respond':
         body = it.pre || it.post ? `<div class="sentence dialogue">${sentence(it, 'gap')}</div>` : '';
-        showTr = false;
+        showTr = !!it.showTr;
         break;
       case 'say':
         body = `<div class="build-line"><span class="blank-wrap"><input class="blank wide" id="cardInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="pl" aria-label="Answer" /></span></div>`;
@@ -416,6 +429,7 @@ const Card = (() => {
       return `${labels.join(' / ')} of *${L.lemma}*${L.m ? ` ‘${L.m}’` : ''}`;
     }
     if (it.type === 'identify') return it.idCase ? `${PL.CASE_NAME[it.idCase]} — ${PL.CASE_PL[it.idCase]}` : '';
+    if (it.type === 'lemma' && it.root) return `${it.word} ← ${it.a}`;
     if (it.type === 'lemma') return `${it.word} → ${it.a}${L && L.m ? ` ‘${L.m}’` : ''}`;
     return '';
   }
@@ -433,14 +447,10 @@ const Card = (() => {
       case 'cloze':
       case 'lemma':
       case 'identify': {
+        // The sentence (and its translation) is already on the card above.
         head = `<span class="fb-answer">${esc(it.a)}</span>`;
         const lab = answerLabel(it);
         if (lab) head += `<span class="fb-label">${md(lab)}</span>`;
-        // A filled-in sentence is already on screen; only recognition cards repeat it.
-        if (it.type !== 'cloze') {
-          full = `<div class="fb-sentence">${sentence(it, it.word)}</div>`;
-          if (it.tr && it.type !== 'identify') full += `<div class="fb-tr">${esc(it.tr)}</div>`;
-        }
         break;
       }
       case 'build':
@@ -448,22 +458,30 @@ const Card = (() => {
         break;
       case 'decode':
         head = `<span class="fb-answer">${esc(it.ctx ? it.base : it.word)}</span><span class="fb-label">‘${esc(it.a)}’${it.lit ? ` — literally ‘${esc(it.lit)}’` : ''}</span>`;
-        if (it.ctx) full = `<div class="fb-sentence">${sentence(it, it.word)}</div><div class="fb-tr">${esc(it.tr)}</div>`;
+        if (it.ctx) full = `<div class="fb-tr">${esc(it.tr)}</div>`;
         break;
       case 'meaning':
         head = `<span class="fb-answer">${esc(it.word)}</span><span class="fb-label">‘${esc(it.a)}’${it.lit ? ` — literally ‘${esc(it.lit)}’` : ''}</span>`;
         break;
-      case 'respond':
+      case 'respond': {
         head = `<span class="fb-answer">${esc(it.a)}</span>`;
-        if (it.pre || it.post) full = `<div class="fb-sentence dialogue">${sentence(it, it.a)}</div>`;
-        if (it.tr) full += `<div class="fb-tr">${nl(it.tr)}</div>`;
+        const gap = document.querySelector('#card .gap');
+        if (gap) gap.outerHTML = `<strong class="ans">${esc(it.a)}</strong>`;
+        if (it.tr && !it.showTr) full = `<div class="fb-tr">${nl(it.tr)}</div>`;
         break;
+      }
       case 'say':
         head = `<span class="fb-answer">${esc(it.a)}</span><span class="fb-label">‘${esc(it.tr)}’${it.lit ? ` — literally ‘${esc(it.lit)}’` : ''}</span>`;
         break;
     }
 
-    const anat = it.seg ? anatomy(it.seg, it.nest, it.member, true) : '';
+    // Word anatomy with every gloss: upgrade the chips already on the card, or add them here.
+    let anat = '';
+    if (it.seg) {
+      const shown = document.querySelector('#card > .anatomy');
+      if (shown) shown.outerHTML = anatomy(it.seg, it.nest, it.member, true);
+      else anat = anatomy(it.seg, it.nest, it.member, true);
+    }
     const family = it.nest != null ? `<button class="link-btn" id="fbFamily" type="button">see the whole family: ${esc(PL.NEST[it.nest].root)} ‘${esc(PL.NEST[it.nest].gloss)}’ →</button>` : '';
     const r = cur.rule;
     const speakText = speechText(it);

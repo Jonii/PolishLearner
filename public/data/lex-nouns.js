@@ -28,7 +28,7 @@ PL.pattern('n-m-soft', {
 
 PL.pattern('n-m-anim', {
   t: 'Masculine animals (kot, pies)', kind: 'noun',
-  sg: ['—', '-a', '-u / -owi', '= GEN', '-em', '-e* / -u', '-e* / -u'],
+  sg: ['—', '-a', '-owi / -u', '= GEN', '-em', '-e* / -u', '-e* / -u'],
   pl: ['-y / -i', '-ów / -i', '-om', '= NOM', '-ami', '-ach', '= NOM'],
   models: ['kot', 'pies', 'ptak'],
   note: 'Animate masculine nouns use the **genitive form for the accusative** in the singular: widzę kota, mam psa. In the plural only people do that; animals go back to ACC = NOM (widzę koty).',
@@ -55,7 +55,7 @@ PL.pattern('n-f-a', {
   sg: ['-a', '-y / -i', '-e*', '-ę', '-ą', '-e*', '-o'],
   pl: ['-y / -i', '— (zero)', '-om', '= NOM', '-ami', '-ach', '= NOM'],
   models: ['kobieta', 'szkoła', 'mama', 'książka'],
-  note: '*-e in DAT and LOC softens the consonant before it: t→cie (kobiecie), d→dzie (wodzie), ł→le (szkole), r→rze (siostrze), k→ce (książce), g→dze (nodze). Genitive plural has **no ending**, often with a vowel inserted: książka → książek, matka → matek, or ó: noga → nóg.',
+  note: '*-e* in DAT and LOC softens the consonant before it: t→cie (kobiecie), d→dzie (wodzie), ł→le (szkole), r→rze (siostrze), k→ce (książce), g→dze (nodze). Genitive plural has **no ending**, often with a vowel inserted: książka → książek, matka → matek, or ó: noga → nóg.',
 });
 
 PL.pattern('n-f-soft', {
@@ -63,7 +63,7 @@ PL.pattern('n-f-soft', {
   sg: ['-a', '-y / -i', '-y / -i', '-ę', '-ą', '-y / -i', '-o / -u'],
   pl: ['-e', '— / -i / -y', '-om', '= NOM', '-ami', '-ach', '= NOM'],
   models: ['ulica', 'praca', 'lekcja', 'kuchnia'],
-  note: 'After soft or hard-sounding c, cz, sz, rz, j: GEN = DAT = LOC (ulicy, lekcji). Names and pet names in -ia/-sia take *-u* in the vocative: Kasiu, babciu.',
+  note: 'After soft consonants (ś, ć, ń, l, j…) and the hardened c, cz, sz, rz, ż, dz: GEN = DAT = LOC (ulicy, lekcji, plaży). In the vocative, pet names and family words take *-u* (Kasiu, Aniu, babciu); full names in *-ia* keep *-o* (Mario, Julio).',
 });
 
 PL.pattern('n-f-cons', {
@@ -132,7 +132,7 @@ PL.noun('ogród', { g: 'm3', m: 'garden', cls: 'n-m-hard',
 PL.noun('kościół', { g: 'm3', m: 'church', cls: 'n-m-hard',
   sg: 'kościół kościoła kościołowi kościół kościołem kościele kościele',
   pl: 'kościoły kościołów kościołom kościoły kościołami kościołach kościoły',
-  note: 'ó → o (kościoła) and ł → l in the locative: *w kościele*.' });
+  note: 'ó → o (kościoła); in the locative also o → e and ł → l: *w kościele*.' });
 PL.noun('telefon', { g: 'm3', m: 'phone', cls: 'n-m-hard',
   sg: 'telefon telefonu telefonowi telefon telefonem telefonie telefonie',
   pl: 'telefony telefonów telefonom telefony telefonami telefonach telefony' });
@@ -352,7 +352,7 @@ PL.noun('Finlandia', { g: 'f', m: 'Finland', cls: 'n-f-soft',
 PL.noun('babcia', { g: 'f', m: 'grandma', cls: 'n-f-soft',
   sg: 'babcia babci babci babcię babcią babci babciu',
   pl: 'babcie babć babciom babcie babciami babciach babcie',
-  note: 'Pet-name nouns in *-ia / -cia / -sia* take *-u* in the vocative: *babciu!*' });
+  note: 'Pet names and family words in *-ia / -cia / -sia* take *-u* in the vocative: *babciu!*' });
 PL.noun('Kasia', { g: 'f', m: 'Kasia (name; short for Katarzyna)', cls: 'n-f-soft',
   sg: 'Kasia Kasi Kasi Kasię Kasią Kasi Kasiu' });
 PL.noun('pani', { g: 'f', m: 'lady, Mrs; "you" (polite, to a woman)', cls: 'n-f-soft',
@@ -445,7 +445,7 @@ PL.noun('życie', { g: 'n', m: 'life', cls: 'n-n-e',
 PL.noun('imię', { g: 'n', m: 'first name', cls: 'n-n-e',
   sg: 'imię imienia imieniu imię imieniem imieniu imię',
   pl: 'imiona imion imionom imiona imionami imionach imiona',
-  note: 'Neuter in *-ę* gain *-en-* in the other forms: imienia, imieniem.' });
+  note: 'Neuters in *-mię* add *-eni-* in the singular (imienia, imieniem) and *-on-* in the plural (imiona, imion). Other neuters in *-ę* take *-ęci- / -ęt-*: zwierzę → zwierzęcia, zwierzęta.' });
 
 /* ── Plural only ── */
 
@@ -481,7 +481,7 @@ PL.noun('sobota', { g: 'f', m: 'Saturday', cls: 'n-f-a',
 PL.noun('niedziela', { g: 'f', m: 'Sunday', cls: 'n-f-soft',
   sg: 'niedziela niedzieli niedzieli niedzielę niedzielą niedzieli niedzielo',
   pl: 'niedziele niedziel niedzielom niedziele niedzielami niedzielach niedziele',
-  note: 'Literally "the day of not-doing" (*nie* + *dzielać*, an old word for working).' });
+  note: 'Literally "the day of not working": *nie* + the root of *działać* (to work, to act).' });
 PL.noun('godzina', { g: 'f', m: 'hour', cls: 'n-f-a',
   sg: 'godzina godziny godzinie godzinę godziną godzinie godzino',
   pl: 'godziny godzin godzinom godziny godzinami godzinach godziny' });

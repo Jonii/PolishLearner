@@ -285,6 +285,7 @@ const PL = (() => {
     const L = {
       pos: 'verb', m: d.m, asp: d.asp || null, pair: d.pair || null, cls: d.cls || null,
       refl: !!d.refl, note: d.note || '', hidden: !!d.hidden, from: d.from || null,
+      base: d.base || null,      // for irregular prefixed verbs given in full (wyjść ← iść)
     };
     if (d.from) {
       L.forms = null;
