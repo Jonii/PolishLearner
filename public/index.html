@@ -3,47 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polski — Word by Word</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<title>Polski — roots, prefixes, endings</title>
+<meta name="description" content="Grind Polish grammar the way it works: cases, conjugation, prefixes, word families and everyday small words — with real sentences and hints that teach the pattern.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23c0392b'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' text-anchor='middle' fill='%23fffdf8'%3E%C5%82%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="logo">Po<span>l</span>ski</div>
-    <div class="tagline">One word. Every form. Real sentences.</div>
+    <div class="tagline">Roots · prefixes · endings</div>
   </header>
-  <div class="word-nav" id="wordNav"></div>
-  <div class="session-stats" id="sessionStats"></div>
 
-  <div class="flashcard-section">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="flashcard-area" id="flashcardArea"></div>
-  </div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button type="button" role="tab" data-view="practice">Practice</button>
+    <button type="button" role="tab" data-view="progress">Progress</button>
+    <button type="button" role="tab" data-view="reference">Reference</button>
+  </nav>
 
-  <div class="completed-trail" id="completedTrail"></div>
-
-  <div class="paradigm-wrap" id="paradigmWrap">
-    <div class="paradigm-toggle" id="paradigmToggle">
-      <div class="paradigm-toggle-left" id="paradigmToggleLeft"></div>
-      <span class="toggle-arrow">▼</span>
-    </div>
-    <div class="paradigm-body" id="paradigmBody"></div>
-  </div>
+  <main>
+    <section class="view" id="view-practice" aria-label="Practice">
+      <div class="module-bar" id="moduleBar"></div>
+      <div class="focus-bar" id="focusBar" hidden></div>
+      <div class="session-stats" id="sessionStats"></div>
+      <div class="card-area" id="cardArea"></div>
+      <div class="completed-trail" id="trail" aria-label="Recent answers"></div>
+      <p class="keys-help">
+        <kbd>Enter</kbd> check / next · <kbd>F2</kbd> rule · <kbd>F1</kbd> table · <kbd>F3</kbd> options · <kbd>1</kbd>–<kbd>4</kbd> pick · <kbd>Alt</kbd>+<kbd>a</kbd> → ą (also c e l n o s x z)
+      </p>
+    </section>
+    <section class="view" id="view-progress" aria-label="Progress"></section>
+    <section class="view" id="view-reference" aria-label="Reference"></section>
+  </main>
 
   <footer>
     Słowo po słowie — word by word<br>
-    <button class="reset-link" onclick="resetProgress()">Reset all progress</button>
+    <span id="itemCount"></span>
   </footer>
 </div>
-<div class="unlock-toast" id="unlockToast"></div>
-<div class="paradigm-popup" id="paradigmPopup" onclick="if(event.target===this)UI.closePopup()">
-  <div class="paradigm-popup-inner" id="paradigmPopupInner"></div>
-</div>
 
-<script src="data.js"></script>
-<script src="srs.js"></script>
-<script src="ui.js"></script>
-<script src="app.js"></script>
+<div class="popup" id="popup" aria-hidden="true">
+  <div class="popup-inner" id="popupInner" role="dialog" tabindex="-1"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="js/core.js"></script>
+<script src="js/compile.js"></script>
+<script src="data/lex-nouns.js"></script>
+<script src="data/lex-adjectives.js"></script>
+<script src="data/lex-verbs.js"></script>
+<script src="data/cases.js"></script>
+<script src="data/verbs.js"></script>
+<script src="data/prefixes.js"></script>
+<script src="data/building.js"></script>
+<script src="data/smallwords.js"></script>
+<script src="js/srs.js"></script>
+<script src="js/input.js"></script>
+<script src="js/card.js"></script>
+<script src="js/views.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
